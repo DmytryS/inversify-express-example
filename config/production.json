@@ -4,9 +4,15 @@
         "url": "mongodb://localhost/taskdb"
     },
     "SERVER": {
-        "port": 5000
+        "port": 5000,
+        "baseUrl": "/api/v1"
     },
     "LOGGER": {
-        "path": "/logs"
+        "path": "/logs",
+        "fileName": "delivery-be.log"
+    },
+    "AUTH": {
+        "secret": "43BF1F678DD0675D28076230D1BF9B18",
+        "expiresIn": "3650d"
     }
 }

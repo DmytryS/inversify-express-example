@@ -1,5 +1,5 @@
-export interface IDatabase {
+export default interface IDatabase {
     connect(): Promise<void>;
     close(): Promise<any>;
-    clear(): Promise<void>;
+    clear(): Promise<any>;
 }

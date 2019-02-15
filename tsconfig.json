@@ -7,8 +7,14 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["reflect-metadata"],
+    "types": [
+      "reflect-metadata",
+      "node"
+    ],
   },
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "typings"

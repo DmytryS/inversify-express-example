@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { injectable, inject } from 'inversify';
 import IConfig from './interface';
-import TYPES from '../../../types';
+import TYPES from '../../constant/types';
 
 @injectable()
 export default class Nconf implements IConfig {

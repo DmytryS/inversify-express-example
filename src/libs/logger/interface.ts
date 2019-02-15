@@ -1,5 +1,6 @@
-export default interface ILogger {
-    error(msg: any): void;
-    info(msg: any): void;
-    debug(msg: any): void;
+import { Logger as ILogger }from 'log4js';
+export interface ILoggerService {
+    getLogger(serviceName: string): ILogger;
 }
+
+export default ILogger;
