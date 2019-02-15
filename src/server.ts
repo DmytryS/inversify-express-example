@@ -5,7 +5,7 @@ import kernel from "./libs/ioc";
 import * as path from "path";
 import * as fs from "fs";
 import { IPlugin } from "./libs/plugins/interfaces";
-import { IServerConfig } from "./configs/interfaces";
+import { IServerConfig } from "./configs/interface";
 
 const serverConfigs = kernel.get<IServerConfig>("IServerConfig");
 const port = process.env.port || serverConfigs.port;

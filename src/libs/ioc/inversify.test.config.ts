@@ -1,5 +1,5 @@
 import { IKernel } from "inversify";
-import {IRepositoryConfig, IServerConfig} from "../../configs/interfaces";
+import {IRepositoryConfig, IServerConfig} from "../../configs/interface";
 import Configurations from "../../configs/configurations";
 import { ITaskRepository } from "../repository/interfaces";
 import TaskRepository from "../repository/memory/taskRepository";

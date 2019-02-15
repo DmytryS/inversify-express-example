@@ -1,7 +1,7 @@
 import * as MongoDb from 'mongodb';
 import {IEntity} from "../../../core/interfaces";
 import {IRepository} from "../interfaces";
-import {IRepositoryConfig} from "../../../configs/interfaces";
+import {IRepositoryConfig} from "../../../configs/interface";
 import * as Moment from "moment";
 import * as UUID from "node-uuid";
 

@@ -1,0 +1,12 @@
+{
+    "DB": {
+        "type": "mongo",
+        "url": "mongodb://localhost/taskdb"
+    },
+    "SERVER": {
+        "port": 5000
+    },
+    "LOGGER": {
+        "path": "/logs"
+    }
+}

@@ -1,6 +1,6 @@
 import Task from "../../../core/task";
 import MongoRepository from "./mongoRepository";
-import {IRepositoryConfig} from "../../../configs/interfaces";
+import {IRepositoryConfig} from "../../../configs/interface";
 import { injectable, inject } from "inversify";
 
 

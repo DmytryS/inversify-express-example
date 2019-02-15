@@ -4,7 +4,7 @@ import "reflect-metadata";
 import TaskRepository from "../../../src/libs/repository/mongo/taskRepository";
 import Task from "../../../src/core/task";
 import { ITaskRepository } from "../../../src/libs/repository/interfaces";
-import {IRepositoryConfig} from "../../../src/configs/interfaces";
+import {IRepositoryConfig} from "../../../src/configs/interface";
 import Kernel from "../../../src/libs/ioc";
 
 const configurations = Kernel.get<IRepositoryConfig>("IRepositoryConfig");
