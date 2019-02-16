@@ -22,11 +22,6 @@ export default class UserController {
             throw e;
         }
     }
-    @Post('/')
-    private async createUser(req, res, next) {
-        const { body } = req;
-        return await this.userService.create(body);
-    }
 
     @Get('/profile')
     private async profile(req) {

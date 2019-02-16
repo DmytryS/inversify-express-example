@@ -1,8 +1,8 @@
-import log4js from 'log4js';
+import * as log4js from 'log4js';
 let logger = log4js.getLogger('errorHandler');
 
 function _composeErrorObject(err, requestId) {
-    const response = {
+    const response: any = {
         error: err.name,
         message: err.message
     };
@@ -36,7 +36,7 @@ export function errorHandler(err, req, res, next) {
     logger.error('Request error', err);
     res.status(err.status || 500);
 
-    res.send(_composeErrorObject(err));
+    res.send(_composeErrorObject(err, false));
 }
 
 /**
@@ -58,6 +58,10 @@ export function websocketsErrorHandler(socket, requestId, error) {
  * Base class for API errors. Contains indication of HTTP status.
  */
 export class ApiError extends Error {
+    name: string;
+    status: number;
+    _args: Array<Object>;
+    _code: String;
 
     /**
      * ApiError constructor
@@ -117,6 +121,7 @@ export class ApiError extends Error {
  * Represents DatabaseError. This error is to be thrown on database error.
  */
 export class DatabaseError extends ApiError {
+    details: Object;
 
     /**
      * Constructs database error
@@ -179,6 +184,7 @@ export class UnauthorizedError extends ApiError {
  * Represents validation error. Throwing this error results in 400 (Bad Request) HTTP response code.
  */
 export class ValidationError extends ApiError {
+    details: Object;
 
     /**
      * Constructs validation error.

@@ -24,7 +24,7 @@ export default class Logger implements ILoggerService {
         if (!fs.existsSync(pathToFile)) {
             fs.mkdirSync(pathToFile);
         }
-        const appenders = {
+        const appenders: any = {
             file: {
                 type: 'file',
                 filename: path.join(pathToFile, this._config.logger.filename),

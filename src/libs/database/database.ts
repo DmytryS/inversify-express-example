@@ -10,6 +10,7 @@ export default class Database implements IDatabase {
     private _config;
     private _logger: ILogger;
     private _dbConnection;
+    private _mongoose: mongoose.Mongoose;
 
     constructor(
         @inject(TYPES.Logger) private logger: ILoggerService,
@@ -18,6 +19,11 @@ export default class Database implements IDatabase {
         this._config = config.get('DB');
         this._logger = logger.getLogger('Database');
         this._dbConnection = false;
+        this._mongoose = mongoose;
+    }
+
+    get mongoose() {
+        return this._mongoose;
     }
 
     /**

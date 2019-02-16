@@ -2,52 +2,56 @@ import IUserService from './interface';
 import { injectable, inject } from 'inversify';
 import TYPES from '../../constant/types';
 import IConfig from '../../libs/config/interface';
+import { User as IUser} from '../../repository/user/interface';
 import * as jwt from 'jsonwebtoken';
+import { UserRepository as IUserRepository } from '../../repository/user/interface';
 
 @injectable()
 export default class UserService implements IUserService {
     private _config;
+    private _userRepository: IUserRepository;
+
     constructor(
-        @inject(TYPES.Config) config: IConfig
+        @inject(TYPES.Config) config: IConfig,
+        @inject(TYPES.UserRepository) userRepository: IUserRepository
     ) {
         this._config = config.get('AUTH');
-    }
-
-    get USER_QUEUES() {
-        return this._USER_QUEUES;
+        this._userRepository = userRepository;
     }
 
     async profile(id: string) {
-        return this.rpcClient.call(this.USER_QUEUES['get-by-id'], id);
+        return this._userRepository.findById(id);
     }
 
     async login(email: string, password: string) {
-        const user = await this.rpcClient.call(this.USER_QUEUES['login'], email, password);
+        const user = await this._userRepository.findOne({
+            email
+        });
         return {
             success: true,
-            token: jwt.sign(user, this.JWT_SECRET, {
-                expiresIn: '2 days'
-            })
+            token: jwt.sign(
+                user,
+                this._config.secret,
+                {
+                    expiresIn: this._config.expiresIn
+                }
+            )
         }
     }
 
-    async register(data: object) {
-        return this.rpcClient.call(this.USER_QUEUES['create'], data);
+    async register(data: IUser) {
+        return this._userRepository.create(data);
     }
 
     async getUsers() {
-        return this.rpcClient.call(this.USER_QUEUES['get-all']);
-    }
-
-    async create(data: object) {
-        return this.rpcClient.call(this.USER_QUEUES['create'], data);
+        return this._userRepository.findAll();
     }
 
     async deleteById(id: string) {
-        return this.rpcClient.call(this.USER_QUEUES['delete-by-id'], id);
+        return this._userRepository.deleteById(id);
     }
 
     async updateById(id: string, data: object) {
-        return this.rpcClient.call(this.USER_QUEUES['update-by-id'], id, data);
+        return this._userRepository.updateById(id, data);
     }
 }
