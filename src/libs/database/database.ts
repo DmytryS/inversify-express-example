@@ -13,7 +13,7 @@ export default class Database implements IDatabase {
     private _mongoose: mongoose.Mongoose;
 
     constructor(
-        @logger private loggerService: ILogger,
+        @logger loggerService: ILogger,
         @config config: IConfig
     ) {
         this._config = config.get('DB');

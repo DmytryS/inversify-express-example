@@ -6,7 +6,7 @@
   "repository": {
     "url": "https://github.com/inversify/inversify-code-samples.git"
   },
-  "author": "Talento90",
+  "author": "Dmytry Shvaika",
   "keywords": [
     "typescript",
     "project structure",
@@ -14,44 +14,32 @@
     "nodejs"
   ],
   "scripts": {
-    "build": "gulp build",
-    "start": "node build/src/index.js",
-    "setup": "npm install & typings install",
-    "test": "gulp test"
+    "test": "echo \"Error: no test specified\"",
+    "build": "tsc",
+    "dev": "NODE_ENV=dev node -r ts-node/register ./src/index.ts",
+    "nodemon": "nodemon",
+    "start": "node ./build/index.js"
   },
   "dependencies": {
     "@types/node": "^11.9.4",
     "body-parser": "^1.18.3",
-    "boom": "^3.1.2",
-    "fs": "0.0.2",
-    "good": "^6.6.0",
-    "good-console": "^5.3.1",
-    "hapi": "^13.2.2",
-    "hapi-swagger": "^4.3.1",
-    "inert": "^3.2.0",
     "inversify": "^5.0.1",
     "inversify-express-utils": "^6.3.2",
     "inversify-restify-utils": "^3.4.0",
-    "joi": "^8.0.5",
     "jsonwebtoken": "^8.4.0",
     "log4js": "^4.0.2",
-    "moment": "^2.12.0",
-    "mongodb": "^2.1.11",
     "mongoose": "^5.4.13",
     "nconf": "^0.10.0",
-    "node-uuid": "^1.4.7",
-    "path": "^0.12.7",
     "reflect-metadata": "^0.1.13",
-    "vision": "^4.0.1"
+    "restify": "^7.7.0",
+    "restify-cors-middleware": "^1.1.1",
+    "restify-errors": "^6.1.1",
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.1.6"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "gulp": "^3.9.1",
-    "gulp-mocha": "^2.2.0",
-    "gulp-rimraf": "^0.2.0",
-    "gulp-tslint": "4.3.4",
-    "tslint": "^3.6.0",
-    "typescript": "^1.8.9"
+    "nodemon": "^1.18.5",
+    "ts-node": "^7.0.1"
   },
   "engines": {
     "node": ">=4.1.1"
