@@ -20,7 +20,7 @@ container.bind<IConfig>(TYPES.Config).to(ConfigService).inSingletonScope();
 container.bind<ILogger>(TYPES.Logger).to(LoggerService).inSingletonScope();
 container.bind<IDatabase>(TYPES.Database).to(DatabaseService).inSingletonScope();
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
-container.bind<IUserService>(TYPES.UserService).to(UserService);
 container.bind<interfaces.Controller>(TYPE.Controller).to(UserController).whenTargetNamed('UserController');
+container.bind<IUserService>(TYPES.UserService).to(UserService);
 
 export default container;

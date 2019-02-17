@@ -29,7 +29,12 @@ export default class Service {
 
         await this._database.connect();
 
-        const server = new InversifyRestifyServer(container, { defaultRoot: this._config.baseUrl });
+        const server = new InversifyRestifyServer(
+            container,
+            {
+                defaultRoot: this._config.get('SERVER').baseUrl
+            }
+        );
         server.setConfig((app) => {
             app.pre(cors.preflight);
             app.use(cors.actual);
