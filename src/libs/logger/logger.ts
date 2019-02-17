@@ -1,17 +1,17 @@
-import { injectable, inject } from 'inversify';
-import TYPES from '../../constant/types';
-import { ILoggerService } from './interface';
+import { injectable } from 'inversify';
+import { config } from '../../constant/decorators';
+import { ILogger } from './interface';
 import IConfig from '../config/interface';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as log4js from 'log4js';
 
 @injectable()
-export default class Logger implements ILoggerService {
+export default class Logger implements ILogger {
     private _config;
 
     constructor(
-        @inject(TYPES.Config) config: IConfig
+        @config config: IConfig
     ) {
         this._config = config.get('LOGGER');
 

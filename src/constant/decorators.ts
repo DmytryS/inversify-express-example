@@ -1,5 +1,5 @@
 import { inject } from "inversify";
-import TYPES from "./constant/types";
+import TYPES from "./types";
 
 export const server = inject(TYPES.Server);
 export const config = inject(TYPES.Config);

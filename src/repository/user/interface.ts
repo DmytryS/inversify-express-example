@@ -8,4 +8,4 @@ export interface User {
     status: string;
 }
 
-export type UserRepository = Repository<User>;
+export type IUserRepository = Repository<User>;

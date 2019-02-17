@@ -1,9 +1,9 @@
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
+import { injectable } from 'inversify';
 import IDatabase from '../../libs/database/interface';
 import GenericRepository from '../generic/generic';
-import { UserRepository as IUserRepository, User } from './interface';
-import TYPES from '../../constant/types';
+import { IUserRepository as IUserRepository, User } from './interface';
+import { database } from '../../constant/decorators';
 
 export interface UserModel extends User, Document { }
 
@@ -13,7 +13,7 @@ export default class UserRepository
     implements IUserRepository {
 
     public constructor(
-        @inject(TYPES.Database) private databse: IDatabase,
+        @database private databse: IDatabase,
     ) {
         super(
             databse,

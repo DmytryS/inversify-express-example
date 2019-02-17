@@ -1,27 +1,26 @@
 import 'reflect-metadata';
-import { injectable, inject } from 'inversify';
+import { injectable } from 'inversify';
+import nconf from 'nconf';
 import IConfig from './interface';
-import TYPES from '../../constant/types';
 
 @injectable()
 export default class Nconf implements IConfig {
-    private nconf;
-    constructor(
-        @inject(TYPES.Config) nconf
-    ) {
+    private _nconf;
+
+    constructor() {
         nconf.file(require.resolve(`../../../config/${process.env}.json`));
         nconf.env();
         nconf.defaults({
             API_PORT: 8080
         });
-        this.nconf = nconf;
+        this._nconf = nconf;
     }
 
     get(key: string): string {
-        return this.nconf.get(key);
+        return this._nconf.get(key);
     }
 
     has(key: string): boolean {
-        return !!this.nconf.get(key);
+        return !!this._nconf.get(key);
     }
 }

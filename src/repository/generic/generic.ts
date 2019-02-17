@@ -1,8 +1,8 @@
-import { injectable, inject, unmanaged } from "inversify";
+import { injectable, unmanaged } from "inversify";
 import { Schema, Document, Model, SchemaDefinition } from "mongoose";
 import IDatabase from "../../libs/database/interface";
 import Repository, { Query } from "./interface";
-import TYPES from '../../constant/types';
+import { database } from '../../constant/decorators';
 
 @injectable()
 export default class GenericRepository<TEntity, TModel extends Document>
@@ -13,7 +13,7 @@ export default class GenericRepository<TEntity, TModel extends Document>
     protected Model: Model<TModel>;
 
     public constructor(
-        @inject(TYPES.Database) private database: IDatabase,
+        @database private database: IDatabase,
         @unmanaged() name: string,
         @unmanaged() schemaDefinition: SchemaDefinition
     ) {

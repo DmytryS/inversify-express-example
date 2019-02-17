@@ -1,10 +1,10 @@
 import IUserService from './interface';
-import { injectable, inject } from 'inversify';
-import TYPES from '../../constant/types';
+import { injectable } from 'inversify';
+import { config, userRepository} from '../../constant/decorators';
 import IConfig from '../../libs/config/interface';
 import { User as IUser} from '../../repository/user/interface';
 import * as jwt from 'jsonwebtoken';
-import { UserRepository as IUserRepository } from '../../repository/user/interface';
+import {  IUserRepository } from '../../repository/user/interface';
 
 @injectable()
 export default class UserService implements IUserService {
@@ -12,8 +12,8 @@ export default class UserService implements IUserService {
     private _userRepository: IUserRepository;
 
     constructor(
-        @inject(TYPES.Config) config: IConfig,
-        @inject(TYPES.UserRepository) userRepository: IUserRepository
+        @config config: IConfig,
+        @userRepository userRepository: IUserRepository
     ) {
         this._config = config.get('AUTH');
         this._userRepository = userRepository;

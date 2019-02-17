@@ -1,6 +1,6 @@
 import { User as IUser } from '../../repository/user/interface';
 
-interface IUserService {
+export default interface IUserService {
     login(email: string, password: string): Promise<object>
     profile(id: string): Promise<object>;
     register(userData: IUser): Promise<object>;
@@ -8,5 +8,3 @@ interface IUserService {
     deleteById(id: string): Promise<void>;
     updateById(id: string, data: object): Promise<object>;
 }
-
-export default IUserService;
