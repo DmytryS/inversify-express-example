@@ -1,10 +1,10 @@
 import { injectable } from 'inversify';
-import { config } from '../../constant/decorators';
-import { ILogger } from './interface';
-import IConfig from '../config/interface';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as log4js from 'log4js';
+import { config } from '../../constant/decorators';
+import { ILogger } from './interface';
+import IConfig from '../config/interface';
 
 @injectable()
 export default class Logger implements ILogger {
@@ -19,15 +19,16 @@ export default class Logger implements ILogger {
     }
 
     private _setupLogger() {
-        const pathToFile = path.join(__dirname, '../../', this._config.logger.path);
+        const pathToFile = path.join(__dirname, '../../../', this._config.path);
 
         if (!fs.existsSync(pathToFile)) {
             fs.mkdirSync(pathToFile);
         }
+
         const appenders: any = {
             file: {
                 type: 'file',
-                filename: path.join(pathToFile, this._config.logger.filename),
+                filename: path.join(pathToFile, this._config.fileName),
                 timezoneOffset: 0
             }
         };

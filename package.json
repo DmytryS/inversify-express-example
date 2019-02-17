@@ -16,9 +16,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\"",
     "build": "tsc",
-    "dev": "NODE_ENV=dev node -r ts-node/register ./src/index.ts",
+    "dev": "NODE_ENV=development node -r ts-node/register ./src/index.ts",
     "nodemon": "nodemon",
-    "start": "node ./build/index.js"
+    "start": "NODE_ENV=production node ./build/index.js"
   },
   "dependencies": {
     "@types/node": "^11.9.4",

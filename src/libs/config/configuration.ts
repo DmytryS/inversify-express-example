@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import nconf from 'nconf';
+import * as nconf from 'nconf';
 import IConfig from './interface';
 
 @injectable()
@@ -8,7 +8,7 @@ export default class Nconf implements IConfig {
     private _nconf;
 
     constructor() {
-        nconf.file(require.resolve(`../../../config/${process.env}.json`));
+        nconf.file(require.resolve(`../../../config/${process.env.NODE_ENV}.json`));
         nconf.env();
         nconf.defaults({
             API_PORT: 8080

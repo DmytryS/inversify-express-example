@@ -33,10 +33,14 @@ export default class Service {
         server.setConfig((app) => {
             app.pre(cors.preflight);
             app.use(cors.actual);
-            app.use(auth(this._config.get('AUTH'), {
-                allowedGlobalMethods: ['OPTIONS']
-            }));
-            app.use(require('morgan')('dev'));
+            app.use(
+                auth(
+                    this._config.get('AUTH'),
+                    {
+                        allowedGlobalMethods: ['OPTIONS']
+                    }
+                )
+            );
             app.use(bodyParser.json());
         });
         const app = server.build();

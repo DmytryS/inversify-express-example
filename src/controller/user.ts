@@ -1,14 +1,14 @@
-import { Controller, Get, interfaces, Post, Put, Delete } from 'inversify-restify-utils';
-import { injectable, inject } from 'inversify';
-import TYPES from '../constant/types';
-import IUserService from '../service/user/interface';
+import { Controller, Get, Post, Put, Delete } from 'inversify-restify-utils';
+import { injectable } from 'inversify';
 import * as errs from 'restify-errors';
+import { userService} from '../constant/decorators';
+import IUserService from '../service/user/interface';
 
 @Controller('/users')
 @injectable()
 export default class UserController {
     constructor(
-        @inject(TYPES.UserService) private userService: IUserService
+        @userService private userService: IUserService
     ) { }
     @Post('/login')
     private async login(req, res, next) {

@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import IDatabase from './interface';
 import { logger, config } from '../../constant/decorators';
-import mongoose from 'mongoose';
+import * as mongoose from 'mongoose';
 import ILog4js, { ILogger } from '../logger/interface';
 import IConfig from '../config/interface'
 

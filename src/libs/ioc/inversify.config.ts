@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Container } from "inversify";
 import { interfaces, TYPE } from 'inversify-restify-utils';
 import TYPES from "../../constant/types";
