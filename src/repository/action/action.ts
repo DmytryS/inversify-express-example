@@ -2,45 +2,43 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import IDatabase from '../../libs/database/interface';
 import GenericRepository from '../generic/generic';
-import { IUserRepository as IUserRepository, IUser } from './interface';
+import { IActionRepository, IAction } from './interface';
 import { database } from '../../constant/decorators';
 
-export interface UserModel extends IUser, Document { }
+export interface ActionModel extends IAction, Document { }
 
 @injectable()
 export default class UserRepository
-    extends GenericRepository<IUser, UserModel>
-    implements IUserRepository {
+    extends GenericRepository<IAction, ActionModel>
+    implements IActionRepository {
 
     public constructor(
         @database private databse: IDatabase,
     ) {
         super(
             databse,
-            'Users',
+            'Actions',
             {
-                name: {
+                userId: {
                     type: String,
-                    unique: true,
                     required: true
                 },
-                email: {
+                type: {
                     type: String,
-                    lowercase: true,
-                    unique: true,
+                    enum: {
+                        values: ['REGISTER', 'RESET_PASSWORD', 'NOTIFICATION'],
+                        message: 'Action type must be either of \'REGISTER\', \'RESET_PASSWORD\', \'NOTIFICATION\''
+                    },
                     required: true
-                },
-                passwordHash: {
-                    type: String
                 },
                 status: {
                     type: String,
                     enum: {
-                        values: ['ACTIVE', 'PENDING'],
+                        values: ['ACTIVE', 'USED'],
                         message: 'Status must be either of \'ACTIVE\', \'PENDING\''
                     },
                     required: true,
-                    default: 'PENDING'
+                    default: 'ACTIVE'
                 }
             }
         );

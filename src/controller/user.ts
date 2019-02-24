@@ -22,6 +22,16 @@ export default class UserController {
             throw e;
         }
     }
+    @Post('/register')
+    private async register(req, res, next) {
+        const { body } = req;
+
+        return await this.userService.register({
+            name: body.name,
+            email: body.email,
+            password: body.password,
+        });
+    }
 
     @Get('/profile')
     private async profile(req) {

@@ -14,5 +14,16 @@
     "AUTH": {
       "secret": "43BF1F678DD0675D28076230D1BF9B18",
       "expiresIn": "3650d"
+    },
+    "MAIL": {
+        "from": "shvajka.work@gmail.com",
+        "transport_options": {
+            "host": "smpt.gmail.com",
+            "service": "Gmail",
+            "auth": {
+                "user": "shvajka.work@gmail.com",
+                "pass": "Parolkr1"
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 import Repository from "../generic/interface";
 
-export interface User {
+export interface IUser {
     id: string;
     name: string;
     email: string;
@@ -8,4 +8,4 @@ export interface User {
     status: string;
 }
 
-export type IUserRepository = Repository<User>;
+export type IUserRepository = Repository<IUser>;
