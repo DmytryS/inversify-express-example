@@ -22,6 +22,7 @@ export default class UserController {
             throw e;
         }
     }
+
     @Post('/register')
     private async register(req, res, next) {
         const { body } = req;

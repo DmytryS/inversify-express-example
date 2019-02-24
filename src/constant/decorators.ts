@@ -9,3 +9,4 @@ export const mailSender = inject(TYPES.Database);
 export const userRepository = inject(TYPES.UserRepository);
 export const actionRepository = inject(TYPES.ActionRepository);
 export const userService = inject(TYPES.UserService);
+export const actionService = inject(TYPES.ActionService);

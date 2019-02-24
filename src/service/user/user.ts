@@ -10,51 +10,46 @@ import IMailSender from '../../libs/mailer/interface'
 
 @injectable()
 export default class UserService implements IUserService {
-    private _config;
-    private _mailSender: IMailSender;
-    private _userRepository: IUserRepository;
-    private _actionRepository: IActionRepository;
+    private config;
 
     constructor(
-        @config config: IConfig,
-        @mailSender mailSender: IMailSender,
-        @userRepository userRepository: IUserRepository,
-        @actionRepository actionRepository: IActionRepository
+        @config private configService: IConfig,
+        @mailSender private mailSender: IMailSender,
+        @userRepository private userRepository: IUserRepository,
+        @actionRepository private actionRepository: IActionRepository
     ) {
-        this._config = config.get('AUTH');
-        this._mailSender = mailSender;
-        this._userRepository = userRepository;
-        this._actionRepository = actionRepository;
+        this.config = configService.get('AUTH');
     }
 
     async profile(id: string) {
-        return this._userRepository.findById(id);
+        return this.userRepository.findById(id);
     }
 
     async login(email: string, password: string) {
-        const user = await this._userRepository.findOne({
+        const user = await this.userRepository.findOne({
             email
         });
         return {
             success: true,
             token: jwt.sign(
                 user,
-                this._config.secret,
+                this.config.secret,
                 {
-                    expiresIn: this._config.expiresIn
+                    expiresIn: this.config.expiresIn
                 }
             )
         }
     }
 
     async register(data: IUser) {
-        const newUser = await this._userRepository.create(data);
-        const action = await this._actionRepository.create({
+        const newUser = await this.userRepository.create(data);
+        const action = await this.actionRepository.create({
             userId: newUser.id,
-            type: 'REGISTER'
+            type: 'REGISTER',
+            status: 'ACTIVE'
         });
 
-        await this._mailSender.send(
+        await this.mailSender.send(
             newUser.email,
             'REGISTER',
             action
@@ -63,14 +58,14 @@ export default class UserService implements IUserService {
     }
 
     async getUsers() {
-        return this._userRepository.findAll();
+        return this.userRepository.findAll();
     }
 
     async deleteById(id: string) {
-        return this._userRepository.deleteById(id);
+        return this.userRepository.deleteById(id);
     }
 
     async updateById(id: string, data: object) {
-        return this._userRepository.updateById(id, data);
+        return this.userRepository.updateById(id, data);
     }
 }

@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import nodemailer from 'nodemailer';
 import * as handlebars from 'handlebars';
-import layouts from 'handlebars-layouts';
+import * as layouts from 'handlebars-layouts';
 import { promisifyAll, promisify } from 'bluebird';
 import * as path from 'path';
 import * as fs from 'fs';

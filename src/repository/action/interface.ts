@@ -1,7 +1,7 @@
 import Repository from "../generic/interface";
 
 export interface IAction {
-    id: string;
+    id?: string;
     userId: string;
     type: string;
     status: string;

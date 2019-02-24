@@ -8,7 +8,7 @@ import { database } from '../../constant/decorators';
 export interface ActionModel extends IAction, Document { }
 
 @injectable()
-export default class UserRepository
+export default class ActionRepository
     extends GenericRepository<IAction, ActionModel>
     implements IActionRepository {
 

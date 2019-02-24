@@ -8,4 +8,5 @@ export default {
     UserRepository: Symbol('UserRepository'),
     ActionRepository: Symbol('ActionRepository'),
     UserService: Symbol('UserService'),
+    ActionService: Symbol('ActionService')
 };
