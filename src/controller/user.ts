@@ -29,8 +29,7 @@ export default class UserController {
 
         return await this.userService.register({
             name: body.name,
-            email: body.email,
-            password: body.password,
+            email: body.email
         });
     }
 

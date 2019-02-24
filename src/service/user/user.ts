@@ -42,7 +42,10 @@ export default class UserService implements IUserService {
     }
 
     async register(data: IUser) {
-        const newUser = await this.userRepository.create(data);
+        const newUser = await this.userRepository.create({
+            ...data,
+            type: 'DRIVER'
+        });
         const action = await this.actionRepository.create({
             userId: newUser.id,
             type: 'REGISTER',

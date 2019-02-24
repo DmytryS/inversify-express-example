@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import nodemailer from 'nodemailer';
+import * as nodemailer from 'nodemailer';
 import * as handlebars from 'handlebars';
 import * as layouts from 'handlebars-layouts';
 import { promisifyAll, promisify } from 'bluebird';
@@ -25,7 +25,6 @@ export default class MailSender implements IMailSender {
     private _logger: ILog4js;
     private _tranport;
 
-
     /**
      * Constructs email sender
      * @param {Object} config config
@@ -35,7 +34,7 @@ export default class MailSender implements IMailSender {
         @config config: IConfig
     ) {
         this._config = config.get('MAIL');
-        this._logger = loggerService.getLogger('MailSender');
+        this._logger = loggerService.getLogger('MAIL');
 
         if (process.env.NODE_ENV === 'test') {
             this._tranport = {
@@ -43,7 +42,7 @@ export default class MailSender implements IMailSender {
             };
         } else {
             this._tranport = promisifyAll(
-                nodemailer.createTransport(this._config.mail.transport_options)
+                nodemailer.createTransport(this._config.transport_options)
             );
         }
     }
@@ -59,7 +58,7 @@ export default class MailSender implements IMailSender {
         try {
             const template = await this._getTemplate(templateName, templateData);
             const mailOptions = {
-                from: this._config.mail.from,
+                from: this._config.from,
                 to: email,
                 subject: template.subject,
                 html: template.body

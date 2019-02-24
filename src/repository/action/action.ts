@@ -21,6 +21,7 @@ export default class ActionRepository
             {
                 userId: {
                     type: String,
+                    ref: 'Users',
                     required: true
                 },
                 type: {

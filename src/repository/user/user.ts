@@ -21,7 +21,6 @@ export default class UserRepository
             {
                 name: {
                     type: String,
-                    unique: true,
                     required: true
                 },
                 email: {
@@ -32,6 +31,14 @@ export default class UserRepository
                 },
                 passwordHash: {
                     type: String
+                },
+                type: {
+                    type: String,
+                    enum: {
+                        values: ['DRIVER', 'RIDER', 'ADMIN'],
+                        message: 'Status must be either of \'DRIVER\', \'RIDER\', \'ADMIN\''
+                    },
+                    required: true,
                 },
                 status: {
                     type: String,

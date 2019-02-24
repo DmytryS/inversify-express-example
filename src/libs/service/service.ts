@@ -28,6 +28,7 @@ export default class Service {
         });
 
         await this._database.connect();
+        console.log('default root', this._config.get('SERVER').baseUrl);
 
         const server = new InversifyRestifyServer(
             container,

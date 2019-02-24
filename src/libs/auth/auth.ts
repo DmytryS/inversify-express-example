@@ -6,7 +6,9 @@ import * as errs from 'restify-errors';
 export default function auth(JWT_SECRET: string, opts) {
     const { allowedGlobalMethods = [] } = opts;
     return async function (req, res, next) {
-        if (/\/api\/users\/login\/?/.test(req.url)) {
+        if (/\/api\/v1\/users\/login\/?/.test(req.url)
+            || /\/api\/v1\/users\/register?/.test(req.url)
+            || /\/api\/v1\/actions\/?/.test(req.url)) {
             return next();
         }
 

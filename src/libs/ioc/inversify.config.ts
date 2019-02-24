@@ -10,7 +10,7 @@ import LoggerService from '../logger/logger';
 import IConfig from '../config/interface';
 import ConfigService from '../config/configuration';
 import IMailSender from '../mailer/interface';
-import MailSenderService from '../mailer/mailSender';
+import MailSenderService from '../mailer/mailer';
 import { IUserRepository } from '../../repository/user/interface';
 import UserRepository from "../../repository/user/user";
 import { IActionRepository } from '../../repository/action/interface';
@@ -31,5 +31,7 @@ container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository).inSingl
 container.bind<IActionRepository>(TYPES.ActionRepository).to(ActionRepository).inSingletonScope();
 container.bind<interfaces.Controller>(TYPE.Controller).to(UserController).whenTargetNamed('UserController');
 container.bind<IUserService>(TYPES.UserService).to(UserService);
+container.bind<interfaces.Controller>(TYPE.Controller).to(ActionController).whenTargetNamed('ActionController');
+container.bind<IActionService>(TYPES.ActionService).to(ActionService);
 
 export default container;
