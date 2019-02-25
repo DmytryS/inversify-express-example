@@ -6,7 +6,7 @@ import TYPES from '../../constant/types';
 import ILog4js, { ILogger } from '../logger/interface';
 import IDatabase from '../database/interface';
 import IConfig from '../config/interface';
-import auth from '../auth/auth';
+// import auth from '../auth/auth';
 
 export default class Service {
     private _config;
@@ -39,14 +39,14 @@ export default class Service {
         server.setConfig((app) => {
             app.pre(cors.preflight);
             app.use(cors.actual);
-            app.use(
-                auth(
-                    this._config.get('AUTH'),
-                    {
-                        allowedGlobalMethods: ['OPTIONS']
-                    }
-                )
-            );
+            // app.use(
+            //     auth(
+            //         this._config.get('AUTH'),
+            //         {
+            //             allowedGlobalMethods: ['OPTIONS']
+            //         }
+            //     )
+            // );
             app.use(bodyParser.json());
         });
         const app = server.build();
