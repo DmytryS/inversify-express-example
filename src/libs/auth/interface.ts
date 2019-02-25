@@ -1,5 +1,4 @@
-export default interface AuthService {
-    getUserPreferences(): Promise<void>;
-    close(): Promise<any>;
-    clear(): Promise<any>;
+export default interface IAuthService {
+    getUserByJWT(token: string): Promise<object>;
+    getUserByCredentials(email: string, password: string): Promise<object>;
 }

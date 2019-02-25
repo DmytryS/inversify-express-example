@@ -1,31 +1,31 @@
+import { injectable } from "inversify";
+import { logger, config, userRepository} from '../../constant/decorators';
+import IAuthService from './interface';
+import ILog4js, { ILogger } from '../logger/interface';
+import IConfig from '../config/interface';
+import { IUserRepository } from '../../repository/user/interface';
 
-import * as assert from 'assert';
-import * as jwt from 'jsonwebtoken';
-import * as errs from 'restify-errors';
+@injectable()
+export default class AuthService implements IAuthService {
+    private _config;
+    private _logger: ILog4js;
 
-export default function auth(JWT_SECRET: string, opts) {
-    const { allowedGlobalMethods = [] } = opts;
-    return async function (req, res, next) {
-        if (/\/api\/v1\/users\/login\/?/.test(req.url)
-            || /\/api\/v1\/users\/register?/.test(req.url)
-            || /\/api\/v1\/actions\/?/.test(req.url)) {
-            return next();
-        }
+    constructor(
+        @logger loggerService: ILogger,
+        @config config: IConfig,
+        @userRepository userRepository: IUserRepository
+    ) {
+        this._config = config.get('DB');
+        this._logger = loggerService.getLogger('Database');
+    }
 
-        if (allowedGlobalMethods.includes(req.method)) {
-            return next();
-        }
+    public async getUserByJWT(token: string): Promise<object> {
 
-        try {
-            const bearerHeader = req.headers['authorization'];
-            assert.ok(bearerHeader, 'Missing authorization header');
-            const token = bearerHeader.split(' ')[1];
-            assert.ok(token, 'Missing token value');
-            const decoded = await jwt.verify(token, JWT_SECRET);
-            req.decoded = decoded;
-            next();
-        } catch (e) {
-            next(new errs.UnauthorizedError(e.message));
-        }
+        const principal = new Principal(user);
+        return principal;
+    }
+
+    public async getUserByCredentials(email: string, password: string) {
+        return {};
     }
 }

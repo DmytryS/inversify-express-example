@@ -1,6 +1,6 @@
-import IPrincipal from './interface';
+import { interfaces } from "inversify-express-utils";
 
-export default class Principal implements IPrincipal {
+export default class Principal implements interfaces.Principal {
     public details: any;
     public constructor(details: any) {
         this.details = details;
