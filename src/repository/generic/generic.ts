@@ -64,11 +64,11 @@ export default class GenericRepository<TEntity, TModel extends Document>
         });
     }
 
-    private _readMapper(model: TModel) {
-        const obj: any = model.toJSON();
-        Object.defineProperty(obj, "id", Object.getOwnPropertyDescriptor(obj, "_id"));
-        delete obj["_id"];
-        return obj as TEntity;
-    }
+    // private _readMapper(model: TModel) {
+    //     const obj: any = model.toJSON();
+    //     Object.defineProperty(obj, "id", Object.getOwnPropertyDescriptor(obj, "_id"));
+    //     delete obj["_id"];
+    //     return obj as TEntity;
+    // }
 
 }

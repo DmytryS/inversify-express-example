@@ -1,4 +1,10 @@
+import express from 'express';
+
 export default interface IAuthService {
-    getUserByJWT(token: string): Promise<object>;
-    getUserByCredentials(email: string, password: string): Promise<object>;
+    authenticateJwt(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ): any;
+    authenticateCredentials(req: express.Request): any;
 }

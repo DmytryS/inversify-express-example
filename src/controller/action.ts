@@ -3,6 +3,7 @@ import { injectable } from 'inversify';
 import * as errs from 'restify-errors';
 import { actionService } from '../constant/decorators';
 import IActionService from '../service/action/interface';
+import TYPES from '../constant/types'
 
 @Controller('/actions')
 @injectable()
@@ -11,7 +12,7 @@ export default class ActionController {
         @actionService private actionService: IActionService
     ) { }
 
-    @Get('/:id')
+    @Get('/:id', TYPES.AuthService)
     private async getById(req) {
         const { id } = req.params;
         return this.actionService.getById(id);

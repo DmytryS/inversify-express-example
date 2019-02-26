@@ -7,6 +7,8 @@ export interface IUser {
     passwordHash?: string;
     type: string;
     status: string;
+    isValidPassword(candidatePassword: string): Promise<Boolean>;
+    setPassword(password: string): Promise<void>;
 }
 
 export type IUserRepository = Repository<IUser>;
