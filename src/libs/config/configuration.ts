@@ -16,7 +16,7 @@ export default class Nconf implements IConfig {
         this._nconf = nconf;
     }
 
-    get(key: string): string {
+    get(key?: string): any {
         return this._nconf.get(key);
     }
 

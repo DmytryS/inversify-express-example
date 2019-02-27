@@ -18,7 +18,7 @@ export default class UserService implements IUserService {
         @userRepository private userRepository: IUserRepository,
         @actionRepository private actionRepository: IActionRepository
     ) {
-        this.config = configService.get('AUTH');
+        this.config = configService.get();
     }
 
     async profile(id: string) {
@@ -33,9 +33,9 @@ export default class UserService implements IUserService {
             success: true,
             token: jwt.sign(
                 user,
-                this.config.secret,
+                this.config.AUTH.secret,
                 {
-                    expiresIn: this.config.expiresIn
+                    expiresIn: this.config.AUTH.expiresIn
                 }
             )
         }
@@ -55,7 +55,10 @@ export default class UserService implements IUserService {
         await this.mailSender.send(
             newUser.email,
             'REGISTER',
-            action
+            {
+                actionId: action.id,
+                uiUrl: this.config.SERVER.uiUrl
+            }
         );
         return newUser;
     }

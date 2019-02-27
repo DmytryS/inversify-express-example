@@ -1,5 +1,5 @@
-import * as jwt from 'jsonwebtoken';
 import { injectable } from 'inversify';
+import * as err from 'restify-errors';
 import { config, userRepository, actionRepository, mailSender } from '../../constant/decorators';
 import { IUser } from '../../repository/user/interface';
 import IActionService from './interface';
@@ -21,12 +21,44 @@ export default class ActionService implements IActionService {
         this.config = configService.get('AUTH');
     }
 
-    async getById(id: string) {
-        return this.actionRepository.findById(id);
+    async getById(actionId: string) {
+        const action = await this.actionRepository.findById(actionId);
+
+        if (!action) {
+            throw new err.NotFoundError(`Action with id of ${actionId}`);
+        }
+
+        return action;
     }
 
-    async updateById(id: string, data: object) {
-        // TODO
-        return this.userRepository.updateById(id, data);
+    async updateById(actionId: string, data: any) {
+        const action = await this.actionRepository.findById(actionId);
+
+        if (!action) {
+            throw new err.NotFoundError(`Action with id of ${actionId}`);
+        }
+
+        if (action.status !== 'ACTIVE') {
+            throw new err.InvalidArgumentError('Action already used');
+        }
+
+        const user = await this.userRepository.findById(action.userId);
+
+        if (!user) {
+            throw new err.NotFoundError(`User with id of ${action.userId}`);
+        }
+
+        switch (action.type) {
+            case 'REGISTER':
+            case 'RESET_PASSWORD':
+                await user.setPassword(data.password);
+
+                await action.setUsed();
+                break;
+            default:
+                throw new err.InvalidArgumentError(`Unknown action type ${action.type}`);
+        }
+
+        return;
     }
 }

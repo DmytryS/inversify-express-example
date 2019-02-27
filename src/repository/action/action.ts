@@ -27,8 +27,8 @@ export default class ActionRepository
                 type: {
                     type: String,
                     enum: {
-                        values: ['REGISTER', 'RESET_PASSWORD', 'NOTIFICATION'],
-                        message: 'Action type must be either of \'REGISTER\', \'RESET_PASSWORD\', \'NOTIFICATION\''
+                        values: ['REGISTER', 'RESET_PASSWORD'],
+                        message: 'Action type must be either of \'REGISTER\', \'RESET_PASSWORD\''
                     },
                     required: true
                 },
@@ -43,5 +43,14 @@ export default class ActionRepository
                 }
             }
         );
+    }
+
+    /**
+     * Sets action status to 'USER'
+     * @returns {Promise<IAction>} promise which will be resolved when action updated
+     */
+    async setUsed() {
+        this.status = 'USED';
+        return this.save();
     }
 }
