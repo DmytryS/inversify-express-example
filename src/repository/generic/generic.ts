@@ -15,11 +15,13 @@ export default class GenericRepository<TEntity, TModel extends Document>
     public constructor(
         @database private database: IDatabase,
         @unmanaged() name: string,
-        @unmanaged() schemaDefinition: SchemaDefinition
+        @unmanaged() schemaDefinition: SchemaDefinition,
+        @unmanaged() modelClass?: any
     ) {
         this._name = name;
         this._dbTypes = database.mongoose.types;
         const schema = new Schema(schemaDefinition, { collection: this._name });
+        schema.loadClass(modelClass);
         this.Model = database.mongoose.model<TModel>(this._name, schema);
     }
 

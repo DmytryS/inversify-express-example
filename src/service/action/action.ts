@@ -48,6 +48,8 @@ export default class ActionService implements IActionService {
             throw new err.NotFoundError(`User with id of ${action.userId}`);
         }
 
+        
+
         switch (action.type) {
             case 'REGISTER':
             case 'RESET_PASSWORD':

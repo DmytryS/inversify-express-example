@@ -5,7 +5,7 @@ export interface IAction {
     userId: string;
     type: string;
     status: string;
-    setUsed(): Promise<IAction>;
+    setUsed?(): Promise<IAction>;
 }
 
 export type IActionRepository = Repository<IAction>;

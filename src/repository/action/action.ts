@@ -50,7 +50,7 @@ export default class ActionRepository
      * @returns {Promise<IAction>} promise which will be resolved when action updated
      */
     async setUsed() {
-        this.status = 'USED';
-        return this.save();
+        this.Model.status = 'USED';
+        return this.Model.save();
     }
 }

@@ -7,9 +7,10 @@ import IUserService from '../service/user/interface';
 @Controller('/users')
 @injectable()
 export default class UserController {
-    constructor(
-        @userService private userService: IUserService
-    ) { }
+    @userService private userService: IUserService
+    // constructor(
+    //     @userService private userService: IUserService
+    // ) { }
     @Post('/login')
     private async login(req, res, next) {
         const { body } = req;

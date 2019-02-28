@@ -28,7 +28,6 @@ export default class Service {
         });
 
         await this._database.connect();
-        console.log('default root', this._config.get('SERVER').baseUrl);
 
         const server = new InversifyRestifyServer(
             container,
@@ -49,8 +48,13 @@ export default class Service {
             // );
             app.use(bodyParser.json());
         });
+
+        const port = this._config.get('SERVER').port;
         const app = server.build();
-        this._app = app.listen(this._config.get('SERVER').port, () => this._logger.info(`Server started on *:${this._config.get('SERVER').port}`));
+        this._app = app.listen(
+            port,
+            () => this._logger.info(`Server started on *:${port}`)
+        );
 
 
         process.on('uncaughtException', (err) => {

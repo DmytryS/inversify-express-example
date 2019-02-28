@@ -8,11 +8,12 @@ import TYPES from '../constant/types'
 @Controller('/actions')
 @injectable()
 export default class ActionController {
-    constructor(
-        @actionService private actionService: IActionService
-    ) { }
+    @actionService private actionService: IActionService
+    // constructor(
+    //     @actionService private actionService: IActionService
+    // ) { }
 
-    @Get('/:id', TYPES.AuthService)
+    @Get('/:id')
     private async getById(req) {
         const { id } = req.params;
         return this.actionService.getById(id);
@@ -20,8 +21,8 @@ export default class ActionController {
 
     @Put('/:id')
     private async putById(req) {
-        const { body, params: { id } } = req;
+        const { body, params: { id: actionId } } = req;
         console.log('Data is', body);
-        return this.actionService.updateById(id, body);
+        return this.actionService.updateById(actionId, body);
     }
 }
