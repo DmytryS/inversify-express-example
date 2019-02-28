@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Container } from "inversify";
-import { interfaces, TYPE } from 'inversify-restify-utils';
+import { interfaces, TYPE } from 'inversify-express-utils';
 import TYPES from "../../constant/types";
 
 import IDatabase from '../database/interface';
@@ -15,11 +15,11 @@ import { IUserRepository } from '../../repository/user/interface';
 import UserRepository from "../../repository/user/user";
 import { IActionRepository } from '../../repository/action/interface';
 import ActionRepository from "../../repository/action/action";
-import IUserService from '../../service/user/interface';
-import UserService from '../../service/user/user';
+import IUserService from '../../services/user/interface';
+import UserService from '../../services/user/user';
 import UserController from '../../controller/user'
-import IActionService from '../../service/action/interface';
-import ActionService from '../../service/action/action';
+import IActionService from '../../services/action/interface';
+import ActionService from '../../services/action/action';
 import ActionController from '../../controller/action';
 import IAuthService from '../auth/interface';
 import AuthService from '../auth/auth';

@@ -1,60 +1,38 @@
 {
+    "extends": [
+        "tslint:recommended"
+    ],
     "rules": {
-        "class-name": true,
-        "curly": true,
-        "eofline": false,
-        "forin": true,
-        "indent": [
+        "arrow-parens": false,
+        "trailing-comma": [
             true,
-            4
+            {
+                "multiline": "always",
+                "singleline": "never"
+            }
         ],
-        "label-position": true,
-        "label-undefined": true,
+        "quotemark": [
+            true,
+            "single"
+        ],
         "max-line-length": [
-            true,
-            140
+            200
         ],
-        "no-arg": true,
-        "no-bitwise": true,
-        "no-console": [
-            true,
-            "debug",
-            "info",
-            "time",
-            "timeEnd",
-            "trace"
+        "no-unused-expression": false,
+        "no-shadowed-variable": false,
+        "interface-name": [
+            "never-prefix"
         ],
-        "no-construct": true,
-        "no-debugger": true,
-        "no-duplicate-key": true,
-        "no-duplicate-variable": true,
-        "no-empty": false,
-        "no-eval": true,
-        "no-string-literal": false,
-        "no-trailing-whitespace": true,
-        "no-unused-variable": false,
-        "no-unreachable": true,
-        "no-use-before-declare": true,
-        "one-line": [
-            true,
-            "check-open-brace",
-            "check-catch",
-            "check-else",
-            "check-whitespace"
+        "member-ordering": [
+            false
         ],
-        "radix": true,
-        "semicolon": true,
-        "triple-equals": [
-            true,
-            "allow-null-check"
+        "max-classes-per-file": [
+            false
         ],
-        "variable-name": false,
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-operator",
-            "check-separator"
-        ]
+        "no-reference": false,
+        "no-namespace": [
+            false
+        ],
+        "ban-types": false
     }
 }

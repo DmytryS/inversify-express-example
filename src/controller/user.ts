@@ -2,8 +2,19 @@ import { Controller, Get, Post, Put, Delete } from 'inversify-restify-utils';
 import { injectable } from 'inversify';
 import * as errs from 'restify-errors';
 import { userService} from '../constant/decorators';
-import IUserService from '../service/user/interface';
+import IUserService from '../services/user/interface';
+import {
+    ApiOperationGet,
+    ApiOperationPost,
+    ApiPath,
+    SwaggerDefinitionConstant,
+} from 'swagger-express-ts';
 
+@ApiPath({
+    name: 'Users',
+    path: '/users',
+    security: { apiKeyHeader: [] },
+})
 @Controller('/users')
 @injectable()
 export default class UserController {
@@ -11,6 +22,20 @@ export default class UserController {
     // constructor(
     //     @userService private userService: IUserService
     // ) { }
+
+    @ApiOperationGet({
+        description: 'Get cars objects list',
+        responses: {
+            200: {
+                model: 'Car',
+                type: SwaggerDefinitionConstant.Response.Type.ARRAY,
+            },
+        },
+        security: {
+            apiKeyHeader: [],
+        },
+        summary: 'Get cars list',
+    })
     @Post('/login')
     private async login(req, res, next) {
         const { body } = req;
@@ -24,6 +49,23 @@ export default class UserController {
         }
     }
 
+    @ApiOperationPost({
+        description: 'Post car object',
+        parameters: {
+            body: {
+                description: 'New car',
+                model: 'Car',
+                required: true,
+            },
+        },
+        responses: {
+            200: {
+                model: 'Car',
+            },
+            400: { description: 'Parameters fail' },
+        },
+        summary: 'Post new car',
+    })
     @Post('/register')
     private async register(req, res, next) {
         const { body } = req;

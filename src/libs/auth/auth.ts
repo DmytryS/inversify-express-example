@@ -39,11 +39,11 @@ export default class AuthService implements IAuthService {
                 if(err) {
                     next(new errs.UnauthorizedError(err.message ? err.message : err));
                 }
-    
+
                 if(!user) {
                     next(new errs.UnauthorizedError(info));
                 }
-    
+
                 req.user = user;
                 next();
             },
@@ -79,13 +79,13 @@ export default class AuthService implements IAuthService {
                 if (!token || !token.id) {
                     done('Wrong token', false);
                 }
-        
+
                 const user = await this.userRepository.findById(token.id);
-        
+
                 if (!user) {
                     done('Wrong token', false);
                 }
-        
+
                 done(false, user);
             }
         ));
@@ -110,10 +110,10 @@ export default class AuthService implements IAuthService {
                     type: userType
                 });
 
-                if (!user || !(await user.isValidPassword(password))) {
-                    done('Wrong email or password', false);
-                }
-        
+                // if (!user || !(await user.isValidPassword(password))) {
+                //     done('Wrong email or password', false);
+                // }
+
                 done(false, user);
                 } catch (err) {
                     return done(err);
@@ -122,5 +122,3 @@ export default class AuthService implements IAuthService {
         ));
     }
 }
-
-

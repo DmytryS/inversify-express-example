@@ -28,6 +28,7 @@
     "handlebars": "^4.1.0",
     "handlebars-layouts": "^3.1.4",
     "inversify": "^5.0.1",
+    "inversify-binding-decorators": "^4.0.0",
     "inversify-express-utils": "^6.3.2",
     "inversify-restify-utils": "^3.4.0",
     "jsonwebtoken": "^8.4.0",
@@ -46,8 +47,11 @@
     "typescript": "^3.1.6"
   },
   "devDependencies": {
-    "nodemon": "^1.18.5",
-    "ts-node": "^7.0.1"
+    "nodemon": "^1.18.10",
+    "swagger-express-ts": "^1.0.1",
+    "swagger-ui-dist": "^3.20.9",
+    "ts-node": "^7.0.1",
+    "tsoa": "^2.3.8"
   },
   "engines": {
     "node": ">=4.1.1"

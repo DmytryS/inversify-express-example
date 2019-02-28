@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "types": [
       "reflect-metadata",
+      "swagger-express-ts",
       "node"
     ],
   },

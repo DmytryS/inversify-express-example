@@ -5,11 +5,11 @@ import * as mongoose from 'mongoose';
 import ILog4js, { ILogger } from '../logger/interface';
 import IConfig from '../config/interface'
 
-@injectable()
+import { ProvideSingleton, inject } from '../ioc/ioc';
 export default class Database implements IDatabase {
     private _config;
     private _logger: ILog4js;
-    private _dbConnection;
+    public db: mongoose.Connection;
     private _mongoose: mongoose.Mongoose;
 
     constructor(
@@ -18,7 +18,6 @@ export default class Database implements IDatabase {
     ) {
         this._config = config.get('DB');
         this._logger = loggerService.getLogger('Database');
-        this._dbConnection = false;
         this._mongoose = mongoose;
     }
 
@@ -31,14 +30,14 @@ export default class Database implements IDatabase {
      * @return {Promise} promise to connect to database
      */
     async connect(){
-        this._dbConnection = await mongoose.connect(
+        this.db = await mongoose.connect(
             this._config.url,
             {
                 useNewUrlParser: true,
                 useCreateIndex: true,
                 useFindAndModify: false
             },
-            this._onDbConnected.bind(this)
+            this.db.bind(this)
         );
       }
 
@@ -48,7 +47,7 @@ export default class Database implements IDatabase {
      */
     close() {
         return new Promise((resolve, reject) => {
-            this._dbConnection.close((err) => {
+            this.db.close((err) => {
                 if (err) {
                     this._logger.error(`An error occured during closing db connection`, err);
                     reject(err);
@@ -69,7 +68,7 @@ export default class Database implements IDatabase {
         }
 
         return new Promise((res, rej) => {
-            this._dbConnection.dropDatabase((err) => {
+            this.db.dropDatabase((err) => {
                 this._logger.info('Cleared DB');
                 if (err) {
                     this._logger.error(err);

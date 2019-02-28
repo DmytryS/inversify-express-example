@@ -48,12 +48,12 @@ export default class ActionService implements IActionService {
             throw new err.NotFoundError(`User with id of ${action.userId}`);
         }
 
-        
+
 
         switch (action.type) {
             case 'REGISTER':
             case 'RESET_PASSWORD':
-                await user.setPassword(data.password);
+                // await user.setPassword(data.password);
 
                 await action.setUsed();
                 break;
