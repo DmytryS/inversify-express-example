@@ -1,14 +1,17 @@
 import { Controller, Get, Post, Put, Delete } from 'inversify-restify-utils';
-import { injectable } from 'inversify';
-import * as errs from 'restify-errors';
-import { actionService } from '../constant/decorators';
-import IActionService from '../service/action/interface';
+// import { injectable } from 'inversify';
+import { ProvideSingleton, inject } from '../libs/ioc/ioc';
+// import * as errs from 'restify-errors';
+// import { actionService } from '../constant/decorators';
+import IActionService from '../services/action/interface';
 import TYPES from '../constant/types'
 
 @Controller('/actions')
-@injectable()
+@ProvideSingleton(ActionController)
 export default class ActionController {
-    @actionService private actionService: IActionService
+    public TARGET_NAME: string = 'ActionController';
+
+    @inject(TYPES.ActionService) private actionService: IActionService
     // constructor(
     //     @actionService private actionService: IActionService
     // ) { }

@@ -1,22 +1,24 @@
-import { injectable } from 'inversify';
+// import { injectable } from 'inversify';
 import * as err from 'restify-errors';
-import { config, userRepository, actionRepository, mailSender } from '../../constant/decorators';
-import { IUser } from '../../repository/user/interface';
+import { ProvideSingleton, inject } from '../../libs/ioc/ioc'
+import TYPES from '../../constant/types';
+// import { config, userRepository, actionRepository, mailSender } from '../../constant/decorators';
+// import { IUser } from '../../repository/user/interface';
 import IActionService from './interface';
 import IConfig from '../../libs/config/interface';
 import { IUserRepository } from '../../repository/user/interface';
 import { IActionRepository } from '../../repository/action/interface';
-import IMailSender from '../../libs/mailer/interface'
+import IMailerService from '../../libs/mailer/interface'
 
-@injectable()
+@ProvideSingleton(TYPES.ActionService)
 export default class ActionService implements IActionService {
     private config;
 
     constructor(
-        @config private configService: IConfig,
-        @mailSender private mailSender: IMailSender,
-        @userRepository private userRepository: IUserRepository,
-        @actionRepository private actionRepository: IActionRepository
+        @inject(TYPES.ConfigServie) private configService: IConfig,
+        @inject(TYPES.MailerService) private mailerService: IMailerService,
+        @inject(TYPES.UserRepository) private userRepository: IUserRepository,
+        @inject(TYPES.ActionRepository) private actionRepository: IActionRepository
     ) {
         this.config = configService.get('AUTH');
     }

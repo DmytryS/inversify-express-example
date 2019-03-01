@@ -1,4 +1,4 @@
-export default interface IMailSender {
+export default interface IMailerService {
     send(
         targetEmail: string,
         templateName: string,

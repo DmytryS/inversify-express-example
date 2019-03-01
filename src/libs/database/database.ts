@@ -1,20 +1,23 @@
-import { injectable } from 'inversify';
-import IDatabase from './interface';
-import { logger, config } from '../../constant/decorators';
+// import { injectable } from 'inversify';
+import IDatabaseService from './interface';
+// import { logger, config } from '../../constant/decorators';
 import * as mongoose from 'mongoose';
-import ILog4js, { ILogger } from '../logger/interface';
-import IConfig from '../config/interface'
+import ILog4js, { ILoggerService } from '../logger/interface';
+import IConfigService from '../config/interface'
 
 import { ProvideSingleton, inject } from '../ioc/ioc';
-export default class Database implements IDatabase {
+import TYPES from '../../constant/types';
+
+@ProvideSingleton(DatabaseService)
+export default class DatabaseService implements IDatabaseService {
     private _config;
     private _logger: ILog4js;
     public db: mongoose.Connection;
     private _mongoose: mongoose.Mongoose;
 
     constructor(
-        @logger loggerService: ILogger,
-        @config config: IConfig
+        @inject(TYPES.LoggerService) loggerService: ILoggerService,
+        @inject(TYPES.ConfigServie) config: IConfigService
     ) {
         this._config = config.get('DB');
         this._logger = loggerService.getLogger('Database');

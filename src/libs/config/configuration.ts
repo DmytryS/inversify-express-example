@@ -1,5 +1,6 @@
 import 'reflect-metadata';
-import { injectable } from 'inversify';
+// import { injectable } from 'inversify';
+import { injectable } from '../ioc/ioc';
 import * as nconf from 'nconf';
 import IConfig from './interface';
 

@@ -1,19 +1,21 @@
-import { injectable } from 'inversify';
+// import { injectable } from 'inversify';
+import TYPES from '../../constant/types';
+import { ProvideSingleton, inject } from '../ioc/ioc';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as log4js from 'log4js';
-import { config } from '../../constant/decorators';
-import { ILogger } from './interface';
-import IConfig from '../config/interface';
+// import { config } from '../../constant/decorators';
+import { ILoggerService } from './interface';
+import IConfigService from '../config/interface';
 
-@injectable()
-export default class Logger implements ILogger {
+@ProvideSingleton(LoggerService)
+export default class LoggerService implements ILoggerService {
     private _config;
 
     constructor(
-        @config config: IConfig
+        @inject(TYPES.ConfigServie) configService: IConfigService
     ) {
-        this._config = config.get('LOGGER');
+        this._config = configService.get('LOGGER');
 
         this._setupLogger();
     }

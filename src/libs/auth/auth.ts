@@ -1,24 +1,26 @@
-import { injectable } from 'inversify';
+// import { injectable } from 'inversify';
+import { ProvideSingleton, inject } from '../ioc/ioc';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import * as errs from 'restify-errors';
 import express from 'express';
-import { logger, config, userRepository} from '../../constant/decorators';
+// import { logger, config, userRepository} from '../../constant/decorators';
 import IAuthService from './interface';
-import ILog4js, { ILogger } from '../logger/interface';
-import IConfig from '../config/interface';
+import ILog4js, { ILoggerService } from '../logger/interface';
+import IConfigService from '../config/interface';
 import { IUserRepository } from '../../repository/user/interface';
+import TYPES from '../../constant/types';
 
-@injectable()
+@ProvideSingleton(TYPES.AuthService)
 export default class AuthService implements IAuthService {
     private _config;
     private _logger: ILog4js;
 
     constructor(
-        @logger loggerService: ILogger,
-        @config config: IConfig,
-        @userRepository private userRepository: IUserRepository
+        @inject(TYPES.LoggerService) loggerService: ILoggerService,
+        @inject(TYPES.ConfigServie) config: IConfigService,
+        @inject(TYPES.UserRepository) private userRepository: IUserRepository
     ) {
         this._config = config.get('AUTH');
         this._logger = loggerService.getLogger('AuthService');

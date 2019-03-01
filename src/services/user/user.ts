@@ -1,22 +1,24 @@
 import * as jwt from 'jsonwebtoken';
-import { injectable } from 'inversify';
-import { config, userRepository, actionRepository, mailSender } from '../../constant/decorators';
+// import { injectable } from 'inversify';
+import { ProvideSingleton, inject } from '../../libs/ioc/ioc'
+import TYPES from '../../constant/types';
+// import { config, userRepository, actionRepository, mailSender } from '../../constant/decorators';
 import { IUser } from '../../repository/user/interface';
 import IUserService from './interface';
 import IConfig from '../../libs/config/interface';
 import { IUserRepository } from '../../repository/user/interface';
 import { IActionRepository } from '../../repository/action/interface';
-import IMailSender from '../../libs/mailer/interface'
+import IMailerService from '../../libs/mailer/interface'
 
-@injectable()
+@ProvideSingleton(TYPES.UserService)
 export default class UserService implements IUserService {
     private config;
 
     constructor(
-        @config private configService: IConfig,
-        @mailSender private mailSender: IMailSender,
-        @userRepository private userRepository: IUserRepository,
-        @actionRepository private actionRepository: IActionRepository
+        @inject(TYPES.ConfigServie) configService: IConfig,
+        @inject(TYPES.MailerService) private mailerService: IMailerService,
+        @inject(TYPES.UserRepository) private userRepository: IUserRepository,
+        @inject(TYPES.ActionRepository) private actionRepository: IActionRepository
     ) {
         this.config = configService.get();
     }
@@ -52,7 +54,7 @@ export default class UserService implements IUserService {
             status: 'ACTIVE'
         });
 
-        await this.mailSender.send(
+        await this.mailerService.send(
             newUser.email,
             'REGISTER',
             {

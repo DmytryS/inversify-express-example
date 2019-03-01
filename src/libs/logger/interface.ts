@@ -1,7 +1,7 @@
 import { Logger as ILog4js } from 'log4js';
 
 
-export interface ILogger {
+export interface ILoggerService {
     getLogger(serviceName: string): ILog4js;
 }
 

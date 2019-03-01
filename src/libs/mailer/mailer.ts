@@ -1,39 +1,42 @@
-import { injectable } from 'inversify';
+// import { injectable } from 'inversify';
+import { inject, ProvideSingleton } from '../ioc/ioc';
 import * as nodemailer from 'nodemailer';
 import * as handlebars from 'handlebars';
 import * as layouts from 'handlebars-layouts';
 import { promisifyAll, promisify } from 'bluebird';
 import * as path from 'path';
 import * as fs from 'fs';
-import { logger, config } from '../../constant/decorators';
-import IMailSender from './interface';
-import ILog4js, { ILogger } from '../logger/interface';
-import IConfig from '../config/interface'
+// import { logger, config } from '../../constant/decorators';
+import IMailerService from './interface';
+import ILog4js, { ILoggerService } from '../logger/interface';
+import IConfigService from '../config/interface'
 import * as Errs from 'restify-errors';
+import TYPES from '../../constant/types';
 
 const readFile = promisify(fs.readFile);
 
 handlebars.registerHelper(layouts(handlebars));
 handlebars.registerPartial('layout', fs.readFileSync(path.join(__dirname, '../../templates/email', 'layout.hbs'), 'utf8'));
 
-@injectable()
+@ProvideSingleton(MailerService)
 /**
  * Email sender class
  */
-export default class MailSender implements IMailSender {
+export default class MailerService implements IMailerService {
     private _config;
     private _logger: ILog4js;
     private _tranport;
 
     /**
      * Constructs email sender
-     * @param {Object} config config
+     * @param {LoggerService} loggerService logger service
+     * @param {ConfigService} configService config service
      */
     constructor(
-        @logger loggerService: ILogger,
-        @config config: IConfig
+        @inject(TYPES.LoggerService) loggerService: ILoggerService,
+        @inject(TYPES.ConfigServie) configService: IConfigService
     ) {
-        this._config = config.get('MAIL');
+        this._config = configService.get('MAIL');
         this._logger = loggerService.getLogger('MAIL');
 
         if (process.env.NODE_ENV === 'test') {

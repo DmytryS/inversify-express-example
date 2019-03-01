@@ -1,29 +1,29 @@
 import "reflect-metadata";
 import * as express from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
-import * as corsMiddleware from 'restify-cors-middleware';
+// import * as corsMiddleware from 'restify-cors-middleware';
 import * as bodyParser from 'body-parser';
 import container from '../ioc/inversify.config';
 import TYPES from '../../constant/types';
-import ILog4js, { ILogger } from '../logger/interface';
-import IDatabase from '../database/interface';
-import IConfig from '../config/interface';
-import * as path from 'path';
+import ILog4js, { ILoggerService } from '../logger/interface';
+import IDatabaseService from '../database/interface';
+import IConfigService from '../config/interface';
+import { iocContainer } from '../ioc/ioc';
 // import auth from '../auth/auth';
 
-import * as swagger from "swagger-express-ts";
-import { SwaggerDefinitionConstant } from "swagger-express-ts";
+// import * as swagger from "swagger-express-ts";
+// import { SwaggerDefinitionConstant } from "swagger-express-ts";
 
 export default class Service {
     private _config;
     private _logger: ILog4js;
-    private _database: IDatabase;
+    private _database: IDatabaseService;
     private _app;
 
     constructor() {
-        this._config = container.get<IConfig>(TYPES.Config);
-        this._logger = container.get<ILogger>(TYPES.Logger).getLogger('Main service');
-        this._database = container.get<IDatabase>(TYPES.Database);
+        this._config = iocContainer.get<IConfigService>(TYPES.ConfigServie);
+        this._logger = iocContainer.get<ILoggerService>(TYPES.LoggerService).getLogger('Main service');
+        this._database = iocContainer.get<IDatabaseService>(TYPES.DatabaseService);
         this._app = false;
     }
 
@@ -42,28 +42,28 @@ export default class Service {
             }
         );
         server.setConfig((app) => {
-            app.use('/api-docs/swagger', express.static('swagger'));
-            app.use(
-                '/api-docs/swagger/assets',
-                express.static('node_modules/swagger-ui-dist')
-            );
+            // app.use('/api-docs/swagger', express.static('swagger'));
+            // app.use(
+            //     '/api-docs/swagger/assets',
+            //     express.static('node_modules/swagger-ui-dist')
+            // );
             app.use(bodyParser.json());
-            app.use(
-                swagger.express({
-                    definition: {
-                        externalDocs: {
-                            url: 'My url',
-                        },
-                        info: {
-                            title: 'My api',
-                            version: '1.0',
-                        },
-                        responses: {
-                            500: {},
-                        },
-                    },
-                })
-            );
+            // app.use(
+            //     swagger.express({
+            //         definition: {
+            //             externalDocs: {
+            //                 url: 'My url',
+            //             },
+            //             info: {
+            //                 title: 'My api',
+            //                 version: '1.0',
+            //             },
+            //             responses: {
+            //                 500: {},
+            //             },
+            //         },
+            //     })
+            // );
 
         });
 
