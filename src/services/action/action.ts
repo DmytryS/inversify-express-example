@@ -1,13 +1,10 @@
-// import { injectable } from 'inversify';
 import * as err from 'restify-errors';
 import { ProvideSingleton, inject } from '../../libs/ioc/ioc'
 import TYPES from '../../constant/types';
-// import { config, userRepository, actionRepository, mailSender } from '../../constant/decorators';
-// import { IUser } from '../../repository/user/interface';
 import IActionService from './interface';
 import IConfig from '../../libs/config/interface';
-import { IUserModel } from '../../models/user/interface';
-import { IActionModel } from '../../models/action/interface';
+import { IUserRepository } from '../../models/user/interface';
+import { IActionRepository } from '../../models/action/interface';
 import IMailerService from '../../libs/mailer/interface'
 
 @ProvideSingleton(TYPES.ActionService)
@@ -15,16 +12,16 @@ export default class ActionService implements IActionService {
     private config;
 
     constructor(
-        @inject(TYPES.ConfigServie) private configService: IConfig,
+        @inject(TYPES.ConfigServie) configService: IConfig,
         @inject(TYPES.MailerService) private mailerService: IMailerService,
-        @inject(TYPES.UserModel) private userRepository: IUserModel,
-        @inject(TYPES.ActionModel) private actionRepository: IActionModel
+        @inject(TYPES.UserModel) private userRepository: IUserRepository,
+        @inject(TYPES.ActionModel) private actionRepository: IActionRepository
     ) {
         this.config = configService.get('AUTH');
     }
 
     async getById(actionId: string) {
-        const action = await this.actionRepository.findById(actionId);
+        const action = await this.actionRepository.Action.findById(actionId);
 
         if (!action) {
             throw new err.NotFoundError(`Action with id of ${actionId}`);
@@ -34,7 +31,7 @@ export default class ActionService implements IActionService {
     }
 
     async updateById(actionId: string, data: any) {
-        const action = await this.actionRepository.findById(actionId);
+        const action = await this.actionRepository.Action.findById(actionId);
 
         if (!action) {
             throw new err.NotFoundError(`Action with id of ${actionId}`);
@@ -44,7 +41,7 @@ export default class ActionService implements IActionService {
             throw new err.InvalidArgumentError('Action already used');
         }
 
-        const user = await this.userRepository.findById(action.userId);
+        const user = await this.userRepository.User.findById(action.userId);
 
         if (!user) {
             throw new err.NotFoundError(`User with id of ${action.userId}`);

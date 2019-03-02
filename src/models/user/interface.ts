@@ -1,4 +1,4 @@
-import { prop, Typegoose, ModelType } from 'typegoose';
+import { ModelType } from 'typegoose';
 
 export default interface IUser {
     id?: string;
@@ -13,3 +13,7 @@ export type status = 'ACTIVE' | 'PENDING';
 export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
 
 export type IUserModel = ModelType<IUser>;
+
+export interface IUserRepository {
+    User: IUserModel
+}

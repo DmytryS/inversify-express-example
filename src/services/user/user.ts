@@ -1,13 +1,10 @@
 import * as jwt from 'jsonwebtoken';
-// import { injectable } from 'inversify';
 import { ProvideSingleton, inject } from '../../libs/ioc/ioc'
 import TYPES from '../../constant/types';
-// import { config, userRepository, actionRepository, mailSender } from '../../constant/decorators';
-
 import IUserService from './interface';
 import IConfig from '../../libs/config/interface';
-import { IUserModel } from '../../models/user/interface';
-import { IActionModel } from '../../models/action/interface';
+import { IUserRepository, IUserModel } from '../../models/user/interface';
+import { IActionRepository } from '../../models/action/interface';
 import IMailerService from '../../libs/mailer/interface'
 
 @ProvideSingleton(TYPES.UserService)
@@ -17,18 +14,18 @@ export default class UserService implements IUserService {
     constructor(
         @inject(TYPES.ConfigServie) configService: IConfig,
         @inject(TYPES.MailerService) private mailerService: IMailerService,
-        @inject(TYPES.UserModel) private userRepository: IUserModel,
-        @inject(TYPES.ActionModel) private actionRepository: IActionModel
+        @inject(TYPES.UserModel) private userRepository: IUserRepository,
+        @inject(TYPES.ActionModel) private actionRepository: IActionRepository
     ) {
         this.config = configService.get();
     }
 
     async profile(id: string) {
-        return this.userRepository.findById(id);
+        return this.userRepository.User.findById(id);
     }
 
     async login(email: string, password: string) {
-        const user = await this.userRepository.findOne({
+        const user = await this.userRepository.User.findOne({
             email
         });
         return {
@@ -44,11 +41,11 @@ export default class UserService implements IUserService {
     }
 
     async register(data: IUserModel) {
-        const newUser = await this.userRepository.create({
+        const newUser = await new this.userRepository.User({
             ...data,
             type: 'DRIVER'
         });
-        const action = await this.actionRepository.create({
+        const action = await new this.actionRepository.Action({
             userId: newUser.id,
             type: 'REGISTER',
             status: 'ACTIVE'
@@ -66,14 +63,14 @@ export default class UserService implements IUserService {
     }
 
     async getUsers() {
-        return this.userRepository.findAll();
+        return this.userRepository.User.findAll();
     }
 
     async deleteById(id: string) {
-        return this.userRepository.deleteById(id);
+        return this.userRepository.User.deleteById(id);
     }
 
     async updateById(id: string, data: object) {
-        return this.userRepository.updateById(id, data);
+        return this.userRepository.User.updateById(id, data);
     }
 }

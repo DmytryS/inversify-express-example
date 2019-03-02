@@ -1,15 +1,13 @@
-// import { injectable } from 'inversify';
 import { ProvideSingleton, inject } from '../ioc/ioc';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import * as errs from 'restify-errors';
 import express from 'express';
-// import { logger, config, userRepository} from '../../constant/decorators';
 import IAuthService from './interface';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IConfigService from '../config/interface';
-import { IUserModel } from '../../models/user/interface';
+import { IUserRepository } from '../../models/user/interface';
 import TYPES from '../../constant/types';
 
 @ProvideSingleton(TYPES.AuthService)
@@ -20,7 +18,7 @@ export default class AuthService implements IAuthService {
     constructor(
         @inject(TYPES.LoggerService) loggerService: ILoggerService,
         @inject(TYPES.ConfigServie) config: IConfigService,
-        @inject(TYPES.UserModel) private userRepository: IUserModel
+        @inject(TYPES.UserModel) private userRepository: IUserRepository
     ) {
         this._config = config.get('AUTH');
         this._logger = loggerService.getLogger('AuthService');
@@ -82,7 +80,7 @@ export default class AuthService implements IAuthService {
                     done('Wrong token', false);
                 }
 
-                const user = await this.userRepository.findById(token.id);
+                const user = await this.userRepository.User.findById(token.id);
 
                 if (!user) {
                     done('Wrong token', false);
@@ -107,7 +105,7 @@ export default class AuthService implements IAuthService {
                     throw new Error('\'userType\' field is required');
                 }
                 const { userType } = req.body;
-                const user = await this.userRepository.findOne({
+                const user = await this.userRepository.User.findOne({
                     email,
                     type: userType
                 });

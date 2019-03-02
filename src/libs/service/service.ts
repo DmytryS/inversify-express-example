@@ -1,19 +1,12 @@
-import "reflect-metadata";
-import * as express from 'express';
+import 'reflect-metadata';
 import { InversifyExpressServer } from 'inversify-express-utils';
-// import * as corsMiddleware from 'restify-cors-middleware';
 import * as bodyParser from 'body-parser';
-// import container from '../ioc/inversify.config';
 import TYPES from '../../constant/types';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IDatabaseService from '../database/interface';
 import IConfigService from '../config/interface';
 import { container, loadServices } from '../ioc/ioc';
 import '../ioc/loader';
-// import auth from '../auth/auth';
-
-// import * as swagger from "swagger-express-ts";
-// import { SwaggerDefinitionConstant } from "swagger-express-ts";
 
 export default class Service {
     private _config;
@@ -22,7 +15,7 @@ export default class Service {
     private _app;
 
     constructor() {
-        // loadServices();
+        loadServices();
         this._config = container.get<IConfigService>(TYPES.ConfigServie);
         this._logger = container.get<ILoggerService>(TYPES.LoggerService).getLogger('Main service');
         this._database = container.get<IDatabaseService>(TYPES.DatabaseService);
@@ -30,57 +23,16 @@ export default class Service {
     }
 
     async start() {
-        // const cors = corsMiddleware({
-        //     origins: ['*'],
-        //     allowHeaders: ['Authorization']
-        // });
-
         await this._database.connect();
 
-        const server = new InversifyExpressServer(
-            container,
-            {
-                defaultRoot: this._config.get('SERVER').baseUrl
-            }
-        );
-        server.setConfig((app) => {
-            // app.use('/api-docs/swagger', express.static('swagger'));
-            // app.use(
-            //     '/api-docs/swagger/assets',
-            //     express.static('node_modules/swagger-ui-dist')
-            // );
-            app.use(bodyParser.json());
-            // app.use(
-            //     swagger.express({
-            //         definition: {
-            //             externalDocs: {
-            //                 url: 'My url',
-            //             },
-            //             info: {
-            //                 title: 'My api',
-            //                 version: '1.0',
-            //             },
-            //             responses: {
-            //                 500: {},
-            //             },
-            //         },
-            //     })
-            // );
-
+        let server = new InversifyExpressServer(container, false, {
+            rootPath: this._config.get('SERVER').baseUrl
         });
-
-        server.setErrorConfig((app: any) => {
-            app.use(
-                (
-                    err: Error,
-                    request: express.Request,
-                    response: express.Response,
-                    next: express.NextFunction
-                ) => {
-                    console.error(err.stack);
-                    response.status(500).send('Something broke!');
-                }
-            );
+        server.setConfig((app) => {
+            app.use(bodyParser.urlencoded({
+                extended: true
+            }));
+            app.use(bodyParser.json());
         });
 
         const port = this._config.get('SERVER').port;

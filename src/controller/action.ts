@@ -1,24 +1,16 @@
-// import { Controller, Get, Post, Put, Delete } from 'inversify-restify-utils';
 import {
-    controller, httpGet, httpPost, httpPut, httpDelete
+    controller, httpGet, httpPost, httpPut, httpDelete, interfaces
 } from 'inversify-express-utils';
 
-// import { injectable } from 'inversify';
-import { ProvideSingleton, inject } from '../libs/ioc/ioc';
-// import * as errs from 'restify-errors';
-// import { actionService } from '../constant/decorators';
+import { inject } from '../libs/ioc/ioc';
 import IActionService from '../services/action/interface';
 import TYPES from '../constant/types'
 
 @controller('/actions')
-@ProvideSingleton(ActionController)
-export default class ActionController {
+export default class ActionController implements interfaces.Controller {
     public TAG_NAME: string = 'ActionController';
 
     @inject(TYPES.ActionService) private actionService: IActionService
-    // constructor(
-    //     @actionService private actionService: IActionService
-    // ) { }
 
     @httpGet('/:id')
     private async getById(req) {

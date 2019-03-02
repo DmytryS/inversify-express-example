@@ -1,12 +1,10 @@
-// import { injectable } from 'inversify';
-import TYPES from '../../constant/types';
-import { ProvideSingleton, inject } from '../ioc/ioc';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as log4js from 'log4js';
-// import { config } from '../../constant/decorators';
 import { ILoggerService } from './interface';
 import IConfigService from '../config/interface';
+import TYPES from '../../constant/types';
+import { ProvideSingleton, inject } from '../ioc/ioc';
 
 @ProvideSingleton(TYPES.LoggerService)
 export default class LoggerService implements ILoggerService {

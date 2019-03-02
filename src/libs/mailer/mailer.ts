@@ -1,4 +1,3 @@
-// import { injectable } from 'inversify';
 import { inject, ProvideSingleton } from '../ioc/ioc';
 import * as nodemailer from 'nodemailer';
 import * as handlebars from 'handlebars';
@@ -6,7 +5,6 @@ import * as layouts from 'handlebars-layouts';
 import { promisifyAll, promisify } from 'bluebird';
 import * as path from 'path';
 import * as fs from 'fs';
-// import { logger, config } from '../../constant/decorators';
 import IMailerService from './interface';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IConfigService from '../config/interface'

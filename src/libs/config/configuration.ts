@@ -1,5 +1,3 @@
-// import 'reflect-metadata';
-// import { injectable } from 'inversify';
 import { ProvideSingleton } from '../ioc/ioc';
 import * as nconf from 'nconf';
 import IConfigService from './interface';

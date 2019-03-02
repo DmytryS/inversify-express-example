@@ -1,10 +1,7 @@
-// import { injectable } from 'inversify';
 import IDatabaseService from './interface';
-// import { logger, config } from '../../constant/decorators';
 import * as mongoose from 'mongoose';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IConfigService from '../config/interface'
-
 import { ProvideSingleton, inject } from '../ioc/ioc';
 import TYPES from '../../constant/types';
 
@@ -39,8 +36,7 @@ export default class DatabaseService implements IDatabaseService {
                 useNewUrlParser: true,
                 useCreateIndex: true,
                 useFindAndModify: false
-            },
-            this.db.bind(this)
+            }
         );
       }
 

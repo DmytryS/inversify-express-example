@@ -1,20 +1,12 @@
 import { prop, Typegoose, ModelType, InstanceType, instanceMethod } from 'typegoose';
 import IAction from './interface';
-import { ProvideSingleton, inject } from '../../libs/ioc/ioc';
+import { provide } from '../../libs/ioc/ioc';
 import TYPES from '../../constant/types';
-import IConfigService from '../../libs/config/interface';
 
-@ProvideSingleton(TYPES.ActionModel)
-export class Action extends Typegoose implements ModelType<IAction> {
-    private _config;
+export type status = 'ACTIVE' | 'USED';
+export type type = 'REGISTER' | 'RESET_PASSWORD';
 
-    constructor(
-        @inject(TYPES.ConfigServie) config: IConfigService
-    ) {
-        super();
-        this._config = config.get('AUTH');
-    }
-
+class Action extends Typegoose implements ModelType<IAction> {
     @prop()
     userId: string;
     @prop()
@@ -33,5 +25,11 @@ export class Action extends Typegoose implements ModelType<IAction> {
     }
 }
 
-export type status = 'ACTIVE' | 'USED';
-export type type = 'REGISTER' | 'RESET_PASSWORD';
+@provide(TYPES.ActionModel)
+export default class ActionRepository {
+    public Action;
+
+    constructor() {
+        this.Action = new Action().getModelForClass(Action);
+    }
+}

@@ -1,11 +1,20 @@
-import { prop, Typegoose, ModelType, instanceMethod, InstanceType } from 'typegoose';
+import {
+    prop,
+    Typegoose,
+    ModelType,
+    instanceMethod,
+    InstanceType
+} from 'typegoose';
 import bcrypt from 'bcrypt';
 import IUser from './interface';
-import { ProvideSingleton, inject } from '../../libs/ioc/ioc';
+import { inject, provide } from '../../libs/ioc/ioc';
 import TYPES from '../../constant/types';
+import IConfigService from '../../libs/config/interface';
 
-@ProvideSingleton(TYPES.UserModel)
-export class User extends Typegoose implements ModelType<IUser> {
+export type status = 'ACTIVE' | 'PENDING';
+export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
+
+class User extends Typegoose implements ModelType<IUser> {
     @prop()
     name: string;
     @prop()
@@ -25,7 +34,8 @@ export class User extends Typegoose implements ModelType<IUser> {
     @instanceMethod
     async isValidPassword(
         this: InstanceType<User> & typeof User,
-        candidatePassword: string) {
+        candidatePassword: string
+    ) {
         if (!candidatePassword) {
             return false;
         }
@@ -43,7 +53,8 @@ export class User extends Typegoose implements ModelType<IUser> {
     @instanceMethod
     async setPassword(
         this: InstanceType<User> & typeof User,
-        password: string) {
+        password: string
+    ) {
         if (password) {
             this.passwordHash = await bcrypt.hash(password, this._config.saltRounds);
         } else {
@@ -53,5 +64,16 @@ export class User extends Typegoose implements ModelType<IUser> {
     }
 }
 
-export type status = 'ACTIVE' | 'PENDING';
-export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
+@provide(TYPES.UserModel)
+export default class UserRepository {
+    private _config;
+    public User;
+
+    constructor(
+        @inject(TYPES.ConfigServie) config: IConfigService
+    ) {
+        this._config = config.get('AUTH');
+
+        this.User = new User().getModelForClass(User);
+    }
+}

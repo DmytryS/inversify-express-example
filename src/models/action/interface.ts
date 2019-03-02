@@ -1,4 +1,4 @@
-import { prop, Typegoose, ModelType } from 'typegoose';
+import { ModelType } from 'typegoose';
 
 export default interface IAction  {
     id?: string;
@@ -9,3 +9,7 @@ export default interface IAction  {
 }
 
 export type IActionModel = ModelType<IAction>;
+
+export interface IActionRepository {
+    Action: IActionModel
+}

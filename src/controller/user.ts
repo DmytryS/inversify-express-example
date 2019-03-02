@@ -1,28 +1,16 @@
-// import { Controller, Get, Post, Put, Delete } from 'inversify-restify-utils';
 import {
     controller, httpGet, httpPost, httpPut, httpDelete
 } from 'inversify-express-utils';
-
-// import { injectable } from 'inversify';
-import { ProvideSingleton, inject } from '../libs/ioc/ioc';
+import { inject } from '../libs/ioc/ioc';
 import * as errs from 'restify-errors';
-// import { userService} from '../constant/decorators';
 import IUserService from '../services/user/interface';
 import TYPES from '../constant/types';
 
-
-
-
 @controller('/users')
-@ProvideSingleton(UserController)
 export default class UserController {
     public TAG_NAME: string = 'UserController';
 
     @inject(TYPES.UserService) private userService: IUserService
-    // @userService private userService: IUserService
-    // constructor(
-    //     @userService private userService: IUserService
-    // ) { }
 
     @httpPost('/login')
     private async login(req, res, next) {
