@@ -1,11 +1,11 @@
-import { ProvideSingleton } from '../ioc/ioc';
 import * as nconf from 'nconf';
-import IConfigService from './interface';
 import TYPES from '../../constant/types';
+import { ProvideSingleton } from '../ioc/ioc';
+import IConfigService from './interface';
 
 @ProvideSingleton(TYPES.ConfigServie)
 export default class ConfigService implements IConfigService {
-    private _nconf;
+    private config;
 
     constructor() {
         nconf.file(require.resolve(`../../../config/${process.env.NODE_ENV}.json`));
@@ -13,14 +13,14 @@ export default class ConfigService implements IConfigService {
         nconf.defaults({
             API_PORT: 8080
         });
-        this._nconf = nconf;
+        this.config = nconf;
     }
 
-    get(key?: string): any {
-        return this._nconf.get(key);
+    public get(key?: string): any {
+        return this.config.get(key);
     }
 
-    has(key: string): boolean {
-        return !!this._nconf.get(key);
+    public has(key: string): boolean {
+        return !!this.config.get(key);
     }
 }

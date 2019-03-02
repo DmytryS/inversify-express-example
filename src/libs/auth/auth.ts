@@ -1,27 +1,27 @@
-import { ProvideSingleton, inject } from '../ioc/ioc';
-import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import * as errs from 'restify-errors';
 import express from 'express';
-import IAuthService from './interface';
-import ILog4js, { ILoggerService } from '../logger/interface';
-import IConfigService from '../config/interface';
-import { IUserRepository } from '../../models/user/interface';
+import passport from 'passport';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
+import { Strategy as LocalStrategy } from 'passport-local';
+import * as errs from 'restify-errors';
 import TYPES from '../../constant/types';
+import { IUserRepository } from '../../models/user/interface';
+import IConfigService from '../config/interface';
+import { inject, ProvideSingleton } from '../ioc/ioc';
+import ILog4js, { ILoggerService } from '../logger/interface';
+import IAuthService from './interface';
 
 @ProvideSingleton(TYPES.AuthService)
 export default class AuthService implements IAuthService {
-    private _config;
-    private _logger: ILog4js;
+    private config;
+    private logger: ILog4js;
 
     constructor(
         @inject(TYPES.LoggerService) loggerService: ILoggerService,
-        @inject(TYPES.ConfigServie) config: IConfigService,
+        @inject(TYPES.ConfigServie) configService: IConfigService,
         @inject(TYPES.UserModel) private userRepository: IUserRepository
     ) {
-        this._config = config.get('AUTH');
-        this._logger = loggerService.getLogger('AuthService');
+        this.config = configService.get('AUTH');
+        this.logger = loggerService.getLogger('AuthService');
 
         this.applyJWTstrategy();
         this.applyLocalStrategy();
@@ -72,7 +72,7 @@ export default class AuthService implements IAuthService {
         passport.use(`jwt`, new JwtStrategy(
             {
                 jwtFromRequest: ExtractJwt.fromHeader('authorization'),
-                secretOrKey: this._config.secret,
+                secretOrKey: this.config.secret,
                 session: false
             },
             async (token, done) => {
@@ -94,27 +94,27 @@ export default class AuthService implements IAuthService {
     private applyLocalStrategy() {
         passport.use('local', new LocalStrategy(
             {
-                usernameField: 'email',
+                passReqToCallback: true,
                 passwordField: 'password',
                 session: false,
-                passReqToCallback: true
+                usernameField: 'email'
             },
             async (req, email, password, done) => {
                 try {
-                if (!req.body.userType) {
-                    throw new Error('\'userType\' field is required');
-                }
-                const { userType } = req.body;
-                const user = await this.userRepository.User.findOne({
-                    email,
-                    type: userType
-                });
+                    if (!req.body.userType) {
+                        throw new Error('\'userType\' field is required');
+                    }
+                    const { userType } = req.body;
+                    const user = await this.userRepository.User.findOne({
+                        email,
+                        type: userType
+                    });
 
-                // if (!user || !(await user.isValidPassword(password))) {
-                //     done('Wrong email or password', false);
-                // }
+                    // if (!user || !(await user.isValidPassword(password))) {
+                    //     done('Wrong email or password', false);
+                    // }
 
-                done(false, user);
+                    done(false, user);
                 } catch (err) {
                     return done(err);
                 }

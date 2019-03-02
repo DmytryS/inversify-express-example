@@ -1,11 +1,11 @@
 import * as jwt from 'jsonwebtoken';
-import { ProvideSingleton, inject } from '../../libs/ioc/ioc'
 import TYPES from '../../constant/types';
-import IUserService from './interface';
 import IConfig from '../../libs/config/interface';
-import { IUserRepository, IUserModel } from '../../models/user/interface';
-import { IActionRepository } from '../../models/action/interface';
+import { inject, ProvideSingleton } from '../../libs/ioc/ioc'
 import IMailerService from '../../libs/mailer/interface'
+import { IActionRepository } from '../../models/action/interface';
+import { IUserModel, IUserRepository } from '../../models/user/interface';
+import IUserService from './interface';
 
 @ProvideSingleton(TYPES.UserService)
 export default class UserService implements IUserService {
@@ -20,11 +20,11 @@ export default class UserService implements IUserService {
         this.config = configService.get();
     }
 
-    async profile(id: string) {
+    public async profile(id: string) {
         return this.userRepository.User.findById(id);
     }
 
-    async login(email: string, password: string) {
+    public async login(email: string, password: string) {
         const user = await this.userRepository.User.findOne({
             email
         });
@@ -40,15 +40,15 @@ export default class UserService implements IUserService {
         }
     }
 
-    async register(data: IUserModel) {
+    public async register(data: IUserModel) {
         const newUser = await new this.userRepository.User({
             ...data,
             type: 'DRIVER'
         });
         const action = await new this.actionRepository.Action({
-            userId: newUser.id,
+            status: 'ACTIVE',
             type: 'REGISTER',
-            status: 'ACTIVE'
+            userId: newUser.id
         });
 
         await this.mailerService.send(
@@ -62,15 +62,15 @@ export default class UserService implements IUserService {
         return newUser;
     }
 
-    async getUsers() {
+    public async getUsers() {
         return this.userRepository.User.findAll();
     }
 
-    async deleteById(id: string) {
+    public async deleteById(id: string) {
         return this.userRepository.User.deleteById(id);
     }
 
-    async updateById(id: string, data: object) {
+    public async updateById(id: string, data: object) {
         return this.userRepository.User.updateById(id, data);
     }
 }

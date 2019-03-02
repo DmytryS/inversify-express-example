@@ -1,30 +1,30 @@
-import {
-    prop,
-    Typegoose,
-    ModelType,
-    instanceMethod,
-    InstanceType
-} from 'typegoose';
 import bcrypt from 'bcrypt';
-import IUser from './interface';
-import { inject, provide } from '../../libs/ioc/ioc';
+import {
+    instanceMethod,
+    InstanceType,
+    ModelType,
+    prop,
+    Typegoose
+} from 'typegoose';
 import TYPES from '../../constant/types';
 import IConfigService from '../../libs/config/interface';
+import { inject, provide } from '../../libs/ioc/ioc';
+import IUser from './interface';
 
 export type status = 'ACTIVE' | 'PENDING';
 export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
 
 class User extends Typegoose implements ModelType<IUser> {
     @prop()
-    name: string;
+    public name: string;
     @prop()
-    email: string;
+    public email: string;
     @prop()
-    passwordHash: string;
+    public passwordHash: string;
     @prop()
-    type: type;
+    public type: type;
     @prop()
-    status: status;
+    public status: status;
 
     /**
      * Checks user password
@@ -32,7 +32,7 @@ class User extends Typegoose implements ModelType<IUser> {
      * @returns {Promise<Boolean>} promise which will be resolved when password compared
      */
     @instanceMethod
-    async isValidPassword(
+    public async isValidPassword(
         this: InstanceType<User> & typeof User,
         candidatePassword: string
     ) {
@@ -42,7 +42,7 @@ class User extends Typegoose implements ModelType<IUser> {
         if (!this.passwordHash) {
             return false;
         }
-        return await bcrypt.compare(candidatePassword, this.passwordHash);
+        return bcrypt.compare(candidatePassword, this.passwordHash);
     }
 
     /**
@@ -51,28 +51,26 @@ class User extends Typegoose implements ModelType<IUser> {
      * @returns {Promise<>} promise which will be resolved when password set
      */
     @instanceMethod
-    async setPassword(
+    public async setPassword(
         this: InstanceType<User> & typeof User,
         password: string
     ) {
-        if (password) {
-            this.passwordHash = await bcrypt.hash(password, this._config.saltRounds);
-        } else {
-            this.passwordHash = undefined;
-        }
+        this.passwordHash = password ? await bcrypt.hash(password, this._config.saltRounds) : undefined;
+
         return this.save();
     }
 }
 
 @provide(TYPES.UserModel)
+// tslint:disable-next-line
 export default class UserRepository {
-    private _config;
     public User;
+    private config;
 
     constructor(
-        @inject(TYPES.ConfigServie) config: IConfigService
+        @inject(TYPES.ConfigServie) configService: IConfigService
     ) {
-        this._config = config.get('AUTH');
+        this.config = configService.get('AUTH');
 
         this.User = new User().getModelForClass(User);
     }

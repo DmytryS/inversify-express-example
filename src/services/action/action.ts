@@ -1,11 +1,11 @@
 import * as err from 'restify-errors';
-import { ProvideSingleton, inject } from '../../libs/ioc/ioc'
 import TYPES from '../../constant/types';
-import IActionService from './interface';
 import IConfig from '../../libs/config/interface';
-import { IUserRepository } from '../../models/user/interface';
-import { IActionRepository } from '../../models/action/interface';
+import { inject, ProvideSingleton } from '../../libs/ioc/ioc'
 import IMailerService from '../../libs/mailer/interface'
+import { IActionRepository } from '../../models/action/interface';
+import { IUserRepository } from '../../models/user/interface';
+import IActionService from './interface';
 
 @ProvideSingleton(TYPES.ActionService)
 export default class ActionService implements IActionService {
@@ -20,7 +20,7 @@ export default class ActionService implements IActionService {
         this.config = configService.get('AUTH');
     }
 
-    async getById(actionId: string) {
+    public async getById(actionId: string) {
         const action = await this.actionRepository.Action.findById(actionId);
 
         if (!action) {
@@ -30,7 +30,7 @@ export default class ActionService implements IActionService {
         return action;
     }
 
-    async updateById(actionId: string, data: any) {
+    public async updateById(actionId: string, data: any) {
         const action = await this.actionRepository.Action.findById(actionId);
 
         if (!action) {

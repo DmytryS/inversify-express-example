@@ -1,31 +1,32 @@
-import { prop, Typegoose, ModelType, InstanceType, instanceMethod } from 'typegoose';
-import IAction from './interface';
-import { provide } from '../../libs/ioc/ioc';
+import { instanceMethod, InstanceType, ModelType, prop, Typegoose } from 'typegoose';
 import TYPES from '../../constant/types';
+import { provide } from '../../libs/ioc/ioc';
+import IAction from './interface';
 
 export type status = 'ACTIVE' | 'USED';
 export type type = 'REGISTER' | 'RESET_PASSWORD';
 
 class Action extends Typegoose implements ModelType<IAction> {
     @prop()
-    userId: string;
+    public userId: string;
     @prop()
-    type: string;
+    public type: string;
     @prop()
-    status: string;
+    public status: string;
 
     /**
      * Sets action status to 'USER'
      * @returns {Promise<IAction>} promise which will be resolved when action updated
      */
     @instanceMethod
-    async setUsed(this: InstanceType<Action> & typeof Action) {
+    public async setUsed(this: InstanceType<Action> & typeof Action) {
         this.status = 'USED';
         return this.save();
     }
 }
 
 @provide(TYPES.ActionModel)
+// tslint:disable-next-line
 export default class ActionRepository {
     public Action;
 

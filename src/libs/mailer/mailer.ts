@@ -1,15 +1,15 @@
-import { inject, ProvideSingleton } from '../ioc/ioc';
-import * as nodemailer from 'nodemailer';
+import { promisify, promisifyAll } from 'bluebird';
+import * as fs from 'fs';
 import * as handlebars from 'handlebars';
 import * as layouts from 'handlebars-layouts';
-import { promisifyAll, promisify } from 'bluebird';
+import * as nodemailer from 'nodemailer';
 import * as path from 'path';
-import * as fs from 'fs';
-import IMailerService from './interface';
-import ILog4js, { ILoggerService } from '../logger/interface';
-import IConfigService from '../config/interface'
 import * as Errs from 'restify-errors';
 import TYPES from '../../constant/types';
+import IConfigService from '../config/interface'
+import { inject, ProvideSingleton } from '../ioc/ioc';
+import ILog4js, { ILoggerService } from '../logger/interface';
+import IMailerService from './interface';
 
 const readFile = promisify(fs.readFile);
 
@@ -21,9 +21,9 @@ handlebars.registerPartial('layout', fs.readFileSync(path.join(__dirname, '../..
  * Email sender class
  */
 export default class MailerService implements IMailerService {
-    private _config;
-    private _logger: ILog4js;
-    private _tranport;
+    private config;
+    private logger: ILog4js;
+    private tranport;
 
     /**
      * Constructs email sender
@@ -34,16 +34,16 @@ export default class MailerService implements IMailerService {
         @inject(TYPES.LoggerService) loggerService: ILoggerService,
         @inject(TYPES.ConfigServie) configService: IConfigService
     ) {
-        this._config = configService.get('MAIL');
-        this._logger = loggerService.getLogger('MAIL');
+        this.config = configService.get('MAIL');
+        this.logger = loggerService.getLogger('MAIL');
 
         if (process.env.NODE_ENV === 'test') {
-            this._tranport = {
+            this.tranport = {
                 sendMailAsync: Promise.resolve()
             };
         } else {
-            this._tranport = promisifyAll(
-                nodemailer.createTransport(this._config.transport_options)
+            this.tranport = promisifyAll(
+                nodemailer.createTransport(this.config.transport_options)
             );
         }
     }
@@ -55,22 +55,22 @@ export default class MailerService implements IMailerService {
      * @param {Object} templateData data to send
      * @returns {Promise} Returns promise which will be resolved mail sent
      */
-    async send(email, templateName, templateData) {
+    public async send(email, templateName, templateData) {
         try {
             const template = await this._getTemplate(templateName, templateData);
             const mailOptions = {
-                from: this._config.from,
-                to: email,
+                from: this.config.from,
+                html: template.body,
                 subject: template.subject,
-                html: template.body
+                to: email
             };
 
-            const response = await this._tranport.sendMailAsync(mailOptions);
+            const response = await this.tranport.sendMailAsync(mailOptions);
 
-            this._logger.info(`Email was successfully sent to ${email}`);
+            this.logger.info(`Email was successfully sent to ${email}`);
             return response.message;
         } catch (err) {
-            this._logger.error(`Email send was rejected by error: ${err}`);
+            this.logger.error(`Email send was rejected by error: ${err}`);
             throw err;
         }
     }
@@ -85,7 +85,7 @@ export default class MailerService implements IMailerService {
                 subject: handlebars.compile(subjectTemplate.toString())({ ...data })
             };
         } catch (err) {
-            this._logger.error('An error occured during mail send', err);
+            this.logger.error('An error occured during mail send', err);
             throw new Errs.InternalError('An error occured during mail send');
         }
     }

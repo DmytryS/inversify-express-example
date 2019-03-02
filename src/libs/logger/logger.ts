@@ -1,25 +1,29 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import * as log4js from 'log4js';
-import { ILoggerService } from './interface';
-import IConfigService from '../config/interface';
+import * as path from 'path';
 import TYPES from '../../constant/types';
-import { ProvideSingleton, inject } from '../ioc/ioc';
+import IConfigService from '../config/interface';
+import { inject, ProvideSingleton } from '../ioc/ioc';
+import { ILoggerService } from './interface';
 
 @ProvideSingleton(TYPES.LoggerService)
 export default class LoggerService implements ILoggerService {
-    private _config;
+    private config;
 
     constructor(
         @inject(TYPES.ConfigServie) configService: IConfigService
     ) {
-        this._config = configService.get('LOGGER');
+        this.config = configService.get('LOGGER');
 
         this._setupLogger();
     }
 
+    public getLogger(serviceName) {
+        return log4js.getLogger(serviceName);
+    }
+
     private _setupLogger() {
-        const pathToFile = path.join(__dirname, '../../../', this._config.path);
+        const pathToFile = path.join(__dirname, '../../../', this.config.path);
 
         if (!fs.existsSync(pathToFile)) {
             fs.mkdirSync(pathToFile);
@@ -27,9 +31,9 @@ export default class LoggerService implements ILoggerService {
 
         const appenders: any = {
             file: {
-                type: 'file',
-                filename: path.join(pathToFile, this._config.fileName),
-                timezoneOffset: 0
+                filename: path.join(pathToFile, this.config.fileName),
+                timezoneOffset: 0,
+                type: 'file'
             }
         };
         const categories = {
@@ -46,10 +50,6 @@ export default class LoggerService implements ILoggerService {
         }
 
         log4js.configure({ categories, appenders });
-    }
-
-    getLogger(serviceName) {
-        return log4js.getLogger(serviceName);
     }
 
 }

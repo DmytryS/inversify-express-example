@@ -1,10 +1,10 @@
 import {
-    controller, httpGet, httpPost, httpPut, httpDelete, interfaces
+    controller, httpDelete, httpGet, httpPost, httpPut, interfaces
 } from 'inversify-express-utils';
 
+import TYPES from '../constant/types'
 import { inject } from '../libs/ioc/ioc';
 import IActionService from '../services/action/interface';
-import TYPES from '../constant/types'
 
 @controller('/actions')
 export default class ActionController implements interfaces.Controller {
@@ -21,7 +21,7 @@ export default class ActionController implements interfaces.Controller {
     @httpPut('/:id')
     private async putById(req) {
         const { body, params: { id: actionId } } = req;
-        console.log('Data is', body);
+
         return this.actionService.updateById(actionId, body);
     }
 }

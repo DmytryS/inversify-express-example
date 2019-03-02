@@ -1,13 +1,13 @@
 export default {
-    Server: Symbol('Server'),
-    App: Symbol('App'),
-    ConfigServie: Symbol('ConfigServie'),
-    LoggerService: Symbol('LoggerService'),
-    DatabaseService: Symbol('DatabaseService'),
-    AuthService: Symbol('AuthService'),
-    MailerService: Symbol('MailerService'),
-    UserModel: Symbol('UserModel'),
     ActionModel: Symbol('ActionModel'),
-    UserService: Symbol('UserService'),
-    ActionService: Symbol('ActionService')
+    ActionService: Symbol('ActionService'),
+    App: Symbol('App'),
+    AuthService: Symbol('AuthService'),
+    ConfigServie: Symbol('ConfigServie'),
+    DatabaseService: Symbol('DatabaseService'),
+    LoggerService: Symbol('LoggerService'),
+    MailerService: Symbol('MailerService'),
+    Server: Symbol('Server'),
+    UserModel: Symbol('UserModel'),
+    UserService: Symbol('UserService')
 };

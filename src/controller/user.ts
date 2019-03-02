@@ -1,10 +1,10 @@
 import {
-    controller, httpGet, httpPost, httpPut, httpDelete
+    controller, httpDelete, httpGet, httpPost, httpPut
 } from 'inversify-express-utils';
-import { inject } from '../libs/ioc/ioc';
 import * as errs from 'restify-errors';
-import IUserService from '../services/user/interface';
 import TYPES from '../constant/types';
+import { inject } from '../libs/ioc/ioc';
+import IUserService from '../services/user/interface';
 
 @controller('/users')
 export default class UserController {
@@ -29,9 +29,9 @@ export default class UserController {
     private async register(req, res, next) {
         const { body } = req;
 
-        return await this.userService.register({
-            name: body.name,
-            email: body.email
+        return this.userService.register({
+            email: body.email,
+            name: body.name
         });
     }
 
@@ -63,7 +63,7 @@ export default class UserController {
     private async putById(req) {
         const { id } = req.params;
         const { body } = req;
-        console.log('Data is', body);
+
         return this.userService.updateById(id, body);
     }
 }

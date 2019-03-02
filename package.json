@@ -18,11 +18,13 @@
     "build": "tsc",
     "dev": "NODE_ENV=development node -r ts-node/register ./src/index.ts",
     "nodemon": "nodemon",
-    "start": "NODE_ENV=production node ./build/index.js"
+    "start": "NODE_ENV=production node ./build/index.js",
+    "tslint": "tslint --fix -c tslint.json 'src/**/*.ts'"
   },
   "dependencies": {
     "@types/node": "^11.9.4",
     "bcrypt": "^3.0.4",
+    "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "handlebars": "^4.1.0",
@@ -51,6 +53,8 @@
     "swagger-express-ts": "^1.0.1",
     "swagger-ui-dist": "^3.20.9",
     "ts-node": "^7.0.1",
+    "tslint": "^5.13.1",
+    "tslint-config-prettier": "^1.18.0",
     "tsoa": "^2.3.8"
   },
   "engines": {

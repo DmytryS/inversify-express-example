@@ -1,17 +1,17 @@
-import 'reflect-metadata';
 // import { Controller } from 'tsoa';
 import {
     Container,
-    inject,
-    interfaces,
     decorate,
-    injectable
+    inject,
+    injectable,
+    interfaces
 } from 'inversify';
 import {
-    provide,
     buildProviderModule,
-    fluentProvide
+    fluentProvide,
+    provide
 } from 'inversify-binding-decorators';
+import 'reflect-metadata';
 
 // decorate(injectable(), Controller);
 

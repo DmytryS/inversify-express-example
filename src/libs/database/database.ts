@@ -1,41 +1,35 @@
-import IDatabaseService from './interface';
 import * as mongoose from 'mongoose';
-import ILog4js, { ILoggerService } from '../logger/interface';
-import IConfigService from '../config/interface'
-import { ProvideSingleton, inject } from '../ioc/ioc';
 import TYPES from '../../constant/types';
+import IConfigService from '../config/interface'
+import { inject, ProvideSingleton } from '../ioc/ioc';
+import ILog4js, { ILoggerService } from '../logger/interface';
+import IDatabaseService from './interface';
 
 @ProvideSingleton(TYPES.DatabaseService)
 export default class DatabaseService implements IDatabaseService {
-    private _config;
-    private _logger: ILog4js;
     public db: mongoose.Connection;
-    private _mongoose: mongoose.Mongoose;
+    private config;
+    private logger: ILog4js;
 
     constructor(
         @inject(TYPES.LoggerService) loggerService: ILoggerService,
-        @inject(TYPES.ConfigServie) config: IConfigService
+        @inject(TYPES.ConfigServie) configService: IConfigService
     ) {
-        this._config = config.get('DB');
-        this._logger = loggerService.getLogger('Database');
-        this._mongoose = mongoose;
-    }
-
-    get mongoose() {
-        return this._mongoose;
+        this.config = configService.get('DB');
+        this.logger = loggerService.getLogger('Database');
     }
 
     /**
      * Connects to the database
      * @return {Promise} promise to connect to database
      */
-    async connect(){
+    public async connect(){
         this.db = await mongoose.connect(
-            this._config.url,
+            this.config.url,
             {
-                useNewUrlParser: true,
                 useCreateIndex: true,
-                useFindAndModify: false
+                useFindAndModify: false,
+                useNewUrlParser: true
             }
         );
       }
@@ -44,11 +38,11 @@ export default class DatabaseService implements IDatabaseService {
      * Disconnects from database
      * @returns {Promise} promise to diconnect from DB
      */
-    close() {
+    public close() {
         return new Promise((resolve, reject) => {
             this.db.close((err) => {
                 if (err) {
-                    this._logger.error(`An error occured during closing db connection`, err);
+                    this.logger.error(`An error occured during closing db connection`, err);
                     reject(err);
                 } else {
                     resolve();
@@ -61,16 +55,16 @@ export default class DatabaseService implements IDatabaseService {
      * Clears the database
      * @returns {Promise} promise to clear database
      */
-    async clear() {
+    public async clear() {
         if (process.env.NODE_ENV !== 'test') {
             throw new Error('Will not drop collection until in test env');
         }
 
         return new Promise((res, rej) => {
             this.db.dropDatabase((err) => {
-                this._logger.info('Cleared DB');
+                this.logger.info('Cleared DB');
                 if (err) {
-                    this._logger.error(err);
+                    this.logger.error(err);
                     rej(err);
                 }
                 res();
@@ -80,9 +74,9 @@ export default class DatabaseService implements IDatabaseService {
 
     private _onDbConnected(err) {
         if (err) {
-            this._logger.error(err);
+            this.logger.error(err);
         } else {
-            this._logger.debug(`Connected to the ${process.env.NODE_ENV} database`);
+            this.logger.debug(`Connected to the ${process.env.NODE_ENV} database`);
         }
     }
 }
