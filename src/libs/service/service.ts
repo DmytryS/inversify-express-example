@@ -7,10 +7,8 @@ import IDatabaseService from '../database/interface';
 import { container, loadServices } from '../ioc/ioc';
 import '../ioc/loader';
 import ILog4js, { ILoggerService } from '../logger/interface';
-
 import * as express from 'express';
 import * as swagger from "swagger-express-ts";
-import { SwaggerDefinitionConstant } from "swagger-express-ts";
 
 export default class Service {
     private config;

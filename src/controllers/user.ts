@@ -8,8 +8,8 @@ import IUserService from '../services/user/interface';
 import { ApiPath, ApiOperationGet, ApiOperationPost, SwaggerDefinitionConstant } from 'swagger-express-ts';
 
 @ApiPath({
-    path: "/versions",
-    name: "Version",
+    path: "/users",
+    name: "User",
     security: { basicAuth: [] }
 })
 @controller('/users')
@@ -19,14 +19,18 @@ export default class UserController {
     @inject(TYPES.UserService) private userService: IUserService
 
     @ApiOperationPost({
-        description: "Post version object login",
-        summary: "Post new version",
+        description: 'Post version object login',
+        summary: 'Post new version',
         parameters: {
-            body: { description: "New version", required: true, model: "Version" }
+            body: {
+                description: 'Register user',
+                required: true,
+                model: 'User'
+            }
         },
         responses: {
-            200: { description: "Success" },
-            400: { description: "Parameters fail" }
+            200: { description: 'Success' },
+            400: { description: 'Parameters fail' }
         }
     })
     @httpPost('/login')
@@ -43,14 +47,18 @@ export default class UserController {
     }
 
     @ApiOperationPost({
-        description: "Post version object register",
-        summary: "Post new version",
+        description: 'Register new user',
+        summary: 'Register new user',
         parameters: {
-            body: { description: "New version", required: true, model: "Version" }
+            body: {
+                description: 'User',
+                required: true,
+                model: 'User'
+            }
         },
         responses: {
-            200: { description: "Success" },
-            400: { description: "Parameters fail" }
+            200: { description: 'Success' },
+            400: { description: 'Parameters fail' }
         }
     })
     @httpPost('/register')
@@ -64,13 +72,13 @@ export default class UserController {
     }
 
     @ApiOperationGet({
-        description: "Get versions objects list",
-        summary: "Get versions list",
+        description: 'Get user prrofile object',
+        summary: 'Get user prrofile',
         responses: {
             200: {
-                description: "Success",
+                description: 'Success',
                 type: SwaggerDefinitionConstant.Response.Type.ARRAY,
-                model: "Version"
+                model: 'User'
             }
         },
         security: {

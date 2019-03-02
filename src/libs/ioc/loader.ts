@@ -1,5 +1,5 @@
-import '../../controller/action';
-import '../../controller/user';
+import '../../controllers/action';
+import '../../controllers/user';
 import '../../models/action/action';
 import '../../models/user/user';
 import '../../services/action/action';
