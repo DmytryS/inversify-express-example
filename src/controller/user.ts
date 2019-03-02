@@ -1,4 +1,8 @@
-import { Controller, Get, Post, Put, Delete } from 'inversify-restify-utils';
+// import { Controller, Get, Post, Put, Delete } from 'inversify-restify-utils';
+import {
+    controller, httpGet, httpPost, httpPut, httpDelete
+} from 'inversify-express-utils';
+
 // import { injectable } from 'inversify';
 import { ProvideSingleton, inject } from '../libs/ioc/ioc';
 import * as errs from 'restify-errors';
@@ -9,10 +13,10 @@ import TYPES from '../constant/types';
 
 
 
-@Controller('/users')
+@controller('/users')
 @ProvideSingleton(UserController)
 export default class UserController {
-    public TARGET_NAME: string = 'UserController';
+    public TAG_NAME: string = 'UserController';
 
     @inject(TYPES.UserService) private userService: IUserService
     // @userService private userService: IUserService
@@ -20,7 +24,7 @@ export default class UserController {
     //     @userService private userService: IUserService
     // ) { }
 
-    @Post('/login')
+    @httpPost('/login')
     private async login(req, res, next) {
         const { body } = req;
         try {
@@ -33,7 +37,7 @@ export default class UserController {
         }
     }
 
-    @Post('/register')
+    @httpPost('/register')
     private async register(req, res, next) {
         const { body } = req;
 
@@ -43,23 +47,23 @@ export default class UserController {
         });
     }
 
-    @Get('/profile')
+    @httpGet('/profile')
     private async profile(req) {
         return this.userService.profile(req.decoded._id);
     }
 
-    @Get('/')
+    @httpGet('/')
     private async getUsers() {
         return this.userService.getUsers();
     }
 
-    @Get('/:id')
+    @httpGet('/:id')
     private async getById(req) {
         const { id } = req.params;
         return this.userService.profile(id);
     }
 
-    @Delete('/:id')
+    @httpDelete('/:id')
     private async deleteById(req, res) {
         const { id } = req.params;
         await this.userService.deleteById(id);
@@ -67,7 +71,7 @@ export default class UserController {
         res.send();
     }
 
-    @Put('/:id')
+    @httpPut('/:id')
     private async putById(req) {
         const { id } = req.params;
         const { body } = req;

@@ -3,12 +3,13 @@ import * as express from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
 // import * as corsMiddleware from 'restify-cors-middleware';
 import * as bodyParser from 'body-parser';
-import container from '../ioc/inversify.config';
+// import container from '../ioc/inversify.config';
 import TYPES from '../../constant/types';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IDatabaseService from '../database/interface';
 import IConfigService from '../config/interface';
-import { iocContainer } from '../ioc/ioc';
+import { container, loadServices } from '../ioc/ioc';
+import '../ioc/loader';
 // import auth from '../auth/auth';
 
 // import * as swagger from "swagger-express-ts";
@@ -21,9 +22,10 @@ export default class Service {
     private _app;
 
     constructor() {
-        this._config = iocContainer.get<IConfigService>(TYPES.ConfigServie);
-        this._logger = iocContainer.get<ILoggerService>(TYPES.LoggerService).getLogger('Main service');
-        this._database = iocContainer.get<IDatabaseService>(TYPES.DatabaseService);
+        // loadServices();
+        this._config = container.get<IConfigService>(TYPES.ConfigServie);
+        this._logger = container.get<ILoggerService>(TYPES.LoggerService).getLogger('Main service');
+        this._database = container.get<IDatabaseService>(TYPES.DatabaseService);
         this._app = false;
     }
 

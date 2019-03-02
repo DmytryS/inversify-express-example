@@ -8,7 +8,7 @@ import * as log4js from 'log4js';
 import { ILoggerService } from './interface';
 import IConfigService from '../config/interface';
 
-@ProvideSingleton(LoggerService)
+@ProvideSingleton(TYPES.LoggerService)
 export default class LoggerService implements ILoggerService {
     private _config;
 

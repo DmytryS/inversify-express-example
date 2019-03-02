@@ -1,11 +1,12 @@
-import 'reflect-metadata';
+// import 'reflect-metadata';
 // import { injectable } from 'inversify';
-import { injectable } from '../ioc/ioc';
+import { ProvideSingleton } from '../ioc/ioc';
 import * as nconf from 'nconf';
-import IConfig from './interface';
+import IConfigService from './interface';
+import TYPES from '../../constant/types';
 
-@injectable()
-export default class Nconf implements IConfig {
+@ProvideSingleton(TYPES.ConfigServie)
+export default class ConfigService implements IConfigService {
     private _nconf;
 
     constructor() {

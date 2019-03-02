@@ -1,0 +1,11 @@
+import '../database/database';
+import '../logger/logger';
+import '../config/configuration';
+import '../mailer/mailer';
+import '../../repository/user/user';
+import '../../repository/action/action';
+import '../../services/user/user';
+import '../../controller/user'
+import '../../services/action/action';
+import '../../controller/action';
+import '../auth/auth';

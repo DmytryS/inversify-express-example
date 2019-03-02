@@ -18,7 +18,7 @@ const readFile = promisify(fs.readFile);
 handlebars.registerHelper(layouts(handlebars));
 handlebars.registerPartial('layout', fs.readFileSync(path.join(__dirname, '../../templates/email', 'layout.hbs'), 'utf8'));
 
-@ProvideSingleton(MailerService)
+@ProvideSingleton(TYPES.MailerService)
 /**
  * Email sender class
  */

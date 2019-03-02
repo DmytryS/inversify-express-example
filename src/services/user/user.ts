@@ -3,11 +3,11 @@ import * as jwt from 'jsonwebtoken';
 import { ProvideSingleton, inject } from '../../libs/ioc/ioc'
 import TYPES from '../../constant/types';
 // import { config, userRepository, actionRepository, mailSender } from '../../constant/decorators';
-import { IUser } from '../../repository/user/interface';
+
 import IUserService from './interface';
 import IConfig from '../../libs/config/interface';
-import { IUserRepository } from '../../repository/user/interface';
-import { IActionRepository } from '../../repository/action/interface';
+import { IUserModel } from '../../models/user/interface';
+import { IActionModel } from '../../models/action/interface';
 import IMailerService from '../../libs/mailer/interface'
 
 @ProvideSingleton(TYPES.UserService)
@@ -17,8 +17,8 @@ export default class UserService implements IUserService {
     constructor(
         @inject(TYPES.ConfigServie) configService: IConfig,
         @inject(TYPES.MailerService) private mailerService: IMailerService,
-        @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-        @inject(TYPES.ActionRepository) private actionRepository: IActionRepository
+        @inject(TYPES.UserRepository) private userRepository: IUserModel,
+        @inject(TYPES.ActionRepository) private actionRepository: IActionModel
     ) {
         this.config = configService.get();
     }
@@ -43,7 +43,7 @@ export default class UserService implements IUserService {
         }
     }
 
-    async register(data: IUser) {
+    async register(data: IUserModel) {
         const newUser = await this.userRepository.create({
             ...data,
             type: 'DRIVER'

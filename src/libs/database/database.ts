@@ -8,7 +8,7 @@ import IConfigService from '../config/interface'
 import { ProvideSingleton, inject } from '../ioc/ioc';
 import TYPES from '../../constant/types';
 
-@ProvideSingleton(DatabaseService)
+@ProvideSingleton(TYPES.DatabaseService)
 export default class DatabaseService implements IDatabaseService {
     private _config;
     private _logger: ILog4js;

@@ -1,8 +1,6 @@
-import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
-import Repository from "../generic/interface";
+import { prop, Typegoose, ModelType } from 'typegoose';
 
-export interface IUser {
-
+export default interface IUser {
     id?: string;
     name: string;
     email: string;
@@ -14,4 +12,4 @@ export interface IUser {
 export type status = 'ACTIVE' | 'PENDING';
 export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
 
-export type IUserRepository = Repository<IUser>;
+export type IUserModel = ModelType<IUser>;

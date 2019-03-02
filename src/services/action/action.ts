@@ -6,8 +6,8 @@ import TYPES from '../../constant/types';
 // import { IUser } from '../../repository/user/interface';
 import IActionService from './interface';
 import IConfig from '../../libs/config/interface';
-import { IUserRepository } from '../../repository/user/interface';
-import { IActionRepository } from '../../repository/action/interface';
+import { IUserModel } from '../../models/user/interface';
+import { IActionModel } from '../../models/action/interface';
 import IMailerService from '../../libs/mailer/interface'
 
 @ProvideSingleton(TYPES.ActionService)
@@ -17,8 +17,8 @@ export default class ActionService implements IActionService {
     constructor(
         @inject(TYPES.ConfigServie) private configService: IConfig,
         @inject(TYPES.MailerService) private mailerService: IMailerService,
-        @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-        @inject(TYPES.ActionRepository) private actionRepository: IActionRepository
+        @inject(TYPES.UserRepository) private userRepository: IUserModel,
+        @inject(TYPES.ActionRepository) private actionRepository: IActionModel
     ) {
         this.config = configService.get('AUTH');
     }

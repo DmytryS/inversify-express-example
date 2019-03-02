@@ -9,7 +9,7 @@ import express from 'express';
 import IAuthService from './interface';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IConfigService from '../config/interface';
-import { IUserRepository } from '../../repository/user/interface';
+import { IUserModel } from '../../models/user/interface';
 import TYPES from '../../constant/types';
 
 @ProvideSingleton(TYPES.AuthService)
@@ -20,7 +20,7 @@ export default class AuthService implements IAuthService {
     constructor(
         @inject(TYPES.LoggerService) loggerService: ILoggerService,
         @inject(TYPES.ConfigServie) config: IConfigService,
-        @inject(TYPES.UserRepository) private userRepository: IUserRepository
+        @inject(TYPES.UserRepository) private userRepository: IUserModel
     ) {
         this._config = config.get('AUTH');
         this._logger = loggerService.getLogger('AuthService');

@@ -1,4 +1,4 @@
-export default interface IConfig {
+export default interface IConfigService {
     get(k?: string): any
     has(k: string): boolean
 }

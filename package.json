@@ -30,7 +30,6 @@
     "inversify": "^5.0.1",
     "inversify-binding-decorators": "^4.0.0",
     "inversify-express-utils": "^6.3.2",
-    "inversify-restify-utils": "^3.4.0",
     "jsonwebtoken": "^8.4.0",
     "log4js": "^4.0.2",
     "mongoose": "^5.4.13",
@@ -44,6 +43,7 @@
     "restify-cors-middleware": "^1.1.1",
     "restify-errors": "^6.1.1",
     "tsc": "^1.20150623.0",
+    "typegoose": "^5.5.1",
     "typescript": "^3.1.6"
   },
   "devDependencies": {

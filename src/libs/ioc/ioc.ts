@@ -1,20 +1,40 @@
-
-import { Controller } from 'tsoa';
-import { Container, inject, interfaces, decorate, injectable } from 'inversify';
-import { autoProvide, makeProvideDecorator, makeFluentProvideDecorator } from 'inversify-binding-decorators';
 import 'reflect-metadata';
+// import { Controller } from 'tsoa';
+import {
+    Container,
+    inject,
+    interfaces,
+    decorate,
+    injectable
+} from 'inversify';
+import {
+    provide,
+    buildProviderModule,
+    fluentProvide
+} from 'inversify-binding-decorators';
 
-decorate(injectable(), Controller);
+// decorate(injectable(), Controller);
 
 type Identifier = string | symbol | interfaces.Newable<any> | interfaces.Abstract<any>;
 
-const iocContainer = new Container();
+const container = new Container();
 
-const provide = makeProvideDecorator(iocContainer);
-const fluentProvider = makeFluentProvideDecorator(iocContainer);
 
-const ProvideNamed = (identifier: Identifier, name: string) => fluentProvider(identifier).whenTargetNamed(name).done();
+// const fluentProvider = makeFluentProvideDecorator(iocContainer);
 
-const ProvideSingleton = (identifier: Identifier) => fluentProvider(identifier).inSingletonScope().done();
+const ProvideNamed = (identifier: Identifier, name: string) => fluentProvide(identifier).whenTargetNamed(name).done();
 
-export { iocContainer, autoProvide, provide, ProvideSingleton, ProvideNamed, inject, decorate, injectable };
+const ProvideSingleton = (identifier: Identifier) => fluentProvide(identifier).inSingletonScope().done();
+
+const loadServices = () => container.load(buildProviderModule());
+
+export {
+    loadServices,
+    container,
+    provide,
+    ProvideSingleton,
+    ProvideNamed,
+    inject,
+    decorate,
+    injectable
+};
