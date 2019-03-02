@@ -20,7 +20,7 @@ export default class AuthService implements IAuthService {
     constructor(
         @inject(TYPES.LoggerService) loggerService: ILoggerService,
         @inject(TYPES.ConfigServie) config: IConfigService,
-        @inject(TYPES.UserRepository) private userRepository: IUserModel
+        @inject(TYPES.UserModel) private userRepository: IUserModel
     ) {
         this._config = config.get('AUTH');
         this._logger = loggerService.getLogger('AuthService');

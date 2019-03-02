@@ -17,8 +17,8 @@ export default class ActionService implements IActionService {
     constructor(
         @inject(TYPES.ConfigServie) private configService: IConfig,
         @inject(TYPES.MailerService) private mailerService: IMailerService,
-        @inject(TYPES.UserRepository) private userRepository: IUserModel,
-        @inject(TYPES.ActionRepository) private actionRepository: IActionModel
+        @inject(TYPES.UserModel) private userRepository: IUserModel,
+        @inject(TYPES.ActionModel) private actionRepository: IActionModel
     ) {
         this.config = configService.get('AUTH');
     }

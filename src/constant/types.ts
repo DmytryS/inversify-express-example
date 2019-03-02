@@ -6,8 +6,8 @@ export default {
     DatabaseService: Symbol('DatabaseService'),
     AuthService: Symbol('AuthService'),
     MailerService: Symbol('MailerService'),
-    UserRepository: Symbol('UserRepository'),
-    ActionRepository: Symbol('ActionRepository'),
+    UserModel: Symbol('UserModel'),
+    ActionModel: Symbol('ActionModel'),
     UserService: Symbol('UserService'),
     ActionService: Symbol('ActionService')
 };
