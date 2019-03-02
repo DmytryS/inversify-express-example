@@ -10,12 +10,22 @@ import TYPES from '../../constant/types';
 import IConfigService from '../../libs/config/interface';
 import { inject, provide } from '../../libs/ioc/ioc';
 import IUser from './interface';
+import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
 export type status = 'ACTIVE' | 'PENDING';
 export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
 
+@ApiModel({
+    description: "Version description",
+    name: "Version"
+})
 class User extends Typegoose implements ModelType<IUser> {
     @prop()
+    @ApiModelProperty({
+        description: "Id of version",
+        required: true,
+        example: ['123456789']
+    })
     public name: string;
     @prop()
     public email: string;

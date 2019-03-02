@@ -1,12 +1,16 @@
+import 'reflect-metadata';
 import * as bodyParser from 'body-parser';
 import { InversifyExpressServer } from 'inversify-express-utils';
-import 'reflect-metadata';
 import TYPES from '../../constant/types';
 import IConfigService from '../config/interface';
 import IDatabaseService from '../database/interface';
 import { container, loadServices } from '../ioc/ioc';
 import '../ioc/loader';
 import ILog4js, { ILoggerService } from '../logger/interface';
+
+import * as express from 'express';
+import * as swagger from "swagger-express-ts";
+import { SwaggerDefinitionConstant } from "swagger-express-ts";
 
 export default class Service {
     private config;
@@ -28,16 +32,41 @@ export default class Service {
         const server = new InversifyExpressServer(container, false, {
             rootPath: this.config.get('SERVER').baseUrl
         });
-        server.setConfig((expressApp) => {
-            expressApp.use(bodyParser.urlencoded({
-                extended: true
-            }));
-            expressApp.use(bodyParser.json());
+        server.setConfig((app) => {
+            // app.use(bodyParser.urlencoded({
+            //     extended: true
+            // }));
+            // app.use(bodyParser.json());
+
+            app.use('/api-docs/swagger', express.static('swagger'));
+            app.use('/api-docs/swagger/assets', express.static('node_modules/swagger-ui-dist'));
+            app.use(bodyParser.json());
+            app.use(swagger.express(
+                {
+                    definition: {
+                        externalDocs: {
+                            url: "My url"
+                        },
+                        info: {
+                            title: "My api",
+                            version: "1.0"
+                        }
+                        // Models can be defined here
+                    }
+                }
+            ));
+        });
+
+        server.setErrorConfig((app: any) => {
+            app.use((err: Error, request: express.Request, response: express.Response, next: express.NextFunction) => {
+                this.logger.error(err.stack);
+                response.status(500).send("Something broke!");
+            });
         });
 
         const port = this.config.get('SERVER').port;
-        const app = server.build();
-        this.app = app.listen(
+        // const app = ;
+        this.app = server.build().listen(
             port,
             () => this.logger.info(`Server started on *:${port}`)
         );

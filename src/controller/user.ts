@@ -5,13 +5,30 @@ import * as errs from 'restify-errors';
 import TYPES from '../constant/types';
 import { inject } from '../libs/ioc/ioc';
 import IUserService from '../services/user/interface';
+import { ApiPath, ApiOperationGet, ApiOperationPost, SwaggerDefinitionConstant } from 'swagger-express-ts';
 
+@ApiPath({
+    path: "/versions",
+    name: "Version",
+    security: { basicAuth: [] }
+})
 @controller('/users')
 export default class UserController {
     public TAG_NAME: string = 'UserController';
 
     @inject(TYPES.UserService) private userService: IUserService
 
+    @ApiOperationPost({
+        description: "Post version object login",
+        summary: "Post new version",
+        parameters: {
+            body: { description: "New version", required: true, model: "Version" }
+        },
+        responses: {
+            200: { description: "Success" },
+            400: { description: "Parameters fail" }
+        }
+    })
     @httpPost('/login')
     private async login(req, res, next) {
         const { body } = req;
@@ -25,6 +42,17 @@ export default class UserController {
         }
     }
 
+    @ApiOperationPost({
+        description: "Post version object register",
+        summary: "Post new version",
+        parameters: {
+            body: { description: "New version", required: true, model: "Version" }
+        },
+        responses: {
+            200: { description: "Success" },
+            400: { description: "Parameters fail" }
+        }
+    })
     @httpPost('/register')
     private async register(req, res, next) {
         const { body } = req;
@@ -35,6 +63,20 @@ export default class UserController {
         });
     }
 
+    @ApiOperationGet({
+        description: "Get versions objects list",
+        summary: "Get versions list",
+        responses: {
+            200: {
+                description: "Success",
+                type: SwaggerDefinitionConstant.Response.Type.ARRAY,
+                model: "Version"
+            }
+        },
+        security: {
+            apiKeyHeader: []
+        }
+    })
     @httpGet('/profile')
     private async profile(req) {
         return this.userService.profile(req.decoded._id);
