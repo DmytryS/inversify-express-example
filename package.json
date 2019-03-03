@@ -55,8 +55,7 @@
     "prettier-tslint": "^0.4.2",
     "ts-node": "^7.0.1",
     "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1",
-    "tsoa": "^2.3.8"
+    "tslint-plugin-prettier": "^2.0.1"
   },
   "engines": {
     "node": ">=4.1.1"

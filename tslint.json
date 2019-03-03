@@ -1,18 +1,19 @@
 {
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules"],
-    "extends": ["tslint:latest", "tslint-config-prettier"],
-    "plugins": ["prettier"],
-    "rules": {
-        "prettier": [
-            true,
-            {
-                "printWidth": 120,
-                "singleQuote": true,
-                "semi": true,
-                "trailingComma": "none",
-                "tabWidth": 4
-            }
-        ]
-    }
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"],
+  "extends": ["tslint:latest", "tslint-config-prettier"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier": [
+      true,
+      {
+        "printWidth": 120,
+        "singleQuote": true,
+        "semi": true,
+        "trailingComma": "none",
+        "tabWidth": 4
+      }
+    ],
+    "quotemark": [true, "single", "avoid-escape", "avoid-template"]
+  }
 }
