@@ -77,8 +77,7 @@ export default class UserController {
             200: {
                 description: 'Success',
                 model: 'User',
-                type: SwaggerDefinitionConstant.Response.Type.ARRAY,
-
+                type: SwaggerDefinitionConstant.Response.Type.ARRAY
             }
         },
         security: {

@@ -1,7 +1,9 @@
+/* tslint:enable */
+import 'reflect-metadata';
+/* tslint:disable */
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
-import 'reflect-metadata';
 import * as swagger from "swagger-express-ts";
 import TYPES from '../../constant/types';
 import IConfigService from '../config/interface';
