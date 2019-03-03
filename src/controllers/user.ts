@@ -1,6 +1,4 @@
-import {
-    controller, httpDelete, httpGet, httpPost, httpPut
-} from 'inversify-express-utils';
+import { controller, httpDelete, httpGet, httpPost, httpPut } from 'inversify-express-utils';
 import * as errs from 'restify-errors';
 import { ApiOperationGet, ApiOperationPost, ApiPath, SwaggerDefinitionConstant } from 'swagger-express-ts';
 import TYPES from '../constant/types';
@@ -10,7 +8,7 @@ import IUserService from '../services/user/interface';
 @ApiPath({
     name: 'User',
     path: '/users',
-    security: { basicAuth: [] },
+    security: { basicAuth: [] }
 })
 @controller('/users')
 export default class UserController {
@@ -24,14 +22,14 @@ export default class UserController {
             body: {
                 description: 'Register user',
                 model: 'User',
-                required: true,
-            },
+                required: true
+            }
         },
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' },
+            400: { description: 'Parameters fail' }
         },
-        summary: 'Post new version',
+        summary: 'Post new version'
     })
     @httpPost('/login')
     private async login(req, res, next) {
@@ -52,14 +50,14 @@ export default class UserController {
             body: {
                 description: 'User',
                 model: 'User',
-                required: true,
-            },
+                required: true
+            }
         },
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' },
+            400: { description: 'Parameters fail' }
         },
-        summary: 'Register new user',
+        summary: 'Register new user'
     })
     @httpPost('/register')
     private async register(req, res, next) {
@@ -67,7 +65,7 @@ export default class UserController {
 
         return this.userService.register({
             email: body.email,
-            name: body.name,
+            name: body.name
         });
     }
 
@@ -77,13 +75,13 @@ export default class UserController {
             200: {
                 description: 'Success',
                 model: 'User',
-                type: SwaggerDefinitionConstant.Response.Type.ARRAY,
-            },
+                type: SwaggerDefinitionConstant.Response.Type.ARRAY
+            }
         },
         security: {
-            apiKeyHeader: [],
+            apiKeyHeader: []
         },
-        summary: 'Get user prrofile',
+        summary: 'Get user prrofile'
     })
     @httpGet('/profile')
     private async profile(req) {

@@ -42,13 +42,13 @@ export default class MailerService implements IMailerService {
 
         if (process.env.NODE_ENV === 'test') {
             this.tranport = {
-                sendMailAsync: Promise.resolve(),
+                sendMailAsync: Promise.resolve()
             };
         } else {
-            this.tranport = promisifyAll(
-                nodemailer.createTransport(this.config.transport_options)
-            );
+            this.tranport = promisifyAll(nodemailer.createTransport(this.config.transport_options));
         }
+
+        const t = 67;
     }
 
     /**
@@ -65,7 +65,7 @@ export default class MailerService implements IMailerService {
                 from: this.config.from,
                 html: template.body,
                 subject: template.subject,
-                to: email,
+                to: email
             };
 
             const response = await this.tranport.sendMailAsync(mailOptions);
@@ -89,7 +89,7 @@ export default class MailerService implements IMailerService {
 
             return {
                 body: handlebars.compile(bodyTemplate.toString())({ ...data }),
-                subject: handlebars.compile(subjectTemplate.toString())({ ...data }),
+                subject: handlebars.compile(subjectTemplate.toString())({ ...data })
             };
         } catch (err) {
             this.logger.error('An error occured during mail send', err);

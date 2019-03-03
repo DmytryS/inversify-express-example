@@ -1,6 +1,6 @@
 import { ModelType } from 'typegoose';
 
-export default interface IAction  {
+export default interface IAction {
     id?: string;
     userId: string;
     type: string;

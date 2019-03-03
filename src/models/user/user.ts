@@ -1,12 +1,6 @@
 import bcrypt from 'bcrypt';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
-import {
-    instanceMethod,
-    InstanceType,
-    ModelType,
-    prop,
-    Typegoose
-} from 'typegoose';
+import { instanceMethod, InstanceType, ModelType, prop, Typegoose } from 'typegoose';
 import TYPES from '../../constant/types';
 import IConfigService from '../../libs/config/interface';
 import { inject, provide } from '../../libs/ioc/ioc';
@@ -17,21 +11,21 @@ export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
 
 @ApiModel({
     description: 'User description',
-    name: 'User',
+    name: 'User'
 })
 class User extends Typegoose implements ModelType<IUser> {
     @prop()
     @ApiModelProperty({
         description: 'Id of user',
         example: ['5c766d614e86ea27c61cf82a'],
-        required: true,
+        required: true
     })
     public name: string;
     @prop()
     @ApiModelProperty({
         description: 'Email of user',
         example: ['some@mail.com'],
-        required: true,
+        required: true
     })
     public email: string;
     @prop()
@@ -40,14 +34,14 @@ class User extends Typegoose implements ModelType<IUser> {
     @ApiModelProperty({
         description: 'Type of user',
         example: ['DRIVER', 'RIDER', 'ADMIN'],
-        required: true,
+        required: true
     })
     public type: type;
     @prop()
     @ApiModelProperty({
         description: 'Status of user',
         example: ['ACTIVE', 'PENDING'],
-        required: true,
+        required: true
     })
     public status: status;
 
@@ -57,10 +51,7 @@ class User extends Typegoose implements ModelType<IUser> {
      * @returns {Promise<Boolean>} promise which will be resolved when password compared
      */
     @instanceMethod
-    public async isValidPassword(
-        this: InstanceType<User> & typeof User,
-        candidatePassword: string
-    ) {
+    public async isValidPassword(this: InstanceType<User> & typeof User, candidatePassword: string) {
         if (!candidatePassword) {
             return false;
         }
@@ -76,10 +67,7 @@ class User extends Typegoose implements ModelType<IUser> {
      * @returns {Promise<>} promise which will be resolved when password set
      */
     @instanceMethod
-    public async setPassword(
-        this: InstanceType<User> & typeof User,
-        password: string
-    ) {
+    public async setPassword(this: InstanceType<User> & typeof User, password: string) {
         this.passwordHash = password ? await bcrypt.hash(password, this._config.saltRounds) : undefined;
 
         return this.save();
@@ -92,9 +80,7 @@ export default class UserRepository {
     public User;
     private config;
 
-    constructor(
-        @inject(TYPES.ConfigServie) configService: IConfigService
-    ) {
+    constructor(@inject(TYPES.ConfigServie) configService: IConfigService) {
         this.config = configService.get('AUTH');
 
         this.User = new User().getModelForClass(User);

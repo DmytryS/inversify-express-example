@@ -1,19 +1,18 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint:latest",
-        "tslint-config-prettier",
-        "tslint-config-airbnb"
-    ],
-    "jsRules": {},
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules"],
+    "extends": ["tslint:latest", "tslint-config-prettier"],
+    "plugins": ["prettier"],
     "rules": {
-        "quotemark": [
+        "prettier": [
             true,
-            "single"
-        ],
-        "trailing-comma": [
-            false
+            {
+                "printWidth": 120,
+                "singleQuote": true,
+                "semi": true,
+                "trailingComma": "none",
+                "tabWidth": 4
+            }
         ]
-    },
-    "rulesDirectory": []
+    }
 }

@@ -26,39 +26,31 @@ export default class UserService implements IUserService {
 
     public async login(email: string, password: string) {
         const user = await this.userRepository.User.findOne({
-            email,
+            email
         });
         return {
             success: true,
-            token: jwt.sign(
-                user,
-                this.config.AUTH.secret,
-                {
-                    expiresIn: this.config.AUTH.expiresIn,
-                }
-            ),
+            token: jwt.sign(user, this.config.AUTH.secret, {
+                expiresIn: this.config.AUTH.expiresIn
+            })
         };
     }
 
     public async register(data: IUserModel) {
         const newUser = await new this.userRepository.User({
             ...data,
-            type: 'DRIVER',
+            type: 'DRIVER'
         });
         const action = await new this.actionRepository.Action({
             status: 'ACTIVE',
             type: 'REGISTER',
-            userId: newUser.id,
+            userId: newUser.id
         });
 
-        await this.mailerService.send(
-            newUser.email,
-            'REGISTER',
-            {
-                actionId: action.id,
-                uiUrl: this.config.SERVER.uiUrl,
-            }
-        );
+        await this.mailerService.send(newUser.email, 'REGISTER', {
+            actionId: action.id,
+            uiUrl: this.config.SERVER.uiUrl
+        });
         return newUser;
     }
 

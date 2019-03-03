@@ -10,9 +10,7 @@ import { ILoggerService } from './interface';
 export default class LoggerService implements ILoggerService {
     private config;
 
-    constructor(
-        @inject(TYPES.ConfigServie) configService: IConfigService
-    ) {
+    constructor(@inject(TYPES.ConfigServie) configService: IConfigService) {
         this.config = configService.get('LOGGER');
 
         this._setupLogger();
@@ -33,14 +31,14 @@ export default class LoggerService implements ILoggerService {
             file: {
                 filename: path.join(pathToFile, this.config.fileName),
                 timezoneOffset: 0,
-                type: 'file',
-            },
+                type: 'file'
+            }
         };
         const categories = {
             default: {
                 appenders: ['file'],
-                level: 'error',
-            },
+                level: 'error'
+            }
         };
 
         if (process.env.NODE_ENV !== 'production') {
@@ -51,5 +49,4 @@ export default class LoggerService implements ILoggerService {
 
         log4js.configure({ categories, appenders });
     }
-
 }

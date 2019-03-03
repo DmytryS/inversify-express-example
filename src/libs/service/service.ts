@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
-import * as swagger from "swagger-express-ts";
+import * as swagger from 'swagger-express-ts';
 import TYPES from '../../constant/types';
 import IConfigService from '../config/interface';
 import IDatabaseService from '../database/interface';
@@ -32,7 +32,7 @@ export default class Service {
         const server = new InversifyExpressServer(container, false, {
             rootPath: this.config.get('SERVER').baseUrl
         });
-        server.setConfig((app) => {
+        server.setConfig(app => {
             // app.use(bodyParser.urlencoded({
             //     extended: true
             // }));
@@ -41,41 +41,37 @@ export default class Service {
             app.use('/api-docs/swagger', express.static('swagger'));
             app.use('/api-docs/swagger/assets', express.static('node_modules/swagger-ui-dist'));
             app.use(bodyParser.json());
-            app.use(swagger.express(
-                {
+            app.use(
+                swagger.express({
                     definition: {
                         externalDocs: {
-                            url: "My url"
+                            url: 'My url'
                         },
                         info: {
-                            title: "My api",
-                            version: "1.0"
+                            title: 'My api',
+                            version: '1.0'
                         }
                         // Models can be defined here
                     }
-                }
-            ));
+                })
+            );
         });
 
         server.setErrorConfig((app: any) => {
             app.use((err: Error, request: express.Request, response: express.Response, next: express.NextFunction) => {
                 this.logger.error(err.stack);
-                response.status(500).send("Something broke!");
+                response.status(500).send('Something broke!');
             });
         });
 
         const port = this.config.get('SERVER').port;
         // const app = ;
-        this.app = server.build().listen(
-            port,
-            () => this.logger.info(`Server started on *:${port}`)
-        );
+        this.app = server.build().listen(port, () => this.logger.info(`Server started on *:${port}`));
 
-
-        process.on('uncaughtException', (err) => {
+        process.on('uncaughtException', err => {
             this.logger.error('Unhandled exception', err);
         });
-        process.on('unhandledRejection', (err) => {
+        process.on('unhandledRejection', err => {
             this.logger.error('Unhandled rejection', err);
         });
         process.on('SIGTERM', async () => {
