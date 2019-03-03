@@ -6,7 +6,7 @@ import * as nodemailer from 'nodemailer';
 import * as path from 'path';
 import * as Errs from 'restify-errors';
 import TYPES from '../../constant/types';
-import IConfigService from '../config/interface'
+import IConfigService from '../config/interface';
 import { inject, ProvideSingleton } from '../ioc/ioc';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IMailerService from './interface';
@@ -14,7 +14,10 @@ import IMailerService from './interface';
 const readFile = promisify(fs.readFile);
 
 handlebars.registerHelper(layouts(handlebars));
-handlebars.registerPartial('layout', fs.readFileSync(path.join(__dirname, '../../templates/email', 'layout.hbs'), 'utf8'));
+handlebars.registerPartial(
+    'layout',
+    fs.readFileSync(path.join(__dirname, '../../templates/email', 'layout.hbs'), 'utf8')
+);
 
 @ProvideSingleton(TYPES.MailerService)
 /**
@@ -39,7 +42,7 @@ export default class MailerService implements IMailerService {
 
         if (process.env.NODE_ENV === 'test') {
             this.tranport = {
-                sendMailAsync: Promise.resolve()
+                sendMailAsync: Promise.resolve(),
             };
         } else {
             this.tranport = promisifyAll(
@@ -62,7 +65,7 @@ export default class MailerService implements IMailerService {
                 from: this.config.from,
                 html: template.body,
                 subject: template.subject,
-                to: email
+                to: email,
             };
 
             const response = await this.tranport.sendMailAsync(mailOptions);
@@ -77,12 +80,16 @@ export default class MailerService implements IMailerService {
 
     private async _getTemplate(templateName, data) {
         try {
-            const bodyTemplate = await readFile(path.join(__dirname, '../../templates/email', templateName, 'html.hbs'));
-            const subjectTemplate = await readFile(path.join(__dirname, '../../templates/email', templateName, 'subject.hbs'));
+            const bodyTemplate = await readFile(
+                path.join(__dirname, '../../templates/email', templateName, 'html.hbs')
+            );
+            const subjectTemplate = await readFile(
+                path.join(__dirname, '../../templates/email', templateName, 'subject.hbs')
+            );
 
             return {
                 body: handlebars.compile(bodyTemplate.toString())({ ...data }),
-                subject: handlebars.compile(subjectTemplate.toString())({ ...data })
+                subject: handlebars.compile(subjectTemplate.toString())({ ...data }),
             };
         } catch (err) {
             this.logger.error('An error occured during mail send', err);

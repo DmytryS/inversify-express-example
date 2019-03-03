@@ -11,7 +11,7 @@ export default class ConfigService implements IConfigService {
         nconf.file(require.resolve(`../../../config/${process.env.NODE_ENV}.json`));
         nconf.env();
         nconf.defaults({
-            API_PORT: 8080
+            API_PORT: 8080,
         });
         this.config = nconf;
     }

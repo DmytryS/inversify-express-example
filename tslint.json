@@ -1,11 +1,19 @@
 {
+    "defaultSeverity": "error",
     "extends": [
         "tslint:latest",
-        "tslint-config-prettier"
+        "tslint-config-prettier",
+        "tslint-config-airbnb"
     ],
-    "linterOptions": {
-        "exclude": [
-            "node_modules"
+    "jsRules": {},
+    "rules": {
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "trailing-comma": [
+            false
         ]
-    }
+    },
+    "rulesDirectory": []
 }

@@ -11,5 +11,5 @@ export default interface IAction  {
 export type IActionModel = ModelType<IAction>;
 
 export interface IActionRepository {
-    Action: IActionModel
+    Action: IActionModel;
 }

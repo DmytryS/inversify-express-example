@@ -1,8 +1,8 @@
 import * as jwt from 'jsonwebtoken';
 import TYPES from '../../constant/types';
 import IConfig from '../../libs/config/interface';
-import { inject, ProvideSingleton } from '../../libs/ioc/ioc'
-import IMailerService from '../../libs/mailer/interface'
+import { inject, ProvideSingleton } from '../../libs/ioc/ioc';
+import IMailerService from '../../libs/mailer/interface';
 import { IActionRepository } from '../../models/action/interface';
 import { IUserModel, IUserRepository } from '../../models/user/interface';
 import IUserService from './interface';
@@ -26,7 +26,7 @@ export default class UserService implements IUserService {
 
     public async login(email: string, password: string) {
         const user = await this.userRepository.User.findOne({
-            email
+            email,
         });
         return {
             success: true,
@@ -34,21 +34,21 @@ export default class UserService implements IUserService {
                 user,
                 this.config.AUTH.secret,
                 {
-                    expiresIn: this.config.AUTH.expiresIn
+                    expiresIn: this.config.AUTH.expiresIn,
                 }
-            )
-        }
+            ),
+        };
     }
 
     public async register(data: IUserModel) {
         const newUser = await new this.userRepository.User({
             ...data,
-            type: 'DRIVER'
+            type: 'DRIVER',
         });
         const action = await new this.actionRepository.Action({
             status: 'ACTIVE',
             type: 'REGISTER',
-            userId: newUser.id
+            userId: newUser.id,
         });
 
         await this.mailerService.send(
@@ -56,7 +56,7 @@ export default class UserService implements IUserService {
             'REGISTER',
             {
                 actionId: action.id,
-                uiUrl: this.config.SERVER.uiUrl
+                uiUrl: this.config.SERVER.uiUrl,
             }
         );
         return newUser;

@@ -36,11 +36,11 @@ export default class AuthService implements IAuthService {
             `jwt`,
             { session: false },
             (err, user, info) => {
-                if(err) {
+                if (err) {
                     next(new errs.UnauthorizedError(err.message ? err.message : err));
                 }
 
-                if(!user) {
+                if (!user) {
                     next(new errs.UnauthorizedError(info));
                 }
 
@@ -58,14 +58,14 @@ export default class AuthService implements IAuthService {
                 'local',
                 { session: false },
                 (err, user) => {
-                    if(err) {
-                        reject(new new errs.UnauthorizedError(err.message ? err.message : err));
+                    if (err) {
+                        reject(new errs.UnauthorizedError(err.message ? err.message : err));
                     } else {
                         resolve(user);
                     }
                 }
             )(req)
-        )
+        );
     }
 
     private applyJWTstrategy() {
@@ -73,7 +73,7 @@ export default class AuthService implements IAuthService {
             {
                 jwtFromRequest: ExtractJwt.fromHeader('authorization'),
                 secretOrKey: this.config.secret,
-                session: false
+                session: false,
             },
             async (token, done) => {
                 if (!token || !token.id) {
@@ -97,7 +97,7 @@ export default class AuthService implements IAuthService {
                 passReqToCallback: true,
                 passwordField: 'password',
                 session: false,
-                usernameField: 'email'
+                usernameField: 'email',
             },
             async (req, email, password, done) => {
                 try {
@@ -107,7 +107,7 @@ export default class AuthService implements IAuthService {
                     const { userType } = req.body;
                     const user = await this.userRepository.User.findOne({
                         email,
-                        type: userType
+                        type: userType,
                     });
 
                     // if (!user || !(await user.isValidPassword(password))) {

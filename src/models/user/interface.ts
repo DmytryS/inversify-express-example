@@ -15,5 +15,5 @@ export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
 export type IUserModel = ModelType<IUser>;
 
 export interface IUserRepository {
-    User: IUserModel
+    User: IUserModel;
 }

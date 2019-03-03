@@ -1,8 +1,8 @@
 import * as err from 'restify-errors';
 import TYPES from '../../constant/types';
 import IConfig from '../../libs/config/interface';
-import { inject, ProvideSingleton } from '../../libs/ioc/ioc'
-import IMailerService from '../../libs/mailer/interface'
+import { inject, ProvideSingleton } from '../../libs/ioc/ioc';
+import IMailerService from '../../libs/mailer/interface';
 import { IActionRepository } from '../../models/action/interface';
 import { IUserRepository } from '../../models/user/interface';
 import IActionService from './interface';
@@ -46,8 +46,6 @@ export default class ActionService implements IActionService {
         if (!user) {
             throw new err.NotFoundError(`User with id of ${action.userId}`);
         }
-
-
 
         switch (action.type) {
             case 'REGISTER':

@@ -33,14 +33,14 @@ export default class LoggerService implements ILoggerService {
             file: {
                 filename: path.join(pathToFile, this.config.fileName),
                 timezoneOffset: 0,
-                type: 'file'
-            }
+                type: 'file',
+            },
         };
         const categories = {
             default: {
                 appenders: ['file'],
-                level: 'error'
-            }
+                level: 'error',
+            },
         };
 
         if (process.env.NODE_ENV !== 'production') {

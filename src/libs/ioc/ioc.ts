@@ -19,7 +19,6 @@ type Identifier = string | symbol | interfaces.Newable<any> | interfaces.Abstrac
 
 const container = new Container();
 
-
 // const fluentProvider = makeFluentProvideDecorator(iocContainer);
 
 const ProvideNamed = (identifier: Identifier, name: string) => fluentProvide(identifier).whenTargetNamed(name).done();

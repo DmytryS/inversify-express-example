@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import TYPES from '../../constant/types';
-import IConfigService from '../config/interface'
+import IConfigService from '../config/interface';
 import { inject, ProvideSingleton } from '../ioc/ioc';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IDatabaseService from './interface';
@@ -23,13 +23,13 @@ export default class DatabaseService implements IDatabaseService {
      * Connects to the database
      * @return {Promise} promise to connect to database
      */
-    public async connect(){
+    public async connect() {
         this.db = await mongoose.connect(
             this.config.url,
             {
                 useCreateIndex: true,
                 useFindAndModify: false,
-                useNewUrlParser: true
+                useNewUrlParser: true,
             }
         );
       }

@@ -17,21 +17,21 @@ export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
 
 @ApiModel({
     description: 'User description',
-    name: 'User'
+    name: 'User',
 })
 class User extends Typegoose implements ModelType<IUser> {
     @prop()
     @ApiModelProperty({
         description: 'Id of user',
         example: ['5c766d614e86ea27c61cf82a'],
-        required: true
+        required: true,
     })
     public name: string;
     @prop()
     @ApiModelProperty({
         description: 'Email of user',
         example: ['some@mail.com'],
-        required: true
+        required: true,
     })
     public email: string;
     @prop()
@@ -40,14 +40,14 @@ class User extends Typegoose implements ModelType<IUser> {
     @ApiModelProperty({
         description: 'Type of user',
         example: ['DRIVER', 'RIDER', 'ADMIN'],
-        required: true
+        required: true,
     })
     public type: type;
     @prop()
     @ApiModelProperty({
         description: 'Status of user',
         example: ['ACTIVE', 'PENDING'],
-        required: true
+        required: true,
     })
     public status: status;
 

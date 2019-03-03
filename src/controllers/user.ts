@@ -8,15 +8,15 @@ import { inject } from '../libs/ioc/ioc';
 import IUserService from '../services/user/interface';
 
 @ApiPath({
-    name: "User",
-    path: "/users",
-    security: { basicAuth: [] }
+    name: 'User',
+    path: '/users',
+    security: { basicAuth: [] },
 })
 @controller('/users')
 export default class UserController {
     public TAG_NAME: string = 'UserController';
 
-    @inject(TYPES.UserService) private userService: IUserService
+    @inject(TYPES.UserService) private userService: IUserService;
 
     @ApiOperationPost({
         description: 'Post version object login',
@@ -24,14 +24,14 @@ export default class UserController {
             body: {
                 description: 'Register user',
                 model: 'User',
-                required: true
-            }
+                required: true,
+            },
         },
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' }
+            400: { description: 'Parameters fail' },
         },
-        summary: 'Post new version'
+        summary: 'Post new version',
     })
     @httpPost('/login')
     private async login(req, res, next) {
@@ -52,12 +52,12 @@ export default class UserController {
             body: {
                 description: 'User',
                 model: 'User',
-                required: true
-            }
+                required: true,
+            },
         },
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' }
+            400: { description: 'Parameters fail' },
         },
         summary: 'Register new user',
     })
@@ -67,7 +67,7 @@ export default class UserController {
 
         return this.userService.register({
             email: body.email,
-            name: body.name
+            name: body.name,
         });
     }
 
@@ -77,13 +77,13 @@ export default class UserController {
             200: {
                 description: 'Success',
                 model: 'User',
-                type: SwaggerDefinitionConstant.Response.Type.ARRAY
-            }
+                type: SwaggerDefinitionConstant.Response.Type.ARRAY,
+            },
         },
         security: {
-            apiKeyHeader: []
+            apiKeyHeader: [],
         },
-        summary: 'Get user prrofile'
+        summary: 'Get user prrofile',
     })
     @httpGet('/profile')
     private async profile(req) {

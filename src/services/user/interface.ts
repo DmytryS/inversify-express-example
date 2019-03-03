@@ -1,5 +1,5 @@
 export default interface IUserService {
-    login(email: string, password: string): Promise<object>
+    login(email: string, password: string): Promise<object>;
     profile(id: string): Promise<object>;
     register(userData: object): Promise<object>;
     getUsers(): Promise<object[]>;
