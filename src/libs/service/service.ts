@@ -1,14 +1,14 @@
-import 'reflect-metadata';
 import * as bodyParser from 'body-parser';
+import * as express from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
+import 'reflect-metadata';
+import * as swagger from "swagger-express-ts";
 import TYPES from '../../constant/types';
 import IConfigService from '../config/interface';
 import IDatabaseService from '../database/interface';
 import { container, loadServices } from '../ioc/ioc';
 import '../ioc/loader';
 import ILog4js, { ILoggerService } from '../logger/interface';
-import * as express from 'express';
-import * as swagger from "swagger-express-ts";
 
 export default class Service {
     private config;

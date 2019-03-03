@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 import {
     instanceMethod,
     InstanceType,
@@ -10,30 +11,44 @@ import TYPES from '../../constant/types';
 import IConfigService from '../../libs/config/interface';
 import { inject, provide } from '../../libs/ioc/ioc';
 import IUser from './interface';
-import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
 
 export type status = 'ACTIVE' | 'PENDING';
 export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
 
 @ApiModel({
-    description: "Version description",
-    name: "Version"
+    description: 'User description',
+    name: 'User'
 })
 class User extends Typegoose implements ModelType<IUser> {
     @prop()
     @ApiModelProperty({
-        description: "Id of version",
-        required: true,
-        example: ['123456789']
+        description: 'Id of user',
+        example: ['5c766d614e86ea27c61cf82a'],
+        required: true
     })
     public name: string;
     @prop()
+    @ApiModelProperty({
+        description: 'Email of user',
+        example: ['some@mail.com'],
+        required: true
+    })
     public email: string;
     @prop()
     public passwordHash: string;
     @prop()
+    @ApiModelProperty({
+        description: 'Type of user',
+        example: ['DRIVER', 'RIDER', 'ADMIN'],
+        required: true
+    })
     public type: type;
     @prop()
+    @ApiModelProperty({
+        description: 'Status of user',
+        example: ['ACTIVE', 'PENDING'],
+        required: true
+    })
     public status: status;
 
     /**

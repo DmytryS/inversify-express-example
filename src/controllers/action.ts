@@ -2,9 +2,9 @@ import {
     controller, httpGet, httpPost, interfaces
 } from 'inversify-express-utils';
 import {
-    ApiPath,
     ApiOperationGet,
     ApiOperationPost,
+    ApiPath,
     SwaggerDefinitionConstant
 } from 'swagger-express-ts';
 import TYPES from '../constant/types'
@@ -12,8 +12,8 @@ import { inject } from '../libs/ioc/ioc';
 import IActionService from '../services/action/interface';
 
 @ApiPath({
-    path: "/actions",
     name: "Action",
+    path: "/actions",
     security: { basicAuth: [] }
 })
 @controller('/actions')
@@ -24,18 +24,18 @@ export default class ActionController implements interfaces.Controller {
 
     @ApiOperationPost({
         description: 'Get action object',
-        summary: 'Get action',
         parameters: {
             body: {
                 description: 'Register user',
-                required: true,
-                model: 'Action'
+                model: 'Action',
+                required: true
             }
         },
         responses: {
             200: { description: 'Success' },
             400: { description: 'Parameters fail' }
-        }
+        },
+        summary: 'Get action'
     })
     @httpGet('/:id')
     private async getById(req) {
@@ -45,18 +45,18 @@ export default class ActionController implements interfaces.Controller {
 
     @ApiOperationPost({
         description: 'Perform action',
-        summary: 'Perform action',
         parameters: {
             body: {
                 description: 'Action',
-                required: true,
-                model: 'Action'
+                model: 'Action',
+                required: true
             }
         },
         responses: {
             200: { description: 'Success' },
             400: { description: 'Parameters fail' }
-        }
+        },
+        summary: 'Perform action'
     })
     @httpPost('/:id')
     private async putById(req) {
