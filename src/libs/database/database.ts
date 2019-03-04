@@ -24,6 +24,8 @@ export default class DatabaseService implements IDatabaseService {
      * @return {Promise} promise to connect to database
      */
     public async connect() {
+        mongoose.connection.on('connected', this._onDbConnected.bind(this));
+
         this.db = await mongoose.connect(this.config.url, {
             useCreateIndex: true,
             useFindAndModify: false,
@@ -73,7 +75,7 @@ export default class DatabaseService implements IDatabaseService {
         if (err) {
             this.logger.error(err);
         } else {
-            this.logger.debug(`Connected to the ${process.env.NODE_ENV} database`);
+            this.logger.info(`Connected to the ${process.env.NODE_ENV} database`);
         }
     }
 }
