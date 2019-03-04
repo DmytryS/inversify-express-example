@@ -32,7 +32,7 @@ export default class Service {
         const server = new InversifyExpressServer(container, false, {
             rootPath: this.config.get('SERVER').baseUrl
         });
-        server.setConfig(app => {
+        server.setConfig((app) => {
             // app.use(bodyParser.urlencoded({
             //     extended: true
             // }));
@@ -68,10 +68,10 @@ export default class Service {
         // const app = ;
         this.app = server.build().listen(port, () => this.logger.info(`Server started on *:${port}`));
 
-        process.on('uncaughtException', err => {
+        process.on('uncaughtException', (err) => {
             this.logger.error('Unhandled exception', err);
         });
-        process.on('unhandledRejection', err => {
+        process.on('unhandledRejection', (err) => {
             this.logger.error('Unhandled rejection', err);
         });
         process.on('SIGTERM', async () => {

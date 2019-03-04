@@ -24,11 +24,15 @@ export default class DatabaseService implements IDatabaseService {
      * @return {Promise} promise to connect to database
      */
     public async connect() {
-        this.db = await mongoose.connect(this.config.url, {
-            useCreateIndex: true,
-            useFindAndModify: false,
-            useNewUrlParser: true
-        });
+        this.db = await mongoose.connect(
+            this.config.url,
+            {
+                useCreateIndex: true,
+                useFindAndModify: false,
+                useNewUrlParser: true
+            },
+            this._onDbConnected.bind(this)
+        );
     }
 
     /**
@@ -37,7 +41,7 @@ export default class DatabaseService implements IDatabaseService {
      */
     public close() {
         return new Promise((resolve, reject) => {
-            this.db.close(err => {
+            this.db.close((err) => {
                 if (err) {
                     this.logger.error('An error occured during closing db connection', err);
                     reject(err);
@@ -58,7 +62,7 @@ export default class DatabaseService implements IDatabaseService {
         }
 
         return new Promise((res, rej) => {
-            this.db.dropDatabase(err => {
+            this.db.dropDatabase((err) => {
                 this.logger.info('Cleared DB');
                 if (err) {
                     this.logger.error(err);

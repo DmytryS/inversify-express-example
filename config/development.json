@@ -13,9 +13,9 @@
         "fileName": "delivery-be.log"
     },
     "AUTH": {
-      "secret": "43BF1F678DD0675D28076230D1BF9B18",
-      "expiresIn": "365d",
-      "saltRounds": 3
+        "secret": "43BF1F678DD0675D28076230D1BF9B18",
+        "expiresIn": "365d",
+        "saltRounds": 3
     },
     "MAIL": {
         "from": "shvajka.work@gmail.com",

@@ -1,23 +1,14 @@
 {
-  "compilerOptions": {
-    "outDir": "build",
-    "target": "es6",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "types": [
-      "reflect-metadata",
-      "swagger-express-ts",
-      "node"
-    ],
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "typings"
-  ]
+    "compilerOptions": {
+        "outDir": "build",
+        "target": "es6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "types": ["reflect-metadata", "swagger-express-ts", "node"]
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "typings"]
 }

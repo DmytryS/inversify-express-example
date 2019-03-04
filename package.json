@@ -1,63 +1,67 @@
 {
-  "name": "inversify-hapi-example",
-  "version": "1.0.0",
-  "description": "",
-  "license": "MIT",
-  "repository": {
-    "url": "https://github.com/inversify/inversify-code-samples.git"
-  },
-  "author": "Dmytry Shvaika",
-  "keywords": [
-    "typescript",
-    "project structure",
-    "gulp",
-    "nodejs"
-  ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\"",
-    "build": "tsc",
-    "dev": "NODE_ENV=development node -r ts-node/register ./src/index.ts",
-    "nodemon": "nodemon",
-    "start": "NODE_ENV=production node ./build/index.js",
-    "tslint": "tslint-config-prettier-check ./tslint.json"
-  },
-  "dependencies": {
-    "bcrypt": "^3.0.4",
-    "bluebird": "^3.5.3",
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "handlebars": "^4.1.0",
-    "handlebars-layouts": "^3.1.4",
-    "inversify": "^5.0.1",
-    "inversify-binding-decorators": "^4.0.0",
-    "inversify-express-utils": "^6.3.2",
-    "jsonwebtoken": "^8.4.0",
-    "log4js": "^4.0.2",
-    "mongoose": "^5.4.13",
-    "nconf": "^0.10.0",
-    "nodemailer": "^5.1.1",
-    "passport": "^0.4.0",
-    "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
-    "reflect-metadata": "^0.1.13",
-    "restify": "^7.7.0",
-    "restify-cors-middleware": "^1.1.1",
-    "restify-errors": "^6.1.1",
-    "swagger-express-ts": "^1.0.1",
-    "swagger-ui-dist": "^3.21.0",
-    "tsc": "^1.20150623.0",
-    "typegoose": "^5.6.0",
-    "typescript": "^3.1.6"
-  },
-  "devDependencies": {
-    "@types/node": "^11.9.4",
-    "nodemon": "^1.18.10",
-    "prettier-tslint": "^0.4.2",
-    "ts-node": "^7.0.1",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-plugin-prettier": "^2.0.1"
-  },
-  "engines": {
-    "node": ">=4.1.1"
-  }
+    "name": "inversify-hapi-example",
+    "version": "1.0.0",
+    "description": "",
+    "license": "MIT",
+    "repository": {
+        "url": "https://github.com/inversify/inversify-code-samples.git"
+    },
+    "author": "Dmytry Shvaika",
+    "keywords": [
+        "typescript",
+        "project structure",
+        "gulp",
+        "nodejs"
+    ],
+    "scripts": {
+        "test": "echo \"Error: no test specified\"",
+        "build": "tsc",
+        "dev": "NODE_ENV=development node -r ts-node/register ./src/index.ts",
+        "nodemon": "nodemon",
+        "start": "NODE_ENV=production node ./build/index.js",
+        "format": "prettier --check 'src/**/*.{ts,json,md, gql}'",
+        "format:fix": "prettier --write 'src/**/*.{ts,json,md,gql}'",
+        "tslint": "tslint -p ./tsconfig.json",
+        "tslint:fix": "tslint --fix --format stylish -p ./tsconfig.json",
+        "lint": "npm run format && npm run tslint",
+        "lint:fix": "npm run format:fix && npm run tslint:fix"
+    },
+    "dependencies": {
+        "bcrypt": "^3.0.4",
+        "bluebird": "^3.5.3",
+        "body-parser": "^1.18.3",
+        "express": "^4.16.4",
+        "handlebars": "^4.1.0",
+        "handlebars-layouts": "^3.1.4",
+        "inversify": "^5.0.1",
+        "inversify-binding-decorators": "^4.0.0",
+        "inversify-express-utils": "^6.3.2",
+        "jsonwebtoken": "^8.4.0",
+        "log4js": "^4.0.2",
+        "mongoose": "^5.4.13",
+        "nconf": "^0.10.0",
+        "nodemailer": "^5.1.1",
+        "passport": "^0.4.0",
+        "passport-jwt": "^4.0.0",
+        "passport-local": "^1.0.0",
+        "reflect-metadata": "^0.1.13",
+        "restify": "^7.7.0",
+        "restify-cors-middleware": "^1.1.1",
+        "restify-errors": "^6.1.1",
+        "swagger-express-ts": "^1.0.1",
+        "swagger-ui-dist": "^3.21.0",
+        "tsc": "^1.20150623.0",
+        "typegoose": "^5.6.0",
+        "typescript": "^3.1.6"
+    },
+    "devDependencies": {
+        "@types/node": "^11.9.4",
+        "nodemon": "^1.18.10",
+        "prettier": "^1.16.4",
+        "ts-node": "^7.0.1",
+        "tslint": "^5.13.1"
+    },
+    "engines": {
+        "node": ">=4.1.1"
+    }
 }
