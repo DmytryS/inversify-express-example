@@ -14,7 +14,7 @@
     },
     "AUTH": {
         "secret": "43BF1F678DD0675D28076230D1BF9B18",
-        "expiresIn": "365d",
+        "expiresIn": "10d",
         "saltRounds": 3
     },
     "MAIL": {

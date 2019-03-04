@@ -1,8 +1,10 @@
 import * as express from 'express';
+import * as jwt from 'jsonwebtoken';
+import * as moment from 'moment';
 import * as passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
-import * as errs from 'restify-errors';
+import { InvalidArgumentError, UnauthorizedError } from 'restify-errors';
 import TYPES from '../../constant/types';
 import { IUserRepository } from '../../models/user/interface';
 import IConfigService from '../config/interface';
@@ -32,11 +34,11 @@ export default class AuthService implements IAuthService {
     public async authenticateJwt(req: express.Request, res: express.Response, next: express.NextFunction) {
         this.passport.authenticate('jwt', { session: false }, (err, user, info) => {
             if (err) {
-                next(new errs.UnauthorizedError(err.message ? err.message : err));
+                next(new UnauthorizedError(err.message ? err.message : err));
             }
 
             if (!user) {
-                next(new errs.UnauthorizedError(info));
+                next(new UnauthorizedError(info));
             }
 
             // tslint:disable-next-line
@@ -45,16 +47,42 @@ export default class AuthService implements IAuthService {
         })(req, res, next);
     }
 
-    public async authenticateCredentials(req: express.Request, res: express.Response) {
-        // return new Promise((resolve, reject) =>
-        this.passport.authenticate('local', { session: false }, (err, user) => {
-            if (err) {
-                res.status(401).json(new errs.UnauthorizedError(err.message ? err.message : err));
-            } else {
-                res.json(user);
-            }
-        })(req, res);
-        // );
+    public async authenticateCredentials(req: express.Request) {
+        return new Promise((resolve, reject) =>
+            this.passport.authenticate('local', { session: false }, async (err, user) => {
+                try {
+                    if (err) {
+                        throw err;
+                    }
+
+                    if (user) {
+                        const existingUser = await this.userRepository.User.findById(user._id);
+                        if (existingUser && existingUser.status === 'BANNED') {
+                            throw new UnauthorizedError(
+                                'Your account has been banned. Please contact system administrator'
+                            );
+                        }
+                    }
+
+                    user = user.toJSON();
+
+                    delete user.__v;
+                    delete user.passwordHash;
+
+                    const expires = moment().add(
+                        parseInt(this.config.expiresIn.slice(0, -1), 10),
+                        this.config.expiresIn.slice(-1)
+                    );
+                    const token = jwt.sign(user, this.config.secret, {
+                        expiresIn: this.config.expiresIn
+                    });
+
+                    resolve({ token, expires });
+                } catch (err) {
+                    reject(err);
+                }
+            })(req)
+        );
     }
 
     private applyJWTstrategy() {
@@ -67,17 +95,19 @@ export default class AuthService implements IAuthService {
                     session: false
                 },
                 async (token, done) => {
-                    if (!token || !token.id) {
-                        done('Wrong token', false);
+                    try {
+                        if (!token || !token.id) {
+                            throw new UnauthorizedError('Wrong token');
+                        }
+
+                        const user = await this.userRepository.User.findById(token.id);
+
+                        if (!user) {
+                            throw new UnauthorizedError('Wrong token');
+                        }
+                    } catch (err) {
+                        done(err, false);
                     }
-
-                    const user = await this.userRepository.User.findById(token.id);
-
-                    if (!user) {
-                        done('Wrong token', false);
-                    }
-
-                    done(false, user);
                 }
             )
         );
@@ -96,7 +126,7 @@ export default class AuthService implements IAuthService {
                 async (req, email, password, done) => {
                     try {
                         if (!req.body.type) {
-                            throw new Error("'userType' field is required");
+                            throw new InvalidArgumentError("'type' field is required");
                         }
                         const { type } = req.body;
                         const user = await this.userRepository.User.findOne({
@@ -104,13 +134,13 @@ export default class AuthService implements IAuthService {
                             type
                         });
 
-                        // if (!user || !(await user.isValidPassword(password))) {
-                        //     done('Wrong email or password', false);
-                        // }
+                        if (!user || !(await user.isValidPassword(password))) {
+                            throw new UnauthorizedError('Wrong email or password');
+                        }
 
                         done(false, user);
                     } catch (err) {
-                        return done(err);
+                        done(err, false);
                     }
                 }
             )

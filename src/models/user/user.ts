@@ -6,8 +6,10 @@ import IConfigService from '../../libs/config/interface';
 import { inject, provide } from '../../libs/ioc/ioc';
 import IUser from './interface';
 
-export type status = 'ACTIVE' | 'PENDING';
+export type status = 'ACTIVE' | 'PENDING' | 'BANNED';
 export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
+
+let config;
 
 @ApiModel({
     description: 'User description',
@@ -74,7 +76,7 @@ class User extends Typegoose implements ModelType<IUser> {
      */
     @instanceMethod
     public async setPassword(this: InstanceType<User> & typeof User, password: string) {
-        this.passwordHash = password ? await bcrypt.hash(password, this.config.saltRounds) : undefined;
+        this.passwordHash = password ? await bcrypt.hash(password, config.saltRounds) : undefined;
 
         return this.save();
     }
@@ -89,7 +91,7 @@ export default class UserRepository {
     constructor(@inject(TYPES.ConfigServie) configService: IConfigService) {
         this.config = configService.get('AUTH');
 
-        User.config = this.config;
+        config = this.config;
 
         this.User = new User().getModelForClass(User);
     }

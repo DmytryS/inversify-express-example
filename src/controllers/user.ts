@@ -25,7 +25,7 @@ export default class UserController {
     @inject(TYPES.AuthService) private authService: IAuthService;
 
     @ApiOperationPost({
-        description: 'User login',
+        description: 'User login with credentials',
         parameters: {
             body: {
                 properties: {
@@ -44,16 +44,19 @@ export default class UserController {
                 }
             }
         },
+        path: '/login',
         responses: {
             200: { description: 'Success' },
             400: { description: 'Parameters fail' }
         },
-        summary: 'Post new version'
+        summary: 'User login'
     })
     @httpPost('/login')
     private async login(req, res, next) {
         try {
-            return await this.authService.authenticateCredentials(req, res);
+            const data = await this.authService.authenticateCredentials(req);
+
+            res.json(data);
         } catch (err) {
             return next(err);
         }
@@ -69,6 +72,10 @@ export default class UserController {
                         type: 'string'
                     },
                     name: {
+                        required: true,
+                        type: 'string'
+                    },
+                    type: {
                         required: true,
                         type: 'string'
                     }
@@ -122,19 +129,19 @@ export default class UserController {
         return this.userService.profile(id);
     }
 
-    @httpDelete('/:id')
-    private async deleteById(req, res) {
-        const { id } = req.params;
-        await this.userService.deleteById(id);
-        res.status(204);
-        res.send();
-    }
+    // @httpDelete('/:id')
+    // private async deleteById(req, res) {
+    //     const { id } = req.params;
+    //     await this.userService.deleteById(id);
+    //     res.status(204);
+    //     res.send();
+    // }
 
-    @httpPut('/:id')
-    private async putById(req) {
-        const { id } = req.params;
-        const { body } = req;
+    // @httpPut('/:id')
+    // private async putById(req) {
+    //     const { id } = req.params;
+    //     const { body } = req;
 
-        return this.userService.updateById(id, body);
-    }
+    //     return this.userService.updateById(id, body);
+    // }
 }

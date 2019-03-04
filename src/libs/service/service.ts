@@ -5,6 +5,7 @@ import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import * as swagger from 'swagger-express-ts';
+import { HttpError } from 'restify-errors';
 import TYPES from '../../constant/types';
 import IConfigService from '../config/interface';
 import IDatabaseService from '../database/interface';
@@ -50,7 +51,8 @@ export default class Service {
                         info: {
                             title: 'My api',
                             version: '1.0'
-                        }
+                        },
+                        basePath: this.config.get('SERVER').baseUrl
                         // Models can be defined here
                     }
                 })
@@ -58,10 +60,23 @@ export default class Service {
         });
 
         server.setErrorConfig((app: any) => {
-            app.use((err: Error, request: express.Request, response: express.Response, next: express.NextFunction) => {
-                this.logger.error(err.stack);
-                response.status(500).send('Something broke!');
-            });
+            app.use(
+                (err: HttpError, request: express.Request, response: express.Response, next: express.NextFunction) => {
+                    this.logger.error(err.stack);
+
+                    const DEFAULT_ERR_MSG = 'An error occured. Please contact system administrator';
+
+                    if (err instanceof HttpError) {
+                        response.status(err.statusCode || 500).json({
+                            message: err.message || DEFAULT_ERR_MSG
+                        });
+                    } else {
+                        response.status(500).json({
+                            message: DEFAULT_ERR_MSG
+                        });
+                    }
+                }
+            );
         });
 
         const port = this.config.get('SERVER').port;

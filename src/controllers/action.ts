@@ -1,5 +1,5 @@
 import { controller, httpGet, httpPost, interfaces } from 'inversify-express-utils';
-import { ApiOperationPost, ApiPath } from 'swagger-express-ts';
+import { ApiOperationGet, ApiOperationPost, ApiPath } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import { inject } from '../libs/ioc/ioc';
 import IActionService from '../services/action/interface';
@@ -15,36 +15,48 @@ export default class ActionController implements interfaces.Controller {
 
     @inject(TYPES.ActionService) private actionService: IActionService;
 
-    @ApiOperationPost({
+    @ApiOperationGet({
         description: 'Get action object',
         parameters: {
-            body: {
-                description: 'Register user',
-                model: 'Action',
-                required: true
+            path: {
+                actioniId: {
+                    description: 'Action id',
+                    required: true
+                }
             }
         },
+        path: '/{actioniId}',
         responses: {
             200: { description: 'Success' },
             400: { description: 'Parameters fail' }
         },
         summary: 'Get action'
     })
-    @httpGet('/:id')
+    @httpGet('/:actioniId')
     private async getById(req) {
-        const { id } = req.params;
-        return this.actionService.getById(id);
+        const { actioniId } = req.params;
+        return this.actionService.getById(actioniId);
     }
 
     @ApiOperationPost({
         description: 'Perform action',
         parameters: {
             body: {
-                description: 'Action',
-                model: 'Action',
-                required: true
+                properties: {
+                    password: {
+                        required: true,
+                        type: 'string'
+                    }
+                }
+            },
+            path: {
+                actioniId: {
+                    description: 'Action id',
+                    required: true
+                }
             }
         },
+        path: '/{actioniId}',
         responses: {
             200: { description: 'Success' },
             400: { description: 'Parameters fail' }
