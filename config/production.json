@@ -1,10 +1,10 @@
 {
     "DB": {
         "type": "mongo",
-        "url": "mongodb://localhost/taskdb"
+        "url": "mongodb://development_user:55x8jjSZwReb38B@ds247027.mlab.com:47027/delivery-group-development"
     },
     "SERVER": {
-        "port": 5000,
+        "port": 3000,
         "baseUrl": "/api/v1",
         "uiUrl": "http://127.0.0.1"
     },

@@ -29,7 +29,7 @@ export default class Service {
     public async start() {
         await this.database.connect();
 
-        const server = new InversifyExpressServer(container, false, {
+        const server = new InversifyExpressServer(container, null, {
             rootPath: this.config.get('SERVER').baseUrl
         });
         server.setConfig((app) => {

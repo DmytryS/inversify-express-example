@@ -24,15 +24,11 @@ export default class DatabaseService implements IDatabaseService {
      * @return {Promise} promise to connect to database
      */
     public async connect() {
-        this.db = await mongoose.connect(
-            this.config.url,
-            {
-                useCreateIndex: true,
-                useFindAndModify: false,
-                useNewUrlParser: true
-            },
-            this._onDbConnected.bind(this)
-        );
+        this.db = await mongoose.connect(this.config.url, {
+            useCreateIndex: true,
+            useFindAndModify: false,
+            useNewUrlParser: true
+        });
     }
 
     /**

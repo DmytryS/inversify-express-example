@@ -14,11 +14,10 @@
         "nodejs"
     ],
     "scripts": {
-        "test": "echo \"Error: no test specified\"",
-        "build": "tsc",
-        "dev": "NODE_ENV=development node -r ts-node/register ./src/index.ts",
-        "nodemon": "nodemon",
         "start": "NODE_ENV=production node ./build/index.js",
+        "dev": "NODE_ENV=development nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' ./src/index.ts",
+        "test": "echo \"Error: no test specified\"",
+        "build": "tsc && cp -r ./src/templates ./build/templates",
         "format": "prettier --check 'src/**/*.{ts,json,md, gql}'",
         "format:fix": "prettier --write 'src/**/*.{ts,json,md,gql}'",
         "tslint": "tslint -p ./tsconfig.json",
@@ -55,6 +54,7 @@
         "typescript": "^3.1.6"
     },
     "devDependencies": {
+        "@types/express": "^4.16.1",
         "@types/node": "^11.9.4",
         "nodemon": "^1.18.10",
         "prettier": "^1.16.4",

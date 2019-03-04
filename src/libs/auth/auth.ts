@@ -1,4 +1,4 @@
-import express from 'express';
+import * as express from 'express';
 import * as passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
@@ -39,7 +39,8 @@ export default class AuthService implements IAuthService {
                 next(new errs.UnauthorizedError(info));
             }
 
-            req.user = user;
+            // tslint:disable-next-line
+            req['user'] = user;
             next();
         })(req, res, next);
     }
@@ -48,7 +49,7 @@ export default class AuthService implements IAuthService {
         // return new Promise((resolve, reject) =>
         this.passport.authenticate('local', { session: false }, (err, user) => {
             if (err) {
-                res.stats(401).json(new errs.UnauthorizedError(err.message ? err.message : err));
+                res.status(401).json(new errs.UnauthorizedError(err.message ? err.message : err));
             } else {
                 res.json(user);
             }
