@@ -9,8 +9,10 @@ import {
 } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import IAuthService from '../libs/auth/interface';
-import { inject } from '../libs/ioc/ioc';
+import { container, inject } from '../libs/ioc/ioc';
 import IUserService from '../services/user/interface';
+
+const authServiceInject = container.get<IAuthService>(TYPES.AuthService);
 
 @ApiPath({
     name: 'User',
@@ -100,22 +102,17 @@ export default class UserController {
     }
 
     @ApiOperationGet({
-        description: 'Get user prrofile object',
+        description: 'Get user profile',
+        parameters: {},
         responses: {
-            200: {
-                description: 'Success',
-                model: 'User',
-                type: SwaggerDefinitionConstant.Response.Type.ARRAY
-            }
+            200: { description: 'Success' },
+            400: { description: 'Parameters fail' }
         },
-        security: {
-            apiKeyHeader: []
-        },
-        summary: 'Get user prrofile'
+        summary: 'Get user prrofile object'
     })
-    @httpGet('/profile')
+    @httpGet('/profile', authServiceInject.authenticateJwt)
     private async profile(req) {
-        return this.userService.profile(req.decoded._id);
+        return this.userService.profile(req.user._id);
     }
 
     @httpGet('/')

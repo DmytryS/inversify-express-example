@@ -22,7 +22,8 @@ class User extends Typegoose implements ModelType<IUser> {
     @ApiModelProperty({
         description: 'Name of user',
         example: ['Name Surname'],
-        required: true
+        required: true,
+        type: 'string'
     })
     public name: string;
 
@@ -30,7 +31,8 @@ class User extends Typegoose implements ModelType<IUser> {
     @ApiModelProperty({
         description: 'Email of user',
         example: ['some@mail.com'],
-        required: true
+        required: true,
+        type: 'string'
     })
     public email: string;
 
@@ -41,7 +43,8 @@ class User extends Typegoose implements ModelType<IUser> {
     @ApiModelProperty({
         description: 'Type of user',
         example: ['DRIVER', 'RIDER', 'ADMIN'],
-        required: true
+        required: true,
+        type: 'string'
     })
     public type: type;
 
@@ -49,7 +52,8 @@ class User extends Typegoose implements ModelType<IUser> {
     @ApiModelProperty({
         description: 'Status of user',
         example: ['ACTIVE', 'PENDING'],
-        required: true
+        required: true,
+        type: 'string'
     })
     public status: status;
 

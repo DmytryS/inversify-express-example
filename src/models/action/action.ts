@@ -16,21 +16,24 @@ class Action extends Typegoose implements ModelType<IAction> {
     @ApiModelProperty({
         description: 'Id of user',
         example: ['5c766d614e86ea27c61cf82a'],
-        required: true
+        required: true,
+        type: 'string'
     })
     public userId: string;
     @prop({ required: true })
     @ApiModelProperty({
         description: 'Action type',
         example: ['REGISTER', 'RESET_PASSWORD'],
-        required: true
+        required: true,
+        type: 'string'
     })
     public type: string;
     @prop({ required: true })
     @ApiModelProperty({
         description: 'Action status',
         example: ['ACTIVE', 'USED'],
-        required: true
+        required: true,
+        type: 'string'
     })
     public status: string;
 
