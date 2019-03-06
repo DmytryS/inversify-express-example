@@ -52,6 +52,13 @@ export default class Service {
                             title: 'My api',
                             version: '1.0'
                         },
+                        securityDefinitions: {
+                            apiKeyHeader: {
+                                type: swagger.SwaggerDefinitionConstant.Security.Type.API_KEY,
+                                in: swagger.SwaggerDefinitionConstant.Security.In.HEADER,
+                                name: 'Authorization'
+                            }
+                        },
                         basePath: this.config.get('SERVER').baseUrl
                         // Models can be defined here
                     }

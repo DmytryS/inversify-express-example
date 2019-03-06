@@ -9,10 +9,10 @@ import {
 } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import IAuthService from '../libs/auth/interface';
-import { container, inject } from '../libs/ioc/ioc';
+import { inject } from '../libs/ioc/ioc';
 import IUserService from '../services/user/interface';
 
-const authServiceInject = container.get<IAuthService>(TYPES.AuthService);
+let auth;
 
 @ApiPath({
     name: 'User',
@@ -23,8 +23,12 @@ const authServiceInject = container.get<IAuthService>(TYPES.AuthService);
 export default class UserController {
     public TAG_NAME: string = 'UserController';
 
-    @inject(TYPES.UserService) private userService: IUserService;
-    @inject(TYPES.AuthService) private authService: IAuthService;
+    constructor(
+        @inject(TYPES.UserService) private userService: IUserService,
+        @inject(TYPES.AuthService) private authService: IAuthService
+    ) {
+        auth = this.authService;
+    }
 
     @ApiOperationPost({
         description: 'User login with credentials',
@@ -64,67 +68,71 @@ export default class UserController {
         }
     }
 
-    @ApiOperationPut({
-        description: 'Register new user',
-        parameters: {
-            body: {
-                properties: {
-                    email: {
-                        required: true,
-                        type: 'string'
-                    },
-                    name: {
-                        required: true,
-                        type: 'string'
-                    },
-                    type: {
-                        required: true,
-                        type: 'string'
-                    }
-                }
-            }
-        },
-        responses: {
-            200: { description: 'Success' },
-            400: { description: 'Parameters fail' }
-        },
-        summary: 'Register new user'
-    })
-    @httpPut('/')
-    private async register(req, res, next) {
-        const { email, name, type } = req.body;
+    // @ApiOperationPut({
+    //     description: 'Register new user',
+    //     parameters: {
+    //         body: {
+    //             properties: {
+    //                 email: {
+    //                     required: true,
+    //                     type: 'string'
+    //                 },
+    //                 name: {
+    //                     required: true,
+    //                     type: 'string'
+    //                 },
+    //                 type: {
+    //                     required: true,
+    //                     type: 'string'
+    //                 }
+    //             }
+    //         }
+    //     },
+    //     responses: {
+    //         200: { description: 'Success' },
+    //         400: { description: 'Parameters fail' }
+    //     },
+    //     summary: 'Register new user'
+    // })
+    // @httpPut('/')
+    // private async register(req, res, next) {
+    //     const { email, name, type } = req.body;
 
-        return this.userService.register({
-            email,
-            name,
-            type
-        });
-    }
+    //     return this.userService.register({
+    //         email,
+    //         name,
+    //         type
+    //     });
+    // }
 
     @ApiOperationGet({
         description: 'Get user profile',
         parameters: {},
+        path: '/profile',
         responses: {
             200: { description: 'Success' },
             400: { description: 'Parameters fail' }
         },
+        security: {
+            apiKeyHeader: ['Authorize']
+        },
         summary: 'Get user prrofile object'
     })
-    @httpGet('/profile', authServiceInject.authenticateJwt)
+    @httpGet('/profile', TYPES.ActionService)
     private async profile(req) {
         return this.userService.profile(req.user._id);
     }
 
-    @httpGet('/')
-    private async getUsers() {
-        return this.userService.getUsers();
-    }
+    // @httpGet('/')
+    // private async getUsers() {
+    //     return this.userService.getUsers();
+    // }
 
-    @httpGet('/:id')
-    private async getById(req) {
-        const { id } = req.params;
-        return this.userService.profile(id);
-    }
+    // @httpGet('/:id')
+    // private async getById(req) {
+    //     const { id } = req.params;
+    //     return this.userService.profile(id);
+    // }
 
     // @httpDelete('/:id')
     // private async deleteById(req, res) {

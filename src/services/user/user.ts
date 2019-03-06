@@ -90,7 +90,7 @@ export default class UserService implements IUserService {
     }
 
     public async getUsers() {
-        return this.userRepository.User.findAll();
+        return this.userRepository.User.findA({});
     }
 
     public async deleteById(id: string) {

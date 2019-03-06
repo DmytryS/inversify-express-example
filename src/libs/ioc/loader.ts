@@ -1,10 +1,11 @@
-import '../auth/auth';
-import '../database/database';
 import '../config/configuration';
 import '../logger/logger';
+import '../auth/auth';
+import '../database/database';
 import '../mailer/mailer';
-import '../../controllers/action';
-import '../../controllers/user';
 import '../../models/action/action';
 import '../../models/user/user';
 import '../../services/action/action';
+import '../../services/user/user';
+import '../../controllers/action';
+import '../../controllers/user';

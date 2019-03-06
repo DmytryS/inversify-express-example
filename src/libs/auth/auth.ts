@@ -90,9 +90,8 @@ export default class AuthService implements IAuthService {
             'jwt',
             new JwtStrategy(
                 {
-                    jwtFromRequest: ExtractJwt.fromHeader('authorization'),
-                    secretOrKey: this.config.secret,
-                    session: false
+                    jwtFromRequest: ExtractJwt.fromHeader('Authorization'),
+                    secretOrKey: this.config.secret
                 },
                 async (token, done) => {
                     try {
