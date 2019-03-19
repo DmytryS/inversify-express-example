@@ -107,4 +107,16 @@ export default class Service {
         await this.database.close();
         this.logger.info('Server stopped');
     }
+
+    public async clearDb() {
+        if (process.env.NODE_ENV !== 'test') {
+            throw new Error('Will not drop collection until in test env');
+        }
+
+        await this.database.clear();
+    }
+
+    get server() {
+        return this.app;
+    }
 }
