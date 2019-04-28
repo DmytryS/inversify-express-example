@@ -33,7 +33,7 @@ export default class ActionController implements interfaces.Controller {
         summary: 'Get action'
     })
     @httpGet('/:actioniId')
-    private async getById(req) {
+    public async getById(req) {
         const { actioniId } = req.params;
         return this.actionService.getById(actioniId);
     }
@@ -64,7 +64,7 @@ export default class ActionController implements interfaces.Controller {
         summary: 'Perform action'
     })
     @httpPost('/:id')
-    private async putById(req) {
+    public async putById(req) {
         const {
             body,
             params: { id: actionId }

@@ -1,20 +1,20 @@
 {
     "DB": {
         "type": "mongo",
-        "url": "mongodb://localhost/taskdb"
+        "url": "mongodb://test_user:FSeKBJ7fAvmLWm7@ds149146.mlab.com:49146/ioc-boilerplate-test"
     },
     "SERVER": {
-        "port": 5000,
+        "port": 3000,
         "baseUrl": "/api/v1",
         "uiUrl": "http://127.0.0.1"
     },
     "LOGGER": {
         "path": "/logs",
-        "fileName": "delivery-be.log"
+        "fileName": "delivery-be-test.log"
     },
     "AUTH": {
-        "secret": "43BF1F678DD0675D28076230D1BF9B18",
-        "expiresIn": "365d",
+        "secret": "43BF1F678DD0345D12376230D1BF9B12",
+        "expiresIn": "10d",
         "saltRounds": 3
     },
     "MAIL": {

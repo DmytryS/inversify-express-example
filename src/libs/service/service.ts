@@ -19,12 +19,24 @@ export default class Service {
     private database: IDatabaseService;
     private app;
 
-    constructor() {
+    constructor(configuration) {
         loadServices();
+
         this.config = container.get<IConfigService>(TYPES.ConfigServie);
+        if (configuration) {
+            this.config.setConfig(configuration);
+        }
         this.logger = container.get<ILoggerService>(TYPES.LoggerService).getLogger('Main service');
         this.database = container.get<IDatabaseService>(TYPES.DatabaseService);
         this.app = false;
+    }
+
+    /**
+     * Returns express server
+     * @returns {Server} returns express server
+     */
+    get server() {
+        return this.app;
     }
 
     public async start() {
@@ -75,7 +87,8 @@ export default class Service {
 
                     if (err instanceof HttpError) {
                         response.status(err.statusCode || 500).json({
-                            message: err.message || DEFAULT_ERR_MSG
+                            errorMessage: err.message || DEFAULT_ERR_MSG,
+                            status: err.statusCode || 500
                         });
                     } else {
                         response.status(500).json({
@@ -86,9 +99,13 @@ export default class Service {
             );
         });
 
+        const url = process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1' : '*';
         const port = this.config.get('SERVER').port;
-        // const app = ;
-        this.app = server.build().listen(port, () => this.logger.info(`Server started on *:${port}`));
+
+        this.app = server.build().listen(port, () => {
+            this.logger.info(`Server started on ${url}:${port}`);
+            this.logger.info(`Swagger docs started on ${url}:${port}/api-docs/swagger`);
+        });
 
         process.on('uncaughtException', (err) => {
             this.logger.error('Unhandled exception', err);
@@ -106,5 +123,9 @@ export default class Service {
         await this.app.close();
         await this.database.close();
         this.logger.info('Server stopped');
+    }
+
+    public async clearDb() {
+        await this.database.clear();
     }
 }

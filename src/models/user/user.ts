@@ -84,6 +84,17 @@ class User extends Typegoose implements ModelType<IUser> {
 
         return this.save();
     }
+
+    /**
+     * Sets user status to ACTIVE
+     * @returns {Promise<>} promise which will be resolved when password set
+     */
+    @instanceMethod
+    public async activate(this: InstanceType<User> & typeof User) {
+        this.status = 'ACTIVE';
+
+        return this.save();
+    }
 }
 
 @provide(TYPES.UserModel)

@@ -10,7 +10,7 @@
     },
     "LOGGER": {
         "path": "/logs",
-        "fileName": "delivery-be.log"
+        "fileName": "delivery-be-development.log"
     },
     "AUTH": {
         "secret": "43BF1F678DD0675D28076230D1BF9B18",

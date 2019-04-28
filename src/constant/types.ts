@@ -9,5 +9,6 @@ export default {
     MailerService: Symbol('MailerService'),
     Server: Symbol('Server'),
     UserModel: Symbol('UserModel'),
-    UserService: Symbol('UserService')
+    UserService: Symbol('UserService'),
+    ValidatorService: Symbol('ValidatorService')
 };
