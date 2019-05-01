@@ -1,4 +1,4 @@
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import 'chai/register-should';
 import App from '../src/libs/service/service';
 import mailSender from '../src/libs/mailer/mailer';
