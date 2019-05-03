@@ -4,6 +4,7 @@
     "exclude": ["node_modules"],
     "extends": ["tslint:recommended"],
     "rules": {
+        "no-unused-expression": false,
         "no-console": true,
         "no-debugger": true,
         "no-use-before-declare": false,

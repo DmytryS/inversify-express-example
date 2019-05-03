@@ -5,12 +5,12 @@ export default interface IUser {
     name: string;
     email: string;
     passwordHash?: string;
-    type: type;
+    role: userRole;
     status: status;
 }
 
 export type status = 'ACTIVE' | 'PENDING';
-export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
+export type userRole = 'USER' | 'ADMIN';
 
 export type IUserModel = ModelType<IUser>;
 

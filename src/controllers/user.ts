@@ -118,14 +118,14 @@ export default class UserController {
     @httpPut('/')
     public async register(req, res, next) {
         try {
-            const { email, name, type } = this.validatorService.validate(
+            const { email, name, role } = this.validatorService.validate(
                 validator.rules.object().keys({
                     email: validator.rules
                         .string()
                         .email()
                         .required(),
                     name: validator.rules.string().required(),
-                    type: validator.rules
+                    role: validator.rules
                         .string()
                         .valid('USER', 'ADMIN')
                         .default('USER')
@@ -134,14 +134,14 @@ export default class UserController {
                 next
             );
 
-            if (req.user && req.user.type === 'ADMIN' && type === 'ADMIN') {
+            if (role === 'ADMIN' && (!req.user || req.user.role !== 'ADMIN')) {
                 throw new MethodNotAllowedError('Only ADMIN allowed to do that');
             }
 
             const newUser = await this.userService.register({
                 email,
                 name,
-                type
+                role
             });
 
             res.json({

@@ -55,13 +55,8 @@ export default class AuthService implements IAuthService {
                         throw err;
                     }
 
-                    if (user) {
-                        const existingUser = await this.userRepository.User.findById(user._id);
-                        if (existingUser && existingUser.status === 'BANNED') {
-                            throw new UnauthorizedError(
-                                'Your account has been banned. Please contact system administrator'
-                            );
-                        }
+                    if (!user) {
+                        throw new UnauthorizedError('Something went wrong. Please contact system administrator');
                     }
 
                     user = user.toJSON();
@@ -117,24 +112,25 @@ export default class AuthService implements IAuthService {
             'local',
             new LocalStrategy(
                 {
-                    passReqToCallback: true,
+                    // passReqToCallback: true,
                     passwordField: 'password',
                     session: false,
                     usernameField: 'email'
                 },
-                async (req, email, password, done) => {
+                async (email, password, done) => {
                     try {
-                        if (!req.body.type) {
-                            throw new InvalidArgumentError("'type' field is required");
-                        }
-                        const { type } = req.body;
                         const user = await this.userRepository.User.findOne({
-                            email,
-                            type
+                            email
                         });
 
                         if (!user || !(await user.isValidPassword(password))) {
                             throw new UnauthorizedError('Wrong email or password');
+                        }
+
+                        if (user && user.status === 'BANNED') {
+                            throw new UnauthorizedError(
+                                'Your account has been banned. Please contact system administrator'
+                            );
                         }
 
                         done(false, user);

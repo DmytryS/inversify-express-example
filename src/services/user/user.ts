@@ -3,7 +3,7 @@ import TYPES from '../../constant/types';
 import IAuthService from '../../libs/auth/interface';
 import IConfig from '../../libs/config/interface';
 import { inject, ProvideSingleton } from '../../libs/ioc/ioc';
-import IMailerService from '../../libs/mailer/interface';
+import IMailerServiceService from '../../libs/mailer/interface';
 import { IActionRepository } from '../../models/action/interface';
 import { IUserModel, IUserRepository } from '../../models/user/interface';
 import IUserService from './interface';
@@ -14,7 +14,7 @@ export default class UserService implements IUserService {
 
     constructor(
         @inject(TYPES.ConfigServie) configService: IConfig,
-        @inject(TYPES.MailerService) private mailerService: IMailerService,
+        @inject(TYPES.MailerService) private mailerService: IMailerServiceService,
         @inject(TYPES.UserRepository) private userRepository: IUserRepository,
         @inject(TYPES.ActionRepository) private actionRepository: IActionRepository,
         @inject(TYPES.AuthService) private authService: IAuthService
@@ -44,14 +44,13 @@ export default class UserService implements IUserService {
 
     public async register(userObject: IUserModel) {
         let user = await this.userRepository.User.findOne({
-            email: userObject.email,
-            type: userObject.type
+            email: userObject.email
         });
         let action;
 
         if (user) {
             if (user.status === 'ACTIVE') {
-                throw new ConflictError(`${user.type} with email ${user.email} already exists`);
+                throw new ConflictError(`${user.role} with email ${user.email} already exists`);
             } else {
                 if (user.status === 'PENDING') {
                     action = await this.actionRepository.Action.findOne({
@@ -70,8 +69,7 @@ export default class UserService implements IUserService {
         } else {
             user = await new this.userRepository.User({
                 ...userObject,
-                status: 'PENDING',
-                type: 'DRIVER'
+                status: 'PENDING'
             }).save();
 
             action = await new this.actionRepository.Action({

@@ -9,7 +9,7 @@ import TYPES from '../../constant/types';
 import IConfigService from '../config/interface';
 import { inject, ProvideSingleton } from '../ioc/ioc';
 import ILog4js, { ILoggerService } from '../logger/interface';
-import IMailerService from './interface';
+import IMailerServiceService from './interface';
 
 const readFile = promisify(fs.readFile);
 
@@ -23,7 +23,7 @@ handlebars.registerPartial(
 /**
  * Email sender class
  */
-export default class MailerService implements IMailerService {
+export default class MailerService implements IMailerServiceService {
     private config;
     private logger: ILog4js;
     private tranport;
