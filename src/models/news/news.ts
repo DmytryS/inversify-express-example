@@ -19,7 +19,7 @@ class News extends Typegoose implements ModelType<INews> {
     public createdBy: string;
 }
 
-@provide(TYPES.NewsModel)
+@provide(TYPES.NewsRepository)
 // tslint:disable-next-line
 export default class NewsRepository {
     public News;

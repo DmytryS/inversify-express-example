@@ -7,7 +7,7 @@ import { inject, provide } from '../../libs/ioc/ioc';
 import IUser from './interface';
 
 export type status = 'ACTIVE' | 'PENDING' | 'BANNED';
-export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
+export type type = 'USER' | 'ADMIN';
 
 let config;
 
@@ -42,7 +42,7 @@ class User extends Typegoose implements ModelType<IUser> {
     @prop({ required: true })
     @ApiModelProperty({
         description: 'Type of user',
-        example: ['DRIVER', 'RIDER', 'ADMIN'],
+        example: ['USER', 'ADMIN'],
         required: true,
         type: 'string'
     })
@@ -97,7 +97,7 @@ class User extends Typegoose implements ModelType<IUser> {
     }
 }
 
-@provide(TYPES.UserModel)
+@provide(TYPES.UserRepository)
 // tslint:disable-next-line
 export default class UserRepository {
     public User;

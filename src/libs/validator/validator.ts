@@ -1,6 +1,7 @@
 import { inject, ProvideSingleton } from '../ioc/ioc';
 import TYPES from '../../constant/types';
 import * as validator from '@hapi/joi';
+import { InvalidArgumentError } from 'restify-errors';
 
 /**
  * Provides means to validate DTOs and models
@@ -35,10 +36,11 @@ export class Validator {
 
         if (error) {
             const errMsg = error.details.map((detail) => detail.message).join('. ');
+
             if (next) {
-                return next(new Error(errMsg));
+                return next(new InvalidArgumentError(errMsg));
             }
-            throw new Error(errMsg);
+            throw new InvalidArgumentError(errMsg);
         }
 
         return value;

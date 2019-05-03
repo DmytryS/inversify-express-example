@@ -127,10 +127,12 @@ export default class UserController {
                     name: validator.rules.string().required(),
                     type: validator.rules
                         .string()
-                        .valid('DRIVER', 'RIDER', 'ADMIN')
+                        .valid('USER', 'ADMIN')
+                        .default('USER')
                         .required()
                 }),
-                req.body
+                req.body,
+                next
             );
 
             if (req.user && req.user.type === 'ADMIN' && type === 'ADMIN') {

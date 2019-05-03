@@ -15,8 +15,8 @@ export default class UserService implements IUserService {
     constructor(
         @inject(TYPES.ConfigServie) configService: IConfig,
         @inject(TYPES.MailerService) private mailerService: IMailerService,
-        @inject(TYPES.UserModel) private userRepository: IUserRepository,
-        @inject(TYPES.ActionModel) private actionRepository: IActionRepository,
+        @inject(TYPES.UserRepository) private userRepository: IUserRepository,
+        @inject(TYPES.ActionRepository) private actionRepository: IActionRepository,
         @inject(TYPES.AuthService) private authService: IAuthService
     ) {
         this.config = configService.get();

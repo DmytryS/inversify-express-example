@@ -6,7 +6,7 @@
     "SERVER": {
         "port": 3000,
         "baseUrl": "/api/v1",
-        "uiUrl": "http://127.0.0.1"
+        "uiUrl": "http://localhost"
     },
     "LOGGER": {
         "path": "/logs",

@@ -46,36 +46,34 @@ export default class Service {
             rootPath: this.config.get('SERVER').baseUrl
         });
         server.setConfig((app) => {
-            // app.use(bodyParser.urlencoded({
-            //     extended: true
-            // }));
-            // app.use(bodyParser.json());
-
             app.use('/api-docs/swagger', express.static('swagger'));
             app.use('/api-docs/swagger/assets', express.static('node_modules/swagger-ui-dist'));
             app.use(bodyParser.json());
-            app.use(
-                swagger.express({
-                    definition: {
-                        externalDocs: {
-                            url: 'My url'
-                        },
-                        info: {
-                            title: 'My api',
-                            version: '1.0'
-                        },
-                        securityDefinitions: {
-                            apiKeyHeader: {
-                                type: swagger.SwaggerDefinitionConstant.Security.Type.API_KEY,
-                                in: swagger.SwaggerDefinitionConstant.Security.In.HEADER,
-                                name: 'Authorization'
-                            }
-                        },
-                        basePath: this.config.get('SERVER').baseUrl
-                        // Models can be defined here
-                    }
-                })
-            );
+
+            if (process.env.NODE_ENV === 'development') {
+                app.use(
+                    swagger.express({
+                        definition: {
+                            externalDocs: {
+                                url: 'My url'
+                            },
+                            info: {
+                                title: 'My api',
+                                version: '1.0'
+                            },
+                            securityDefinitions: {
+                                apiKeyHeader: {
+                                    type: swagger.SwaggerDefinitionConstant.Security.Type.API_KEY,
+                                    in: swagger.SwaggerDefinitionConstant.Security.In.HEADER,
+                                    name: 'Authorization'
+                                }
+                            },
+                            basePath: this.config.get('SERVER').baseUrl
+                            // Models can be defined here
+                        }
+                    })
+                );
+            }
         });
 
         server.setErrorConfig((app: any) => {
@@ -104,7 +102,9 @@ export default class Service {
 
         this.app = server.build().listen(port, () => {
             this.logger.info(`Server started on ${url}:${port}`);
-            this.logger.info(`Swagger docs started on ${url}:${port}/api-docs/swagger`);
+            if (process.env.NODE_ENV === 'development') {
+                this.logger.info(`Swagger docs started on ${url}:${port}/api-docs/swagger`);
+            }
         });
 
         process.on('uncaughtException', (err) => {
