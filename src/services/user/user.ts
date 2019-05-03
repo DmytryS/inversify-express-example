@@ -1,6 +1,5 @@
-import { ConflictError } from 'restify-errors';
+import { ConflictError, NotFoundError } from 'restify-errors';
 import TYPES from '../../constant/types';
-import IAuthService from '../../libs/auth/interface';
 import IConfig from '../../libs/config/interface';
 import { inject, ProvideSingleton } from '../../libs/ioc/ioc';
 import IMailerServiceService from '../../libs/mailer/interface';
@@ -16,30 +15,9 @@ export default class UserService implements IUserService {
         @inject(TYPES.ConfigServie) configService: IConfig,
         @inject(TYPES.MailerService) private mailerService: IMailerServiceService,
         @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-        @inject(TYPES.ActionRepository) private actionRepository: IActionRepository,
-        @inject(TYPES.AuthService) private authService: IAuthService
+        @inject(TYPES.ActionRepository) private actionRepository: IActionRepository
     ) {
         this.config = configService.get();
-    }
-
-    public async getProfile(id: string) {
-        return this.userRepository.User.findById(id);
-    }
-
-    public async login(email: string, password: string, userType: string) {
-        // const user = await this.userRepository.User.findOne({
-        //   email,
-        //   userType
-        // });
-        // this.authService.authenticateCredentials();
-        // return {
-        //   success: true,
-        //   token: jwt.sign(user, this.config.AUTH.secret, {
-        //     expiresIn: this.config.AUTH.expiresIn
-        //   })
-        // };
-
-        return {};
     }
 
     public async register(userObject: IUserModel) {
@@ -91,11 +69,29 @@ export default class UserService implements IUserService {
         return this.userRepository.User.findA({});
     }
 
+    public async getById(id: string) {
+        const user = await this.checkIfUserExists(id);
+
+        return user;
+    }
+
     public async deleteById(id: string) {
-        return this.userRepository.User.deleteById(id);
+        const user = await this.checkIfUserExists(id);
+
+        return user.remove();
     }
 
     public async updateById(id: string, data: object) {
         return this.userRepository.User.updateById(id, data);
+    }
+
+    private async checkIfUserExists(userId) {
+        const user = await this.userRepository.User.findById(userId);
+
+        if (!user) {
+            throw new NotFoundError(`User with id of ${userId} not found`);
+        }
+
+        return user;
     }
 }

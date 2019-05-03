@@ -4,7 +4,7 @@ import * as moment from 'moment';
 import * as passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { InvalidArgumentError, UnauthorizedError } from 'restify-errors';
+import { InvalidArgumentError, UnauthorizedError, ForbiddenError } from 'restify-errors';
 import TYPES from '../../constant/types';
 import { IUserRepository } from '../../models/user/interface';
 import IConfigService from '../config/interface';
@@ -31,7 +31,7 @@ export default class AuthService implements IAuthService {
         this.applyLocalStrategy();
     }
 
-    public async authenticateJwt(req: express.Request, res: express.Response, next: express.NextFunction) {
+    public async authenticateJwt(req: express.Request, res: express.Response, next: express.NextFunction, role: any) {
         this.passport.authenticate('jwt', { session: false }, (err, user, info) => {
             if (err) {
                 next(new UnauthorizedError(err.message ? err.message : err));
@@ -41,10 +41,21 @@ export default class AuthService implements IAuthService {
                 next(new UnauthorizedError(info));
             }
 
+            if (!Array.isArray(role)) {
+                role = [role];
+            }
+            if (role && role.length > 0 && !role.includes(user.role)) {
+                throw new ForbiddenError();
+            }
+
             // tslint:disable-next-line
             req['user'] = user;
             next();
         })(req, res, next);
+    }
+
+    public async authMiddleware({ role }) {
+        return this.authenticateJwt.bind(this, role);
     }
 
     public async authenticateCredentials(req: express.Request) {

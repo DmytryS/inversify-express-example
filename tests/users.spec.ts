@@ -228,5 +228,64 @@ describe('User service', () => {
 
             sinon.assert.match(response, { token: sinon.match.string, expires: sinon.match.string });
         });
+
+        it('should return 401 error if failed logged in', async () => {
+            const user = await userRepository
+                .User({
+                    email: 'some@email.com',
+                    name: 'Dummy_2',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await user.setPassword('SOME_PASS');
+
+            await request(server)
+                .post('/api/v1/users/login')
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send({ email: 'some@email.com', password: 'SOME_PASS_2' })
+                .expect(401)
+                .end()
+                .get('body');
+        });
+    });
+
+    describe('Profile', () => {
+        it('should return user profile', async () => {
+            const user = await userRepository
+                .User({
+                    email: 'some@email.com',
+                    name: 'Dummy',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await user.setPassword('SOME_PASS');
+
+            const { token } = await authService.authenticateCredentials({
+                body: {
+                    email: 'some@email.com',
+                    password: 'SOME_PASS'
+                }
+            });
+
+            const response = await request(server)
+                .post('/api/v1/users/login')
+                .set('Accept', 'application/json')
+                .set('Authorization', token)
+                .set('Content-Type', 'application/json')
+                .send({ email: 'some@email.com', password: 'SOME_PASS' })
+                .expect(200)
+                .end()
+                .get('body');
+
+            sinon.assert.match(response, {
+                _id: sinon.match.string,
+                role: 'USER'
+            });
+        });
     });
 });

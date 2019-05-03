@@ -16,6 +16,7 @@ import IUserService from '../services/user/interface';
 import IConfigService from '../libs/config/interface';
 import { IUserRepository } from '../models/user/interface';
 import validator from '../libs/validator/validator';
+import { container } from '../libs/ioc/ioc';
 
 @ApiPath({
     name: 'User',
@@ -60,14 +61,8 @@ export default class UserController {
         summary: 'User login'
     })
     @httpPost('/login')
-    public async login(req, res, next) {
-        try {
-            const data = await this.authService.authenticateCredentials(req);
-
-            res.json(data);
-        } catch (err) {
-            return next(err);
-        }
+    public async login(req) {
+        return this.authService.authenticateCredentials(req);
     }
 
     @ApiOperationGet({
@@ -79,19 +74,13 @@ export default class UserController {
             400: { description: 'Parameters fail' }
         },
         security: {
-            apiKeyHeader: ['Authorize']
+            apiKeyHeader: ['Authorization']
         },
-        summary: 'Get user prrofile object'
+        summary: 'Get user profile object'
     })
-    // @httpGet('/profile', TYPES.ActionService)
+    @httpGet('/profile', container.get<IAuthService>(TYPES.AuthService).authMiddleware)
     public async getProfile(req, res, next) {
-        try {
-            const data = await this.userService.getProfile(req.user._id);
-
-            res.json(data);
-        } catch (err) {
-            return next(err);
-        }
+        return this.userService.getById(req.user._id);
     }
 
     @ApiOperationPut({
@@ -122,71 +111,77 @@ export default class UserController {
     })
     @httpPut('/')
     public async register(req, res, next) {
-        try {
-            const { email, name, role } = this.validatorService.validate(
-                validator.rules.object().keys({
-                    email: validator.rules
-                        .string()
-                        .email()
-                        .required(),
-                    name: validator.rules.string().required(),
-                    role: validator.rules
-                        .string()
-                        .valid('USER', 'ADMIN')
-                        .default('USER')
-                }),
-                req.body,
-                next
-            );
+        const { email, name, role } = this.validatorService.validate(
+            validator.rules.object().keys({
+                email: validator.rules
+                    .string()
+                    .email()
+                    .required(),
+                name: validator.rules.string().required(),
+                role: validator.rules
+                    .string()
+                    .valid('USER', 'ADMIN')
+                    .default('USER')
+            }),
+            req.body,
+            next
+        );
 
-            if (role === 'ADMIN') {
-                let isAdmin = false;
-                const token = req.header('Authorization');
-                if (token) {
-                    try {
-                        const decodedToken = jwt.verify(token, this.configService.get('AUTH').secret);
-                        const admin = await this.userRepository.User.findById(decodedToken._id);
-                        isAdmin = admin.role === 'ADMIN';
-                    } catch (err) {
-                        throw new UnauthorizedError(err.message);
-                    }
-                }
-
-                if (!isAdmin) {
-                    throw new MethodNotAllowedError('Only ADMIN allowed to do that');
+        if (role === 'ADMIN') {
+            let isAdmin = false;
+            const token = req.header('Authorization');
+            if (token) {
+                try {
+                    const decodedToken = jwt.verify(token, this.configService.get('AUTH').secret);
+                    const admin = await this.userRepository.User.findById(decodedToken._id);
+                    isAdmin = admin.role === 'ADMIN';
+                } catch (err) {
+                    throw new UnauthorizedError(err.message);
                 }
             }
 
-            const newUser = await this.userService.register({
-                email,
-                name,
-                role
-            });
-
-            res.json({
-                _id: newUser._id.toString()
-            });
-        } catch (err) {
-            return next(err);
+            if (!isAdmin) {
+                throw new MethodNotAllowedError('Only ADMIN allowed to do that');
+            }
         }
+
+        const newUser = await this.userService.register({
+            email,
+            name,
+            role
+        });
+
+        return {
+            _id: newUser._id.toString()
+        };
     }
 
-    // @httpGet('/')
-    // private async getUsers() {
-    //     return this.userService.getUsers();
-    // }
+    @httpGet('/')
+    private async getUsers() {
+        return this.userService.getUsers();
+    }
 
-    // @httpGet('/:id')
-    // private async getById(req) {
-    //     const { id } = req.params;
-    //     return this.userService.profile(id);
-    // }
+    @httpGet('/:userId')
+    private async getById(req) {
+        const { userId } = this.validatorService.validate(
+            validator.rules.object().keys({
+                userId: validator.rules.string().required()
+            }),
+            req.body
+        );
 
-    // @httpDelete('/:id')
-    // private async deleteById(req, res) {
-    //     const { id } = req.params;
-    //     await this.userService.deleteById(id);
-    //     res.status(204);
-    //     res.send();
-    // }
+        return this.userService.getById(userId);
+    }
+
+    @httpDelete('/:userId')
+    private async deleteById(req) {
+        const { userId } = this.validatorService.validate(
+            validator.rules.object().keys({
+                userId: validator.rules.string().required()
+            }),
+            req.body
+        );
+
+        return await this.userService.deleteById(userId);
+    }
 }
