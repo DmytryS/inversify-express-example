@@ -5,8 +5,6 @@ import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 import * as request from 'supertest-promised';
 import App from '../src/libs/service/service';
-import IMailerService from '../src/libs/mailer/interface';
-import IUserRepository from '../src/models/user/interface';
 import { container } from '../src/libs/ioc/ioc';
 import TYPES from '../src/constant/types';
 
@@ -24,7 +22,7 @@ describe('User service', () => {
         server = app.server;
 
         sandbox = sinon.createSandbox();
-        userRepository = container.get<IUserRepository>(TYPES.UserRepository);
+        userRepository = container.get(TYPES.UserRepository);
         authService = container.get(TYPES.AuthService);
     });
 
@@ -32,22 +30,14 @@ describe('User service', () => {
         await app.stop();
     });
 
-    afterEach(() => {
-        // sandbox.restore();
-        container.restore();
-    });
-
     beforeEach(async () => {
         await app.clearDb();
-        container.snapshot();
         sandbox.restore();
     });
 
     describe('Register', () => {
         it('should return user id if succesfully registered new user', async () => {
-            const mailerStub = sandbox
-                .stub(container.get<IMailerService>(TYPES.MailerService), 'send')
-                .returns(Promise.resolve());
+            const mailerStub = sandbox.stub(container.get(TYPES.MailerService), 'send').returns(Promise.resolve());
 
             const response = await request(server)
                 .put('/api/v1/users')
@@ -69,9 +59,7 @@ describe('User service', () => {
         });
 
         it('should return user id and resend activation key if user status is PENDING', async () => {
-            const mailerStub = sandbox
-                .stub(container.get<IMailerService>(TYPES.MailerService), 'send')
-                .returns(Promise.resolve());
+            const mailerStub = sandbox.stub(container.get(TYPES.MailerService), 'send').returns(Promise.resolve());
 
             const existingUser = await userRepository
                 .User({
@@ -100,9 +88,7 @@ describe('User service', () => {
         });
 
         it('should return 409 error if user with such email already exists', async () => {
-            const mailerStub = sandbox
-                .stub(container.get<IMailerService>(TYPES.MailerService), 'send')
-                .returns(Promise.resolve());
+            const mailerStub = sandbox.stub(container.get(TYPES.MailerService), 'send').returns(Promise.resolve());
 
             await userRepository
                 .User({
@@ -126,9 +112,7 @@ describe('User service', () => {
         });
 
         it('should return 405 error if trying to register ADMIN user', async () => {
-            const mailerStub = sandbox
-                .stub(container.get<IMailerService>(TYPES.MailerService), 'send')
-                .returns(Promise.resolve());
+            const mailerStub = sandbox.stub(container.get(TYPES.MailerService), 'send').returns(Promise.resolve());
 
             await request(server)
                 .put('/api/v1/users')
@@ -142,10 +126,8 @@ describe('User service', () => {
             mailerStub.should.not.have.been.called;
         });
 
-        it.skip('should return admin if registered by admin', async () => {
-            const mailerStub = sandbox
-                .stub(container.get<IMailerService>(TYPES.MailerService), 'send')
-                .returns(Promise.resolve());
+        it('should return admin if registered by admin', async () => {
+            const mailerStub = sandbox.stub(container.get(TYPES.MailerService), 'send').returns(Promise.resolve());
 
             const user = await userRepository
                 .User({
@@ -177,22 +159,20 @@ describe('User service', () => {
 
             sinon.assert.match(response, { _id: sinon.match.string });
             mailerStub.should.have.been.calledOnce;
-            mailerStub.should.be.calledWith('some@email.com', 'REGISTER', {
+            mailerStub.should.be.calledWith('another_one@email.com', 'REGISTER', {
                 actionId: sinon.match.string,
                 uiUrl: 'http://localhost'
             });
         });
 
         it('should return 405 error if trying to register admin by user', async () => {
-            const mailerStub = sandbox
-                .stub(container.get<IMailerService>(TYPES.MailerService), 'send')
-                .returns(Promise.resolve());
+            const mailerStub = sandbox.stub(container.get(TYPES.MailerService), 'send').returns(Promise.resolve());
 
             const user = await userRepository
                 .User({
                     email: 'some@email.com',
                     name: 'Dummy_2',
-                    roel: 'USER',
+                    role: 'USER',
                     status: 'ACTIVE'
                 })
                 .save();

@@ -1,5 +1,6 @@
 import { controller, httpDelete, httpGet, httpPost, httpPut } from 'inversify-express-utils';
-import { MethodNotAllowedError } from 'restify-errors';
+import { MethodNotAllowedError, UnauthorizedError } from 'restify-errors';
+import * as jwt from 'jsonwebtoken';
 import {
     ApiOperationGet,
     ApiOperationPost,
@@ -12,6 +13,8 @@ import IAuthService from '../libs/auth/interface';
 import IValidatorService from '../libs/validator/interface';
 import { inject } from '../libs/ioc/ioc';
 import IUserService from '../services/user/interface';
+import IConfigService from '../libs/config/interface';
+import { IUserRepository } from '../models/user/interface';
 import validator from '../libs/validator/validator';
 
 @ApiPath({
@@ -26,6 +29,8 @@ export default class UserController {
     @inject(TYPES.UserService) private userService: IUserService;
     @inject(TYPES.AuthService) private authService: IAuthService;
     @inject(TYPES.ValidatorService) private validatorService: IValidatorService;
+    @inject(TYPES.ConfigServie) private configService: IConfigService;
+    @inject(TYPES.UserRepository) private userRepository: IUserRepository;
 
     @ApiOperationPost({
         description: 'User login with credentials',
@@ -134,8 +139,22 @@ export default class UserController {
                 next
             );
 
-            if (role === 'ADMIN' && (!req.user || req.user.role !== 'ADMIN')) {
-                throw new MethodNotAllowedError('Only ADMIN allowed to do that');
+            if (role === 'ADMIN') {
+                let isAdmin = false;
+                const token = req.header('Authorization');
+                if (token) {
+                    try {
+                        const decodedToken = jwt.verify(token, this.configService.get('AUTH').secret);
+                        const admin = await this.userRepository.User.findById(decodedToken._id);
+                        isAdmin = admin.role === 'ADMIN';
+                    } catch (err) {
+                        throw new UnauthorizedError(err.message);
+                    }
+                }
+
+                if (!isAdmin) {
+                    throw new MethodNotAllowedError('Only ADMIN allowed to do that');
+                }
             }
 
             const newUser = await this.userService.register({

@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as Errs from 'restify-errors';
 import TYPES from '../../constant/types';
 import IConfigService from '../config/interface';
-import { inject, ProvideSingleton } from '../ioc/ioc';
+import { inject, ProvideSingleton, injectable } from '../ioc/ioc';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IMailerServiceService from './interface';
 
