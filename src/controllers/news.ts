@@ -2,18 +2,18 @@ import { controller, httpGet, httpPost, interfaces } from 'inversify-express-uti
 import { ApiOperationGet, ApiOperationPost, ApiPath } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import { inject } from '../libs/ioc/ioc';
-import IActionService from '../services/action/interface';
+import INewsService from '../services/news/interface';
 
 @ApiPath({
-    name: 'Action',
-    path: '/actions',
+    name: 'News',
+    path: '/news',
     security: { basicAuth: [] }
 })
-@controller('/actions')
-export default class ActionController implements interfaces.Controller {
-    public TAG_NAME: string = 'ActionController';
+@controller('/news')
+export default class NewsController implements interfaces.Controller {
+    public TAG_NAME: string = 'NewsController';
 
-    @inject(TYPES.ActionService) private actionService: IActionService;
+    @inject(TYPES.NewsService) private newsService: INewsService;
 
     @ApiOperationGet({
         description: 'Get action object',
@@ -70,6 +70,6 @@ export default class ActionController implements interfaces.Controller {
             params: { id: actionId }
         } = req;
 
-        return this.actionService.updateById(actionId, body);
+        return this.newsService.updateById(actionId, body);
     }
 }

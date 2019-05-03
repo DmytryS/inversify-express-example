@@ -1,4 +1,4 @@
-import * as err from 'restify-errors';
+import { ConflictError } from 'restify-errors';
 import TYPES from '../../constant/types';
 import IAuthService from '../../libs/auth/interface';
 import IConfig from '../../libs/config/interface';
@@ -22,7 +22,7 @@ export default class UserService implements IUserService {
         this.config = configService.get();
     }
 
-    public async profile(id: string) {
+    public async getProfile(id: string) {
         return this.userRepository.User.findById(id);
     }
 
@@ -51,7 +51,7 @@ export default class UserService implements IUserService {
 
         if (user) {
             if (user.status === 'ACTIVE') {
-                throw new err.ConflictError(`${user.type} with email ${user.email} already exists`);
+                throw new ConflictError(`${user.type} with email ${user.email} already exists`);
             } else {
                 if (user.status === 'PENDING') {
                     action = await this.actionRepository.Action.findOne({

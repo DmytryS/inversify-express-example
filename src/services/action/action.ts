@@ -2,7 +2,6 @@ import * as err from 'restify-errors';
 import TYPES from '../../constant/types';
 import IConfig from '../../libs/config/interface';
 import { inject, ProvideSingleton } from '../../libs/ioc/ioc';
-import IMailerService from '../../libs/mailer/interface';
 import { IActionRepository } from '../../models/action/interface';
 import { IUserRepository } from '../../models/user/interface';
 import IActionService from './interface';
@@ -13,7 +12,6 @@ export default class ActionService implements IActionService {
 
     constructor(
         @inject(TYPES.ConfigServie) configService: IConfig,
-        @inject(TYPES.MailerService) private mailerService: IMailerService,
         @inject(TYPES.UserModel) private userRepository: IUserRepository,
         @inject(TYPES.ActionModel) private actionRepository: IActionRepository
     ) {
@@ -51,6 +49,7 @@ export default class ActionService implements IActionService {
             case 'REGISTER':
             case 'RESET_PASSWORD':
                 await user.setPassword(data.password);
+                await user.activate();
 
                 await action.setUsed();
                 break;
