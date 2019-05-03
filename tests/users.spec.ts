@@ -38,7 +38,7 @@ describe('User service', () => {
     });
 
     describe('Register', () => {
-        it('should return user id if registered new user', async () => {
+        it('should return user id if succesfully registered new user (default TYPE)', async () => {
             const mailerStub = sinon
                 .stub(container.get<IMailer>(TYPES.MailerService), 'send')
                 .returns(Promise.resolve());
@@ -47,7 +47,7 @@ describe('User service', () => {
                 .put('/api/v1/users')
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
-                .send({ email: 'some@email.com', name: 'userName', type: 'USER' })
+                .send({ email: 'some@email.com', name: 'userName' })
                 .expect(200)
                 .end()
                 .get('body');
@@ -55,11 +55,11 @@ describe('User service', () => {
             response.should.have.property('_id').be.a.string;
 
             mailerStub.should.have.been.calledOnce;
+
             mailerStub.should.be.calledWith('some@email.com', 'REGISTER', {
                 actionId: sinon.match.string,
                 uiUrl: 'http://localhost'
             });
-            // sinon.assert.calledWith(mailerStub, );
         });
     });
 });

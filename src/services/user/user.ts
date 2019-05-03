@@ -82,7 +82,7 @@ export default class UserService implements IUserService {
         }
 
         await this.mailerService.send(user.email, 'REGISTER', {
-            actionId: action._id,
+            actionId: action._id.toString(),
             uiUrl: this.config.SERVER.uiUrl
         });
 

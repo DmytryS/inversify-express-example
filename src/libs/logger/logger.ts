@@ -41,7 +41,7 @@ export default class LoggerService implements ILoggerService {
             }
         };
 
-        if (process.env.NODE_ENV !== 'production') {
+        if (process.env.NODE_ENV !== 'test') {
             appenders.console = { type: 'console' };
             categories.default.appenders.push('console');
             categories.default.level = 'info';

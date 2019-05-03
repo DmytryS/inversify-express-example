@@ -129,7 +129,6 @@ export default class UserController {
                         .string()
                         .valid('USER', 'ADMIN')
                         .default('USER')
-                        .required()
                 }),
                 req.body,
                 next
