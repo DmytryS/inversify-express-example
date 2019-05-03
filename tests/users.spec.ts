@@ -203,4 +203,30 @@ describe('User service', () => {
             mailerStub.should.not.have.been.called;
         });
     });
+
+    describe('Login', () => {
+        it('should return token if successfully logged in', async () => {
+            const user = await userRepository
+                .User({
+                    email: 'some@email.com',
+                    name: 'Dummy_2',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await user.setPassword('SOME_PASS');
+
+            const response = await request(server)
+                .post('/api/v1/users/login')
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send({ email: 'some@email.com', password: 'SOME_PASS' })
+                .expect(200)
+                .end()
+                .get('body');
+
+            sinon.assert.match(response, { token: sinon.match.string, expires: sinon.match.string });
+        });
+    });
 });

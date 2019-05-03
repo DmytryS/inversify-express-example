@@ -112,7 +112,6 @@ export default class AuthService implements IAuthService {
             'local',
             new LocalStrategy(
                 {
-                    // passReqToCallback: true,
                     passwordField: 'password',
                     session: false,
                     usernameField: 'email'

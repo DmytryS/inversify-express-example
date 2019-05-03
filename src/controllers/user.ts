@@ -107,7 +107,7 @@ export default class UserController {
                         required: true,
                         type: 'string'
                     },
-                    type: {
+                    role: {
                         required: true,
                         type: 'string'
                     }
@@ -188,13 +188,5 @@ export default class UserController {
     //     await this.userService.deleteById(id);
     //     res.status(204);
     //     res.send();
-    // }
-
-    // @httpPut('/:id')
-    // private async putById(req) {
-    //     const { id } = req.params;
-    //     const { body } = req;
-
-    //     return this.userService.updateById(id, body);
     // }
 }
