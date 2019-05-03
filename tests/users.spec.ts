@@ -1,5 +1,5 @@
 import 'mocha';
-import { expect } from 'chai';
+import 'chai/register-should';
 import sinon from 'sinon';
 import * as request from 'supertest-promised';
 import App from '../src/libs/service/service';
@@ -8,7 +8,7 @@ const app = new App();
 let sandbox;
 let server;
 
-describe('Hello function', () => {
+describe('User service', () => {
     before(async () => {
         await app.start();
         server = app.server;
@@ -24,7 +24,6 @@ describe('Hello function', () => {
         sandbox.restore();
     });
 
-
     describe('Register', () => {
         it('should return hello world', async () => {
             const result = await request(server)
@@ -34,9 +33,7 @@ describe('Hello function', () => {
                 .send({ email: 'some@email.com', name: 'userName' })
                 .expect(200)
                 .end();
-            expect(result).to.equal('Hello world!');
+            result.should.be.equal('Hello world!');
         });
     });
-
-
 });

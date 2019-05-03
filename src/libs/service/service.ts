@@ -19,7 +19,7 @@ export default class Service {
     private database: IDatabaseService;
     private app;
 
-    constructor(configuration) {
+    constructor(configuration?) {
         loadServices();
 
         this.config = container.get<IConfigService>(TYPES.ConfigServie);
