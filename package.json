@@ -4,7 +4,7 @@
     "description": "Example project using inversify",
     "license": "MIT",
     "repository": {
-        "url": "https://github.com/inversify/inversify-code-samples.git"
+        "url": "https://github.com/DmytryS/inversify-express-example.git"
     },
     "author": "Dmytry Shvaika",
     "keywords": [
