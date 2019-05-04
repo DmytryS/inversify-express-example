@@ -35,12 +35,14 @@ export default class AuthService extends BaseMiddleware implements IAuthService 
 
     public async handler(req: express.Request, res: express.Response, next: express.NextFunction) {
         this.passport.authenticate('jwt', { session: false }, (err, user, info) => {
+            // console.log(555555, err, user, info);
+
             if (err) {
                 next(new UnauthorizedError(err.message ? err.message : err));
             }
 
             if (!user) {
-                next(new UnauthorizedError(info));
+                next(new UnauthorizedError(info.toString()));
             }
 
             // if (role) {

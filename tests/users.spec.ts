@@ -289,5 +289,15 @@ describe('User service', () => {
                 status: 'ACTIVE'
             });
         });
+
+        it('should return 401 error if unauthorized', async () => {
+            await request(server)
+                .get('/api/v1/users/profile')
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect(401)
+                .end()
+                .get('body');
+        });
     });
 });
