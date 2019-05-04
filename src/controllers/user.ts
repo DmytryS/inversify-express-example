@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { controller, httpDelete, httpGet, httpPost, httpPut } from 'inversify-express-utils';
+import { interfaces, controller, httpDelete, httpGet, httpPost, httpPut, TYPE } from 'inversify-express-utils';
 import { MethodNotAllowedError, UnauthorizedError } from 'restify-errors';
 import * as jwt from 'jsonwebtoken';
 import {
@@ -21,10 +21,9 @@ import validator from '../libs/validator/validator';
 @ApiPath({
     name: 'User',
     path: '/users'
-    // security: { basicAuth: [] }
 })
 @controller('/users')
-export default class UserController {
+export default class UserController implements interfaces.Controller {
     public TAG_NAME: string = 'UserController';
 
     @inject(TYPES.UserService) private userService: IUserService;
@@ -103,6 +102,7 @@ export default class UserController {
                 }
             }
         },
+        path: '/',
         responses: {
             200: { description: 'Success' },
             400: { description: 'Parameters fail' }
@@ -156,7 +156,7 @@ export default class UserController {
     }
 
     @ApiOperationPost({
-        description: 'Register new user',
+        description: 'Reset user password',
         parameters: {
             body: {
                 properties: {
@@ -167,15 +167,16 @@ export default class UserController {
                 }
             }
         },
+        path: '/reset-password',
         responses: {
             204: { description: 'Success' },
             400: { description: 'Parameters fail' },
             404: { description: 'User not exist' }
         },
-        summary: 'Register new user'
+        summary: 'Reset user password'
     })
     @httpPost('/reset-password')
-    private async resetPassword(req) {
+    public async resetPassword(req) {
         const { email } = this.validatorService.validate(
             validator.rules.object().keys({
                 email: validator.rules
@@ -188,32 +189,132 @@ export default class UserController {
         return this.userService.resetPassword(email);
     }
 
-    @httpGet('/')
-    private async getUsers() {
-        return this.userService.getUsers();
+    @ApiOperationGet({
+        description: 'Get users',
+        parameters: {
+            query: {
+                limit: {
+                    required: false,
+                    type: 'number'
+                },
+                role: {
+                    required: false,
+                    type: 'string'
+                },
+                skip: {
+                    required: false,
+                    type: 'number'
+                }
+            }
+        },
+        path: '/',
+        responses: {
+            200: { description: 'Success' },
+            400: { description: 'Parameters fail' },
+            405: { description: 'Not allowed' }
+        },
+        security: { apiKeyHeader: ['Authorization'] },
+        summary: 'Get list of users'
+    })
+    @httpGet('/', TYPES.AuthService)
+    public async getUsers(req) {
+        const { skip, limit, role } = this.validatorService.validate(
+            validator.rules.object().keys({
+                limit: validator.rules
+                    .number()
+                    .integer()
+                    .min(1),
+                role: validator.rules.string().valid('USER', 'ADMIN'),
+                skip: validator.rules
+                    .number()
+                    .integer()
+                    .min(0)
+            }),
+            req.query
+        );
+
+        if (req.user.role !== 'ADMIN') {
+            throw new MethodNotAllowedError('Only admin allowed to that');
+        }
+
+        return this.userService.getUsers(skip, limit, role);
     }
 
-    @httpGet('/:userId')
-    private async getById(req) {
+    @ApiOperationGet({
+        description: 'Get users',
+        parameters: {
+            query: {
+                limit: {
+                    required: false,
+                    type: 'number'
+                },
+                role: {
+                    required: false,
+                    type: 'string'
+                },
+                skip: {
+                    required: false,
+                    type: 'number'
+                }
+            }
+        },
+        path: '/{userId}',
+        responses: {
+            200: { description: 'Success' },
+            404: { description: 'User not found' },
+            405: { description: 'Not allowed' }
+        },
+        security: { apiKeyHeader: ['Authorization'] },
+        summary: 'Get list of users'
+    })
+    @httpGet('/:userId', TYPES.AuthService)
+    public async getById(req) {
         const { userId } = this.validatorService.validate(
             validator.rules.object().keys({
                 userId: validator.rules.string().required()
             }),
-            req.body
+            req.params
         );
+
+        if (req.user.role !== 'ADMIN') {
+            throw new MethodNotAllowedError('Only admin allowed to that');
+        }
 
         return this.userService.getById(userId);
     }
 
-    @httpDelete('/:userId')
-    private async deleteById(req) {
+    @ApiOperationGet({
+        description: 'Delete user',
+        parameters: {
+            path: {
+                userId: {
+                    required: true,
+                    type: 'string'
+                }
+            }
+        },
+        path: '/{userId}',
+        responses: {
+            204: { description: 'Success' },
+            404: { description: 'User not found' },
+            405: { description: 'Not allowed' }
+        },
+        security: { apiKeyHeader: ['Authorization'] },
+        summary: 'Get list of users'
+    })
+    @httpDelete('/:userId', TYPES.AuthService)
+    public async deleteById(req) {
         const { userId } = this.validatorService.validate(
             validator.rules.object().keys({
                 userId: validator.rules.string().required()
             }),
-            req.body
+            req.params
         );
 
-        return await this.userService.deleteById(userId);
+        if (req.user.role !== 'ADMIN') {
+            throw new MethodNotAllowedError('Only admin allowed to that');
+        }
+
+        return this.userService.deleteById(userId);
     }
 }

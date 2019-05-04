@@ -2,7 +2,8 @@ import { ModelType } from 'typegoose';
 
 export default interface INews {
     id?: string;
-    createdBy: string;
+    name: string;
+    text: string;
 }
 
 export type INewsModel = ModelType<INews>;

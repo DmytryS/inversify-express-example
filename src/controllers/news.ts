@@ -3,39 +3,42 @@ import { ApiOperationGet, ApiOperationPost, ApiPath } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import { inject } from '../libs/ioc/ioc';
 import INewsService from '../services/news/interface';
+import IValidatorService from '../libs/validator/interface';
 
 @ApiPath({
     name: 'News',
-    path: '/news',
-    security: { basicAuth: [] }
+    path: '/news'
 })
 @controller('/news')
 export default class NewsController implements interfaces.Controller {
     public TAG_NAME: string = 'NewsController';
 
     @inject(TYPES.NewsService) private newsService: INewsService;
+    @inject(TYPES.ValidatorService) private validatorService: IValidatorService;
 
     @ApiOperationGet({
-        description: 'Get action object',
+        description: 'Get news object',
         parameters: {
             path: {
-                actioniId: {
-                    description: 'Action id',
+                newsId: {
+                    description: 'News id',
                     required: true
                 }
             }
         },
-        path: '/{actioniId}',
+        path: '/{newsId}',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' }
+            401: { description: 'Unauthorized' },
+            404: { description: 'News not exist' }
         },
         summary: 'Get action'
     })
-    @httpGet('/:actioniId')
+    @httpGet('/:newsId', TYPES.AuthService)
     public async getById(req) {
-        const { actioniId } = req.params;
-        return this.actionService.getById(actioniId);
+        const { newsId } = req.params;
+
+        return this.newsService.getById(newsId);
     }
 
     @ApiOperationPost({

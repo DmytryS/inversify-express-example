@@ -8,8 +8,7 @@ import validator from '../libs/validator/validator';
 
 @ApiPath({
     name: 'Action',
-    path: '/actions',
-    security: { basicAuth: [] }
+    path: '/actions'
 })
 @controller('/actions')
 export default class ActionController implements interfaces.Controller {

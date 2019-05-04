@@ -6,6 +6,7 @@ import IMailerServiceService from '../../libs/mailer/interface';
 import { IActionRepository } from '../../models/action/interface';
 import { IUserModel, IUserRepository } from '../../models/user/interface';
 import IUserService from './interface';
+import { dumpUser } from '../../utils/dump';
 
 @ProvideSingleton(TYPES.UserService)
 export default class UserService implements IUserService {
@@ -90,25 +91,24 @@ export default class UserService implements IUserService {
         return;
     }
 
-    public async getUsers() {
-        return this.userRepository.User.findA({});
+    public async getUsers(skip: number, limit: number, role: string) {
+        const users = await this.userRepository.User.paginate(skip, limit, role);
+
+        return users.map(dumpUser);
     }
 
     public async getById(id: string) {
         const user = await this.checkIfUserExists(id);
 
-        const userJSON = user.toJSON();
-        userJSON._id = userJSON._id.toString();
-        delete userJSON.__v;
-        delete userJSON.passwordHash;
-
-        return userJSON;
+        return dumpUser(user);
     }
 
     public async deleteById(id: string) {
         const user = await this.checkIfUserExists(id);
 
-        return user.remove();
+        await user.remove();
+
+        return;
     }
 
     public async updateById(id: string, data: object) {

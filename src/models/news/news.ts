@@ -11,12 +11,21 @@ import INews from './interface';
 class News extends Typegoose implements ModelType<INews> {
     @prop({ required: true })
     @ApiModelProperty({
-        description: 'Id of user',
-        example: ['5c766d614e86ea27c61cf82a'],
+        description: 'News header',
+        example: ['The NEWS'],
         required: true,
         type: 'string'
     })
-    public createdBy: string;
+    public name: string;
+
+    @prop({ required: true })
+    @ApiModelProperty({
+        description: 'News text',
+        example: ['Some text'],
+        required: true,
+        type: 'string'
+    })
+    public text: string;
 }
 
 @provide(TYPES.NewsRepository)
