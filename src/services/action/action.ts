@@ -5,6 +5,7 @@ import { inject, ProvideSingleton } from '../../libs/ioc/ioc';
 import { IActionRepository } from '../../models/action/interface';
 import { IUserRepository } from '../../models/user/interface';
 import IActionService from './interface';
+import { dumpAction } from '../../utils/dump';
 
 @ProvideSingleton(TYPES.ActionService)
 export default class ActionService implements IActionService {
@@ -21,12 +22,7 @@ export default class ActionService implements IActionService {
     public async getById(actionId: string) {
         const action = await this.checkIfActionExists(actionId);
 
-        const actionJSON = action.toJSON();
-        actionJSON._id = actionJSON._id.toString();
-        delete actionJSON.__v;
-        delete actionJSON.userId;
-
-        return actionJSON;
+        return dumpAction(action);
     }
 
     public async updateById(actionId: string, data: any) {

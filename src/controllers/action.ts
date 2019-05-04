@@ -8,8 +8,7 @@ import validator from '../libs/validator/validator';
 
 @ApiPath({
     name: 'Action',
-    path: '/actions',
-    security: { basicAuth: [] }
+    path: '/actions'
 })
 @controller('/actions')
 export default class ActionController implements interfaces.Controller {
@@ -31,7 +30,7 @@ export default class ActionController implements interfaces.Controller {
         path: '/{actionId}',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' },
+            409: { description: 'Parameters fail' },
             404: { description: 'Action not exist' }
         },
         summary: 'Get action'
@@ -69,7 +68,7 @@ export default class ActionController implements interfaces.Controller {
         path: '/{actionId}',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' },
+            409: { description: 'Parameters fail' },
             404: { description: 'Action not exist' }
         },
         summary: 'Perform action'

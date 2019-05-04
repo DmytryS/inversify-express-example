@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
-import { instanceMethod, InstanceType, ModelType, prop, Typegoose } from 'typegoose';
+import { instanceMethod, InstanceType, ModelType, prop, Typegoose, staticMethod } from 'typegoose';
 import TYPES from '../../constant/types';
 import IConfigService from '../../libs/config/interface';
 import { inject, provide } from '../../libs/ioc/ioc';
@@ -17,6 +17,24 @@ let config;
 })
 class User extends Typegoose implements ModelType<IUser> {
     public static config;
+
+    /**
+     * Returns paginated users
+     * @returns {Promise<>} promise which will be resolved when users get
+     */
+    @staticMethod
+    public static async paginate(this: InstanceType<User> & typeof User, skip: number, limit: number, role: string) {
+        const filterOptions = {};
+
+        if (role) {
+            // tslint:disable-next-line
+            filterOptions['role'] = role;
+        }
+
+        const users = await this.aggregate([{ $match: filterOptions }, { $skip: skip || 0 }, { $limit: limit || 30 }]);
+
+        return users;
+    }
 
     @prop({ required: true })
     @ApiModelProperty({

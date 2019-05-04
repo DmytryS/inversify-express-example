@@ -1,75 +1,86 @@
-import { controller, httpGet, httpPost, interfaces } from 'inversify-express-utils';
-import { ApiOperationGet, ApiOperationPost, ApiPath } from 'swagger-express-ts';
+import { controller, httpGet, httpPost, interfaces, httpPut } from 'inversify-express-utils';
+import { ApiOperationGet, ApiOperationPost, ApiPath, ApiOperationPut } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import { inject } from '../libs/ioc/ioc';
 import INewsService from '../services/news/interface';
+import IValidatorService from '../libs/validator/interface';
+import validator from '../libs/validator/validator';
 
 @ApiPath({
     name: 'News',
-    path: '/news',
-    security: { basicAuth: [] }
+    path: '/news'
 })
 @controller('/news')
 export default class NewsController implements interfaces.Controller {
     public TAG_NAME: string = 'NewsController';
 
     @inject(TYPES.NewsService) private newsService: INewsService;
+    @inject(TYPES.ValidatorService) private validatorService: IValidatorService;
 
     @ApiOperationGet({
-        description: 'Get action object',
+        description: 'Get news object',
         parameters: {
             path: {
-                actioniId: {
-                    description: 'Action id',
+                newsId: {
+                    description: 'News id',
                     required: true
                 }
             }
         },
-        path: '/{actioniId}',
+        path: '/{newsId}',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' }
+            401: { description: 'Unauthorized' },
+            404: { description: 'News not exist' }
         },
         summary: 'Get action'
     })
-    @httpGet('/:actioniId')
+    @httpGet('/:newsId', TYPES.AuthService)
     public async getById(req) {
-        const { actioniId } = req.params;
-        return this.actionService.getById(actioniId);
+        const { newsId } = req.params;
+
+        return this.newsService.getById(newsId);
     }
 
-    @ApiOperationPost({
-        description: 'Perform action',
+    @ApiOperationPut({
+        description: 'Create news',
         parameters: {
             body: {
                 properties: {
-                    password: {
+                    name: {
+                        required: true,
+                        type: 'string'
+                    },
+                    text: {
                         required: true,
                         type: 'string'
                     }
                 }
             },
             path: {
-                actioniId: {
-                    description: 'Action id',
+                newsId: {
+                    description: 'News id',
                     required: true
                 }
             }
         },
-        path: '/{actioniId}',
+        path: '/',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' }
+            409: { description: 'Parameters fail' }
         },
-        summary: 'Perform action'
+        summary: 'Create news'
     })
-    @httpPost('/:id')
+    @httpPut('/', TYPES.AuthService)
     public async putById(req) {
-        const {
-            body,
-            params: { id: actionId }
-        } = req;
+        const body = this.validatorService.validate(
+            validator.rules.object().keys({
+                name: validator.rules.string().required(),
+                text: validator.rules.string().required()
+            }),
+            req.body
+        );
 
-        return this.newsService.updateById(actionId, body);
+        return this.newsService.create(body);
     }
 }
