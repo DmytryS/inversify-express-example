@@ -122,6 +122,7 @@ export default class Service {
     public async stop() {
         await this.app.close();
         await this.database.close();
+        container.unbindAll();
         this.logger.info('Server stopped');
     }
 

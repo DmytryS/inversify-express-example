@@ -10,7 +10,7 @@ import TYPES from '../src/constant/types';
 
 chai.use(sinonChai);
 
-const app = new App();
+let app;
 let sandbox;
 let server;
 let userRepository;
@@ -18,6 +18,8 @@ let authService;
 
 describe('User service', () => {
     before(async () => {
+        app = new App();
+
         await app.start();
         server = app.server;
 
