@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { controller, httpDelete, httpGet, httpPost, httpPut } from 'inversify-express-utils';
 import { MethodNotAllowedError, UnauthorizedError } from 'restify-errors';
 import * as jwt from 'jsonwebtoken';
@@ -20,8 +21,8 @@ import { container } from '../libs/ioc/ioc';
 
 @ApiPath({
     name: 'User',
-    path: '/users',
-    security: { basicAuth: [] }
+    path: '/users'
+    // security: { basicAuth: [] }
 })
 @controller('/users')
 export default class UserController {
@@ -78,8 +79,8 @@ export default class UserController {
         },
         summary: 'Get user profile object'
     })
-    @httpGet('/profile', container.get<IAuthService>(TYPES.AuthService).authMiddleware)
-    public async getProfile(req, res, next) {
+    @httpGet('/profile', TYPES.AuthService)
+    public async getProfile(req) {
         return this.userService.getById(req.user._id);
     }
 
@@ -110,7 +111,7 @@ export default class UserController {
         summary: 'Register new user'
     })
     @httpPut('/')
-    public async register(req, res, next) {
+    public async register(req) {
         const { email, name, role } = this.validatorService.validate(
             validator.rules.object().keys({
                 email: validator.rules
@@ -123,8 +124,7 @@ export default class UserController {
                     .valid('USER', 'ADMIN')
                     .default('USER')
             }),
-            req.body,
-            next
+            req.body
         );
 
         if (role === 'ADMIN') {

@@ -11,9 +11,10 @@ import IConfigService from '../config/interface';
 import { inject, ProvideSingleton } from '../ioc/ioc';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IAuthService from './interface';
+import { BaseMiddleware } from 'inversify-express-utils';
 
 @ProvideSingleton(TYPES.AuthService)
-export default class AuthService implements IAuthService {
+export default class AuthService extends BaseMiddleware implements IAuthService {
     private config;
     private logger: ILog4js;
     private passport;
@@ -23,6 +24,7 @@ export default class AuthService implements IAuthService {
         @inject(TYPES.ConfigServie) configService: IConfigService,
         @inject(TYPES.UserRepository) private userRepository: IUserRepository
     ) {
+        super();
         this.config = configService.get('AUTH');
         this.logger = loggerService.getLogger('AuthService');
         this.passport = passport;
@@ -31,7 +33,7 @@ export default class AuthService implements IAuthService {
         this.applyLocalStrategy();
     }
 
-    public async authenticateJwt(req: express.Request, res: express.Response, next: express.NextFunction, role: any) {
+    public async handler(req: express.Request, res: express.Response, next: express.NextFunction) {
         this.passport.authenticate('jwt', { session: false }, (err, user, info) => {
             if (err) {
                 next(new UnauthorizedError(err.message ? err.message : err));
@@ -41,21 +43,21 @@ export default class AuthService implements IAuthService {
                 next(new UnauthorizedError(info));
             }
 
-            if (!Array.isArray(role)) {
-                role = [role];
-            }
-            if (role && role.length > 0 && !role.includes(user.role)) {
-                throw new ForbiddenError();
-            }
+            // if (role) {
+            //     if (!Array.isArray(role)) {
+            //         role = [role];
+            //     }
+
+            //     if (role.length > 0 && !role.includes(user.role)) {
+            //         throw new ForbiddenError();
+            //     }
+            // }
 
             // tslint:disable-next-line
             req['user'] = user;
+
             next();
         })(req, res, next);
-    }
-
-    public async authMiddleware({ role }) {
-        return this.authenticateJwt.bind(this, role);
     }
 
     public async authenticateCredentials(req: express.Request) {
@@ -96,20 +98,23 @@ export default class AuthService implements IAuthService {
             'jwt',
             new JwtStrategy(
                 {
-                    jwtFromRequest: ExtractJwt.fromHeader('Authorization'),
-                    secretOrKey: this.config.secret
+                    jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+                    secretOrKey: this.config.secret,
+                    session: false
                 },
                 async (token, done) => {
                     try {
-                        if (!token || !token.id) {
+                        if (!token || !token._id) {
                             throw new UnauthorizedError('Wrong token');
                         }
 
-                        const user = await this.userRepository.User.findById(token.id);
+                        const user = await this.userRepository.User.findById(token._id);
 
                         if (!user) {
                             throw new UnauthorizedError('Wrong token');
                         }
+
+                        done(false, user);
                     } catch (err) {
                         done(err, false);
                     }

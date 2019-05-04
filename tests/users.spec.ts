@@ -79,7 +79,7 @@ describe('User service', () => {
                 .end()
                 .get('body');
 
-            sinon.assert.match(response, { _id: existingUser._id.toString() });
+            response.should.eql({ _id: existingUser._id.toString() });
             mailerStub.should.have.been.calledOnce;
             mailerStub.should.be.calledWith('some@email.com', 'REGISTER', {
                 actionId: sinon.match.string,
@@ -273,18 +273,20 @@ describe('User service', () => {
             });
 
             const response = await request(server)
-                .post('/api/v1/users/login')
+                .get('/api/v1/users/profile')
                 .set('Accept', 'application/json')
                 .set('Authorization', token)
                 .set('Content-Type', 'application/json')
-                .send({ email: 'some@email.com', password: 'SOME_PASS' })
                 .expect(200)
                 .end()
                 .get('body');
 
-            sinon.assert.match(response, {
-                _id: sinon.match.string,
-                role: 'USER'
+            response.should.eql({
+                _id: user._id.toString(),
+                email: 'some@email.com',
+                name: 'Dummy',
+                role: 'USER',
+                status: 'ACTIVE'
             });
         });
     });

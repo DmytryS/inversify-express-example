@@ -72,7 +72,12 @@ export default class UserService implements IUserService {
     public async getById(id: string) {
         const user = await this.checkIfUserExists(id);
 
-        return user;
+        const userJSON = user.toJSON();
+        userJSON._id = userJSON._id.toString();
+        delete userJSON.__v;
+        delete userJSON.passwordHash;
+
+        return userJSON;
     }
 
     public async deleteById(id: string) {
