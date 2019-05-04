@@ -1,7 +1,7 @@
 {
-    "name": "inversify-hapi-example",
+    "name": "inversify-example",
     "version": "1.0.0",
-    "description": "",
+    "description": "Example project using inversify",
     "license": "MIT",
     "repository": {
         "url": "https://github.com/inversify/inversify-code-samples.git"
@@ -10,7 +10,7 @@
     "keywords": [
         "typescript",
         "project structure",
-        "gulp",
+        "inversify",
         "nodejs"
     ],
     "scripts": {

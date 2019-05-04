@@ -10,10 +10,10 @@
     },
     "LOGGER": {
         "path": "/logs",
-        "fileName": "delivery-be-test.log"
+        "fileName": "inversify-example.log"
     },
     "AUTH": {
-        "secret": "43BF1F678DD0345D12376230D1BF9B12",
+        "secret": "SOME_SECRET",
         "expiresIn": "10d",
         "saltRounds": 3
     },

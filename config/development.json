@@ -1,7 +1,7 @@
 {
     "DB": {
         "type": "mongo",
-        "url": "mongodb://development_user:55x8jjSZwReb38B@ds247027.mlab.com:47027/delivery-group-development"
+        "url": "mongodb://<user>:<password>@<url>:<port>/<database>"
     },
     "SERVER": {
         "port": 3000,
@@ -10,21 +10,21 @@
     },
     "LOGGER": {
         "path": "/logs",
-        "fileName": "delivery-be-development.log"
+        "fileName": "inversify-example-development.log"
     },
     "AUTH": {
-        "secret": "43BF1F678DD0675D28076230D1BF9B18",
+        "secret": "SOME_SECRET",
         "expiresIn": "10d",
         "saltRounds": 3
     },
     "MAIL": {
-        "from": "shvajka.work@gmail.com",
+        "from": "user@gmail.com",
         "transport_options": {
             "host": "smpt.gmail.com",
             "service": "Gmail",
             "auth": {
-                "user": "shvajka.work@gmail.com",
-                "pass": "Parolkr1"
+                "user": "user@gmail.com",
+                "pass": "password"
             }
         }
     }
