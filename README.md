@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/DmytryS/inversify-express-example.svg?branch=master)](https://travis-ci.com/DmytryS/inversify-express-example)
+
 # inversify-express-example
 
 Boilerplate template for node and typescript api's.
