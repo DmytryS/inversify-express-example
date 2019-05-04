@@ -20,7 +20,7 @@ class User extends Typegoose implements ModelType<IUser> {
 
     /**
      * Returns paginated users
-     * @returns {Promise<>} promise which will be resolved when users get
+     * @returns {Promise<Array<User>>} promise which will be resolved when users get
      */
     @staticMethod
     public static async paginate(this: InstanceType<User> & typeof User, skip: number, limit: number, role: string) {

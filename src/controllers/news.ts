@@ -1,5 +1,5 @@
-import { controller, httpGet, httpPost, interfaces, httpPut } from 'inversify-express-utils';
-import { ApiOperationGet, ApiOperationPost, ApiPath, ApiOperationPut } from 'swagger-express-ts';
+import { controller, httpGet, httpPost, interfaces, httpPut, httpDelete } from 'inversify-express-utils';
+import { ApiOperationGet, ApiOperationPost, ApiPath, ApiOperationPut, ApiOperationDelete } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import { inject } from '../libs/ioc/ioc';
 import INewsService from '../services/news/interface';
@@ -82,5 +82,63 @@ export default class NewsController implements interfaces.Controller {
         );
 
         return this.newsService.create(body);
+    }
+
+    @ApiOperationDelete({
+        description: 'Delete news object',
+        parameters: {
+            path: {
+                newsId: {
+                    description: 'News id',
+                    required: true
+                }
+            }
+        },
+        path: '/{newsId}',
+        responses: {
+            204: { description: 'Success' },
+            401: { description: 'Unauthorized' },
+            404: { description: 'News not exist' }
+        },
+        summary: 'Get action'
+    })
+    @httpDelete('/:newsId', TYPES.AuthService)
+    public async deleteById(req) {
+        const { newsId } = req.params;
+
+        return this.newsService.deleteById(newsId);
+    }
+
+    @httpPost('/:newsId', TYPES.AuthService)
+    public async updateById(req) {
+        const body = this.validatorService.validate(
+            validator.rules.object().keys({
+                name: validator.rules.string().required(),
+                text: validator.rules.string().required()
+            }),
+            req.query
+        );
+        const { newsId } = req.params;
+
+        return this.newsService.updateById(newsId, body);
+    }
+
+    @httpGet('/', TYPES.AuthService)
+    public async getNews(req) {
+        const { skip, limit } = this.validatorService.validate(
+            validator.rules.object().keys({
+                limit: validator.rules
+                    .number()
+                    .integer()
+                    .min(1),
+                skip: validator.rules
+                    .number()
+                    .integer()
+                    .min(0)
+            }),
+            req.query
+        );
+
+        return this.newsService.getNews(skip, limit);
     }
 }

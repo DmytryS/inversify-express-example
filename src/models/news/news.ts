@@ -1,5 +1,5 @@
 import { ApiModel, ApiModelProperty } from 'swagger-express-ts';
-import { instanceMethod, InstanceType, ModelType, prop, Typegoose } from 'typegoose';
+import { staticMethod, InstanceType, ModelType, prop, Typegoose } from 'typegoose';
 import TYPES from '../../constant/types';
 import { provide } from '../../libs/ioc/ioc';
 import INews from './interface';
@@ -9,6 +9,17 @@ import INews from './interface';
     name: 'News'
 })
 class News extends Typegoose implements ModelType<INews> {
+    /**
+     * Returns paginated news
+     * @returns {Promise<Array<News>>} promise which will be resolved when news get
+     */
+    @staticMethod
+    public static async paginate(this: InstanceType<News> & typeof News, skip: number, limit: number) {
+        const news = await this.aggregate([{ $skip: skip || 0 }, { $limit: limit || 30 }]);
+
+        return news;
+    }
+
     @prop({ required: true })
     @ApiModelProperty({
         description: 'News header',

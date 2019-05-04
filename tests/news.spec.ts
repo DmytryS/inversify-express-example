@@ -39,7 +39,7 @@ describe('News service', () => {
         sandbox.restore();
     });
 
-    describe('Get news', () => {
+    describe('Get news by id', () => {
         it('should return news if exists', async () => {
             const user = await userRepository
                 .User({
@@ -163,5 +163,104 @@ describe('News service', () => {
                 text: 'Text for test'
             });
         });
+
+        it('should return 401 error if unauthorized', async () => {
+            await request(server)
+                .put('/api/v1/news')
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send({ name: 'Test Header', text: 'Text for test' })
+                .expect(401)
+                .end();
+        });
     });
+
+    describe('Delete news', () => {
+        it('should delete news by id', async () => {
+            const user = await userRepository
+                .User({
+                    email: 'some@email.com',
+                    name: 'Dummy',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await user.setPassword('SOME_PASS');
+
+            const { token } = await authService.authenticateCredentials({
+                body: {
+                    email: 'some@email.com',
+                    password: 'SOME_PASS'
+                }
+            });
+
+            const news = await newsRepository
+                .News({
+                    name: 'News_1',
+                    text: 'Text_2'
+                })
+                .save();
+
+            await request(server)
+                .delete(`/api/v1/news/${news._id.toString()}`)
+                .set('Accept', 'application/json')
+                .set('Authorization', token)
+                .set('Content-Type', 'application/json')
+                .expect(204)
+                .end();
+
+            const deletedNews = await newsRepository.News.findById(news._id);
+
+            sinon.assert.match(deletedNews, null);
+        });
+
+        it('should return 404 error if news not exist', async () => {
+            const user = await userRepository
+                .User({
+                    email: 'some@email.com',
+                    name: 'Dummy',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await user.setPassword('SOME_PASS');
+
+            const { token } = await authService.authenticateCredentials({
+                body: {
+                    email: 'some@email.com',
+                    password: 'SOME_PASS'
+                }
+            });
+
+            await request(server)
+                .delete('/api/v1/news/5ccdd7fde38335358eee25c6')
+                .set('Accept', 'application/json')
+                .set('Authorization', token)
+                .set('Content-Type', 'application/json')
+                .expect(404)
+                .end();
+        });
+
+        it('should return 404 error if unauthorized', async () => {
+            const news = await newsRepository
+                .News({
+                    name: 'News_1',
+                    text: 'Text_2'
+                })
+                .save();
+
+            await request(server)
+                .delete(`/api/v1/news/${news._id.toString()}`)
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect(401)
+                .end();
+        });
+    });
+
+    describe('News update', () => {});
+
+    describe('Get news', () => {});
 });
