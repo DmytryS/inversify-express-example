@@ -126,4 +126,42 @@ describe('News service', () => {
                 .end();
         });
     });
+
+    describe('Create news', () => {
+        it('should return created news', async () => {
+            const user = await userRepository
+                .User({
+                    email: 'some@email.com',
+                    name: 'Dummy',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await user.setPassword('SOME_PASS');
+
+            const { token } = await authService.authenticateCredentials({
+                body: {
+                    email: 'some@email.com',
+                    password: 'SOME_PASS'
+                }
+            });
+
+            const response = await request(server)
+                .put('/api/v1/news')
+                .set('Accept', 'application/json')
+                .set('Authorization', token)
+                .set('Content-Type', 'application/json')
+                .send({ name: 'Test Header', text: 'Text for test' })
+                .expect(200)
+                .end()
+                .get('body');
+
+            sinon.assert.match(response, {
+                _id: sinon.match.string,
+                name: 'Test Header',
+                text: 'Text for test'
+            });
+        });
+    });
 });

@@ -2,13 +2,7 @@ import 'reflect-metadata';
 import { interfaces, controller, httpDelete, httpGet, httpPost, httpPut, TYPE } from 'inversify-express-utils';
 import { MethodNotAllowedError, UnauthorizedError } from 'restify-errors';
 import * as jwt from 'jsonwebtoken';
-import {
-    ApiOperationGet,
-    ApiOperationPost,
-    ApiOperationPut,
-    ApiPath,
-    SwaggerDefinitionConstant
-} from 'swagger-express-ts';
+import { ApiOperationGet, ApiOperationPost, ApiOperationPut, ApiPath } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import IAuthService from '../libs/auth/interface';
 import IValidatorService from '../libs/validator/interface';
@@ -55,7 +49,7 @@ export default class UserController implements interfaces.Controller {
         path: '/login',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' }
+            409: { description: 'Parameters fail' }
         },
         summary: 'User login'
     })
@@ -70,7 +64,7 @@ export default class UserController implements interfaces.Controller {
         path: '/profile',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' }
+            409: { description: 'Parameters fail' }
         },
         security: {
             apiKeyHeader: ['Authorization']
@@ -105,7 +99,7 @@ export default class UserController implements interfaces.Controller {
         path: '/',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' }
+            409: { description: 'Parameters fail' }
         },
         summary: 'Register new user'
     })
@@ -170,7 +164,7 @@ export default class UserController implements interfaces.Controller {
         path: '/reset-password',
         responses: {
             204: { description: 'Success' },
-            400: { description: 'Parameters fail' },
+            409: { description: 'Parameters fail' },
             404: { description: 'User not exist' }
         },
         summary: 'Reset user password'
@@ -210,7 +204,7 @@ export default class UserController implements interfaces.Controller {
         path: '/',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' },
+            409: { description: 'Parameters fail' },
             405: { description: 'Not allowed' }
         },
         security: { apiKeyHeader: ['Authorization'] },

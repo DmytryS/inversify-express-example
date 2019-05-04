@@ -30,7 +30,7 @@ export default class ActionController implements interfaces.Controller {
         path: '/{actionId}',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' },
+            409: { description: 'Parameters fail' },
             404: { description: 'Action not exist' }
         },
         summary: 'Get action'
@@ -68,7 +68,7 @@ export default class ActionController implements interfaces.Controller {
         path: '/{actionId}',
         responses: {
             200: { description: 'Success' },
-            400: { description: 'Parameters fail' },
+            409: { description: 'Parameters fail' },
             404: { description: 'Action not exist' }
         },
         summary: 'Perform action'

@@ -3,6 +3,7 @@ import TYPES from '../../constant/types';
 import { inject, ProvideSingleton } from '../../libs/ioc/ioc';
 import { INewsRepository, INewsModel } from '../../models/news/interface';
 import INewsService from './interface';
+import { dumpNews } from '../../utils/dump';
 
 @ProvideSingleton(TYPES.NewsService)
 export default class NewsService implements INewsService {
@@ -22,8 +23,9 @@ export default class NewsService implements INewsService {
         const news = await this.checkIfNewsExists(newsId);
         return Promise.resolve();
     }
-    public async create() {
-        return {};
+    public async create(newsObject: INewsModel) {
+        const news = await this.newsRepository.News(newsObject).save();
+        return dumpNews(news);
     }
     public async deleteById(id: string) {
         return Promise.resolve();

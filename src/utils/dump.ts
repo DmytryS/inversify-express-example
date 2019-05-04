@@ -9,9 +9,17 @@ export function dumpUser(user) {
 }
 
 export function dumpAction(action) {
-    return {};
+    return {
+        _id: action._id.toString(),
+        status: action.status,
+        type: action.type
+    };
 }
 
 export function dumpNews(news) {
-    return {};
+    return {
+        _id: news._id.toString(),
+        name: news.name,
+        text: news.text
+    };
 }
