@@ -252,6 +252,27 @@ describe('User service', () => {
                 .end()
                 .get('body');
         });
+
+        it('should return 401 error if user banned', async () => {
+            const user = await userRepository
+                .User({
+                    email: 'some@email.com',
+                    name: 'Dummy_2',
+                    role: 'USER',
+                    status: 'BANNED'
+                })
+                .save();
+
+            await user.setPassword('SOME_PASS');
+
+            await request(server)
+                .post('/api/v1/users/login')
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send({ email: 'some@email.com', password: 'SOME_PASS' })
+                .expect(401)
+                .end();
+        });
     });
 
     describe('Reset password', () => {

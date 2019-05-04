@@ -17,7 +17,7 @@
         "start": "NODE_ENV=production node ./build/index.js",
         "dev": "NODE_ENV=development nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' ./src/index.ts",
         "test": "NODE_ENV=test mocha -r ts-node/register ./tests/**/*.spec.ts --exit",
-        "test:coverage": "nyc npm run test && nyc report --reporter=lcov --reporter=text",
+        "test:coverage": "nyc npm run test && nyc report --reporter=html --reporter=lcov",
         "build": "tsc && cp -r ./src/templates ./build/templates",
         "format": "prettier --check 'src/**/*.{ts,json,md, gql}'",
         "format:fix": "prettier --write 'src/**/*.{ts,json,md,gql}'",
@@ -81,15 +81,17 @@
         "node": ">=4.1.1"
     },
     "nyc": {
+        "extends": "@istanbuljs/nyc-config-typescript",
         "extension": [
-            ".ts",
-            ".tsx"
+            ".ts"
         ],
         "exclude": [
-            "**/*.d.ts"
+            "**/*.spec.ts",
+            "src/libs/**/*"
         ],
         "reporter": [
-            "html"
+            "text",
+            "lcov"
         ],
         "all": true
     }
