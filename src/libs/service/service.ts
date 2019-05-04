@@ -19,12 +19,24 @@ export default class Service {
     private database: IDatabaseService;
     private app;
 
-    constructor() {
+    constructor(configuration?) {
         loadServices();
+
         this.config = container.get<IConfigService>(TYPES.ConfigServie);
+        if (configuration) {
+            this.config.setConfig(configuration);
+        }
         this.logger = container.get<ILoggerService>(TYPES.LoggerService).getLogger('Main service');
         this.database = container.get<IDatabaseService>(TYPES.DatabaseService);
         this.app = false;
+    }
+
+    /**
+     * Returns express server
+     * @returns {Server} returns express server
+     */
+    get server() {
+        return this.app;
     }
 
     public async start() {
@@ -34,36 +46,34 @@ export default class Service {
             rootPath: this.config.get('SERVER').baseUrl
         });
         server.setConfig((app) => {
-            // app.use(bodyParser.urlencoded({
-            //     extended: true
-            // }));
-            // app.use(bodyParser.json());
-
             app.use('/api-docs/swagger', express.static('swagger'));
             app.use('/api-docs/swagger/assets', express.static('node_modules/swagger-ui-dist'));
             app.use(bodyParser.json());
-            app.use(
-                swagger.express({
-                    definition: {
-                        externalDocs: {
-                            url: 'My url'
-                        },
-                        info: {
-                            title: 'My api',
-                            version: '1.0'
-                        },
-                        securityDefinitions: {
-                            apiKeyHeader: {
-                                type: swagger.SwaggerDefinitionConstant.Security.Type.API_KEY,
-                                in: swagger.SwaggerDefinitionConstant.Security.In.HEADER,
-                                name: 'Authorization'
-                            }
-                        },
-                        basePath: this.config.get('SERVER').baseUrl
-                        // Models can be defined here
-                    }
-                })
-            );
+
+            if (process.env.NODE_ENV === 'development') {
+                app.use(
+                    swagger.express({
+                        definition: {
+                            externalDocs: {
+                                url: 'My url'
+                            },
+                            info: {
+                                title: 'My api',
+                                version: '1.0'
+                            },
+                            securityDefinitions: {
+                                apiKeyHeader: {
+                                    type: swagger.SwaggerDefinitionConstant.Security.Type.API_KEY,
+                                    in: swagger.SwaggerDefinitionConstant.Security.In.HEADER,
+                                    name: 'Authorization'
+                                }
+                            },
+                            basePath: this.config.get('SERVER').baseUrl
+                            // Models can be defined here
+                        }
+                    })
+                );
+            }
         });
 
         server.setErrorConfig((app: any) => {
@@ -75,7 +85,8 @@ export default class Service {
 
                     if (err instanceof HttpError) {
                         response.status(err.statusCode || 500).json({
-                            message: err.message || DEFAULT_ERR_MSG
+                            errorMessage: err.message || DEFAULT_ERR_MSG,
+                            status: err.statusCode || 500
                         });
                     } else {
                         response.status(500).json({
@@ -86,9 +97,15 @@ export default class Service {
             );
         });
 
+        const url = process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1' : '*';
         const port = this.config.get('SERVER').port;
-        // const app = ;
-        this.app = server.build().listen(port, () => this.logger.info(`Server started on *:${port}`));
+
+        this.app = server.build().listen(port, () => {
+            this.logger.info(`Server started on ${url}:${port}`);
+            if (process.env.NODE_ENV === 'development') {
+                this.logger.info(`Swagger docs started on ${url}:${port}/api-docs/swagger`);
+            }
+        });
 
         process.on('uncaughtException', (err) => {
             this.logger.error('Unhandled exception', err);
@@ -105,6 +122,15 @@ export default class Service {
     public async stop() {
         await this.app.close();
         await this.database.close();
+        container.unbindAll();
         this.logger.info('Server stopped');
+    }
+
+    public async clearDb() {
+        if (process.env.NODE_ENV !== 'test') {
+            throw new Error('Will not drop collection until in test env');
+        }
+
+        await this.database.clear();
     }
 }

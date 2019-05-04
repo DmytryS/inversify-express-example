@@ -6,8 +6,8 @@ import IConfigService from '../../libs/config/interface';
 import { inject, provide } from '../../libs/ioc/ioc';
 import IUser from './interface';
 
-export type status = 'ACTIVE' | 'PENDING' | 'BANNED';
-export type type = 'DRIVER' | 'RIDER' | 'ADMIN';
+export type userStatus = 'ACTIVE' | 'PENDING' | 'BANNED';
+export type userRole = 'USER' | 'ADMIN';
 
 let config;
 
@@ -41,21 +41,21 @@ class User extends Typegoose implements ModelType<IUser> {
 
     @prop({ required: true })
     @ApiModelProperty({
-        description: 'Type of user',
-        example: ['DRIVER', 'RIDER', 'ADMIN'],
+        description: 'User role',
+        example: ['USER', 'ADMIN'],
         required: true,
         type: 'string'
     })
-    public type: type;
+    public role: userRole;
 
     @prop({ required: true })
     @ApiModelProperty({
         description: 'Status of user',
-        example: ['ACTIVE', 'PENDING'],
+        example: ['ACTIVE', 'PENDING', 'BANNED'],
         required: true,
         type: 'string'
     })
-    public status: status;
+    public status: userStatus;
 
     /**
      * Checks user password
@@ -84,9 +84,20 @@ class User extends Typegoose implements ModelType<IUser> {
 
         return this.save();
     }
+
+    /**
+     * Sets user status to ACTIVE
+     * @returns {Promise<>} promise which will be resolved when password set
+     */
+    @instanceMethod
+    public async activate(this: InstanceType<User> & typeof User) {
+        this.status = 'ACTIVE';
+
+        return this.save();
+    }
 }
 
-@provide(TYPES.UserModel)
+@provide(TYPES.UserRepository)
 // tslint:disable-next-line
 export default class UserRepository {
     public User;

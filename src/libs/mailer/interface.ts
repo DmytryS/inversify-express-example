@@ -1,3 +1,3 @@
-export default interface IMailerService {
+export default interface IMailerServiceService {
     send(targetEmail: string, templateName: string, templateData: object): Promise<void>;
 }

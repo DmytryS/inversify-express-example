@@ -4,16 +4,17 @@ import * as moment from 'moment';
 import * as passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { InvalidArgumentError, UnauthorizedError } from 'restify-errors';
+import { InvalidArgumentError, UnauthorizedError, ForbiddenError } from 'restify-errors';
 import TYPES from '../../constant/types';
 import { IUserRepository } from '../../models/user/interface';
 import IConfigService from '../config/interface';
 import { inject, ProvideSingleton } from '../ioc/ioc';
 import ILog4js, { ILoggerService } from '../logger/interface';
 import IAuthService from './interface';
+import { BaseMiddleware } from 'inversify-express-utils';
 
 @ProvideSingleton(TYPES.AuthService)
-export default class AuthService implements IAuthService {
+export default class AuthService extends BaseMiddleware implements IAuthService {
     private config;
     private logger: ILog4js;
     private passport;
@@ -21,8 +22,9 @@ export default class AuthService implements IAuthService {
     constructor(
         @inject(TYPES.LoggerService) loggerService: ILoggerService,
         @inject(TYPES.ConfigServie) configService: IConfigService,
-        @inject(TYPES.UserModel) private userRepository: IUserRepository
+        @inject(TYPES.UserRepository) private userRepository: IUserRepository
     ) {
+        super();
         this.config = configService.get('AUTH');
         this.logger = loggerService.getLogger('AuthService');
         this.passport = passport;
@@ -31,18 +33,31 @@ export default class AuthService implements IAuthService {
         this.applyLocalStrategy();
     }
 
-    public async authenticateJwt(req: express.Request, res: express.Response, next: express.NextFunction) {
+    public async handler(req: express.Request, res: express.Response, next: express.NextFunction) {
         this.passport.authenticate('jwt', { session: false }, (err, user, info) => {
+            // console.log(555555, err, user, info);
+
             if (err) {
                 next(new UnauthorizedError(err.message ? err.message : err));
             }
 
             if (!user) {
-                next(new UnauthorizedError(info));
+                next(new UnauthorizedError(info.toString()));
             }
+
+            // if (role) {
+            //     if (!Array.isArray(role)) {
+            //         role = [role];
+            //     }
+
+            //     if (role.length > 0 && !role.includes(user.role)) {
+            //         throw new ForbiddenError();
+            //     }
+            // }
 
             // tslint:disable-next-line
             req['user'] = user;
+
             next();
         })(req, res, next);
     }
@@ -55,13 +70,8 @@ export default class AuthService implements IAuthService {
                         throw err;
                     }
 
-                    if (user) {
-                        const existingUser = await this.userRepository.User.findById(user._id);
-                        if (existingUser && existingUser.status === 'BANNED') {
-                            throw new UnauthorizedError(
-                                'Your account has been banned. Please contact system administrator'
-                            );
-                        }
+                    if (!user) {
+                        throw new UnauthorizedError('Something went wrong. Please contact system administrator');
                     }
 
                     user = user.toJSON();
@@ -90,20 +100,23 @@ export default class AuthService implements IAuthService {
             'jwt',
             new JwtStrategy(
                 {
-                    jwtFromRequest: ExtractJwt.fromHeader('Authorization'),
-                    secretOrKey: this.config.secret
+                    jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+                    secretOrKey: this.config.secret,
+                    session: false
                 },
                 async (token, done) => {
                     try {
-                        if (!token || !token.id) {
+                        if (!token || !token._id) {
                             throw new UnauthorizedError('Wrong token');
                         }
 
-                        const user = await this.userRepository.User.findById(token.id);
+                        const user = await this.userRepository.User.findById(token._id);
 
                         if (!user) {
                             throw new UnauthorizedError('Wrong token');
                         }
+
+                        done(false, user);
                     } catch (err) {
                         done(err, false);
                     }
@@ -117,24 +130,24 @@ export default class AuthService implements IAuthService {
             'local',
             new LocalStrategy(
                 {
-                    passReqToCallback: true,
                     passwordField: 'password',
                     session: false,
                     usernameField: 'email'
                 },
-                async (req, email, password, done) => {
+                async (email, password, done) => {
                     try {
-                        if (!req.body.type) {
-                            throw new InvalidArgumentError("'type' field is required");
-                        }
-                        const { type } = req.body;
                         const user = await this.userRepository.User.findOne({
-                            email,
-                            type
+                            email
                         });
 
                         if (!user || !(await user.isValidPassword(password))) {
                             throw new UnauthorizedError('Wrong email or password');
+                        }
+
+                        if (user && user.status === 'BANNED') {
+                            throw new UnauthorizedError(
+                                'Your account has been banned. Please contact system administrator'
+                            );
                         }
 
                         done(false, user);

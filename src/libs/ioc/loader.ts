@@ -3,6 +3,7 @@ import '../logger/logger';
 import '../auth/auth';
 import '../database/database';
 import '../mailer/mailer';
+import '../validator/validator';
 import '../../models/action/action';
 import '../../models/user/user';
 import '../../services/action/action';

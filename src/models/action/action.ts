@@ -48,7 +48,7 @@ class Action extends Typegoose implements ModelType<IAction> {
     }
 }
 
-@provide(TYPES.ActionModel)
+@provide(TYPES.ActionRepository)
 // tslint:disable-next-line
 export default class ActionRepository {
     public Action;

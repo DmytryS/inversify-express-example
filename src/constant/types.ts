@@ -1,5 +1,5 @@
 export default {
-    ActionModel: Symbol('ActionModel'),
+    ActionRepository: Symbol('ActionRepository'),
     ActionService: Symbol('ActionService'),
     App: Symbol('App'),
     AuthService: Symbol('AuthService'),
@@ -7,7 +7,10 @@ export default {
     DatabaseService: Symbol('DatabaseService'),
     LoggerService: Symbol('LoggerService'),
     MailerService: Symbol('MailerService'),
+    NewsRepository: Symbol('NewsRepository'),
+    NewsService: Symbol('NewsService'),
     Server: Symbol('Server'),
-    UserModel: Symbol('UserModel'),
-    UserService: Symbol('UserService')
+    UserRepository: Symbol('UserRepository'),
+    UserService: Symbol('UserService'),
+    ValidatorService: Symbol('ValidatorService')
 };

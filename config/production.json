@@ -1,7 +1,7 @@
 {
     "DB": {
         "type": "mongo",
-        "url": "mongodb://development_user:55x8jjSZwReb38B@ds247027.mlab.com:47027/delivery-group-development"
+        "url": "mongodb://<user>:<password>@<url>:<port>/<database>"
     },
     "SERVER": {
         "port": 3000,
@@ -10,10 +10,10 @@
     },
     "LOGGER": {
         "path": "/logs",
-        "fileName": "delivery-be.log"
+        "fileName": "inversify-example-production.log"
     },
     "AUTH": {
-        "secret": "43BF1F678DD0675D28076230D1BF9B18",
+        "secret": "SOME_SECRET",
         "expiresIn": "365d",
         "saltRounds": 3
     },

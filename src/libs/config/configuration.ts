@@ -16,6 +16,10 @@ export default class ConfigService implements IConfigService {
         this.config = nconf;
     }
 
+    public setConfig(configuration) {
+        nconf.overrides(configuration);
+    }
+
     public get(key?: string): any {
         return this.config.get(key);
     }

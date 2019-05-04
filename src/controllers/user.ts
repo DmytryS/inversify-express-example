@@ -1,5 +1,7 @@
+import 'reflect-metadata';
 import { controller, httpDelete, httpGet, httpPost, httpPut } from 'inversify-express-utils';
-import * as errs from 'restify-errors';
+import { MethodNotAllowedError, UnauthorizedError } from 'restify-errors';
+import * as jwt from 'jsonwebtoken';
 import {
     ApiOperationGet,
     ApiOperationPost,
@@ -9,26 +11,27 @@ import {
 } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import IAuthService from '../libs/auth/interface';
+import IValidatorService from '../libs/validator/interface';
 import { inject } from '../libs/ioc/ioc';
 import IUserService from '../services/user/interface';
-
-let auth;
+import IConfigService from '../libs/config/interface';
+import { IUserRepository } from '../models/user/interface';
+import validator from '../libs/validator/validator';
 
 @ApiPath({
     name: 'User',
-    path: '/users',
-    security: { basicAuth: [] }
+    path: '/users'
+    // security: { basicAuth: [] }
 })
 @controller('/users')
 export default class UserController {
     public TAG_NAME: string = 'UserController';
 
-    constructor(
-        @inject(TYPES.UserService) private userService: IUserService,
-        @inject(TYPES.AuthService) private authService: IAuthService
-    ) {
-        auth = this.authService;
-    }
+    @inject(TYPES.UserService) private userService: IUserService;
+    @inject(TYPES.AuthService) private authService: IAuthService;
+    @inject(TYPES.ValidatorService) private validatorService: IValidatorService;
+    @inject(TYPES.ConfigServie) private configService: IConfigService;
+    @inject(TYPES.UserRepository) private userRepository: IUserRepository;
 
     @ApiOperationPost({
         description: 'User login with credentials',
@@ -58,52 +61,9 @@ export default class UserController {
         summary: 'User login'
     })
     @httpPost('/login')
-    private async login(req, res, next) {
-        try {
-            const data = await this.authService.authenticateCredentials(req);
-
-            res.json(data);
-        } catch (err) {
-            return next(err);
-        }
+    public async login(req) {
+        return this.authService.authenticateCredentials(req);
     }
-
-    // @ApiOperationPut({
-    //     description: 'Register new user',
-    //     parameters: {
-    //         body: {
-    //             properties: {
-    //                 email: {
-    //                     required: true,
-    //                     type: 'string'
-    //                 },
-    //                 name: {
-    //                     required: true,
-    //                     type: 'string'
-    //                 },
-    //                 type: {
-    //                     required: true,
-    //                     type: 'string'
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     responses: {
-    //         200: { description: 'Success' },
-    //         400: { description: 'Parameters fail' }
-    //     },
-    //     summary: 'Register new user'
-    // })
-    // @httpPut('/')
-    // private async register(req, res, next) {
-    //     const { email, name, type } = req.body;
-
-    //     return this.userService.register({
-    //         email,
-    //         name,
-    //         type
-    //     });
-    // }
 
     @ApiOperationGet({
         description: 'Get user profile',
@@ -114,39 +74,146 @@ export default class UserController {
             400: { description: 'Parameters fail' }
         },
         security: {
-            apiKeyHeader: ['Authorize']
+            apiKeyHeader: ['Authorization']
         },
-        summary: 'Get user prrofile object'
+        summary: 'Get user profile object'
     })
-    @httpGet('/profile', TYPES.ActionService)
-    private async profile(req) {
-        return this.userService.profile(req.user._id);
+    @httpGet('/profile', TYPES.AuthService)
+    public async getProfile(req) {
+        return this.userService.getById(req.user._id);
     }
 
-    // @httpGet('/')
-    // private async getUsers() {
-    //     return this.userService.getUsers();
-    // }
+    @ApiOperationPut({
+        description: 'Register new user',
+        parameters: {
+            body: {
+                properties: {
+                    email: {
+                        required: true,
+                        type: 'string'
+                    },
+                    name: {
+                        required: true,
+                        type: 'string'
+                    },
+                    role: {
+                        required: true,
+                        type: 'string'
+                    }
+                }
+            }
+        },
+        responses: {
+            200: { description: 'Success' },
+            400: { description: 'Parameters fail' }
+        },
+        summary: 'Register new user'
+    })
+    @httpPut('/')
+    public async register(req) {
+        const { email, name, role } = this.validatorService.validate(
+            validator.rules.object().keys({
+                email: validator.rules
+                    .string()
+                    .email()
+                    .required(),
+                name: validator.rules.string().required(),
+                role: validator.rules
+                    .string()
+                    .valid('USER', 'ADMIN')
+                    .default('USER')
+            }),
+            req.body
+        );
 
-    // @httpGet('/:id')
-    // private async getById(req) {
-    //     const { id } = req.params;
-    //     return this.userService.profile(id);
-    // }
+        if (role === 'ADMIN') {
+            let isAdmin = false;
+            const token = req.header('Authorization');
+            if (token) {
+                try {
+                    const decodedToken = jwt.verify(token, this.configService.get('AUTH').secret);
+                    const admin = await this.userRepository.User.findById(decodedToken._id);
+                    isAdmin = admin.role === 'ADMIN';
+                } catch (err) {
+                    throw new UnauthorizedError(err.message);
+                }
+            }
 
-    // @httpDelete('/:id')
-    // private async deleteById(req, res) {
-    //     const { id } = req.params;
-    //     await this.userService.deleteById(id);
-    //     res.status(204);
-    //     res.send();
-    // }
+            if (!isAdmin) {
+                throw new MethodNotAllowedError('Only ADMIN allowed to do that');
+            }
+        }
 
-    // @httpPut('/:id')
-    // private async putById(req) {
-    //     const { id } = req.params;
-    //     const { body } = req;
+        const newUser = await this.userService.register({
+            email,
+            name,
+            role
+        });
 
-    //     return this.userService.updateById(id, body);
-    // }
+        return {
+            _id: newUser._id.toString()
+        };
+    }
+
+    @ApiOperationPost({
+        description: 'Register new user',
+        parameters: {
+            body: {
+                properties: {
+                    email: {
+                        required: true,
+                        type: 'string'
+                    }
+                }
+            }
+        },
+        responses: {
+            204: { description: 'Success' },
+            400: { description: 'Parameters fail' },
+            404: { description: 'User not exist' }
+        },
+        summary: 'Register new user'
+    })
+    @httpPost('/reset-password')
+    private async resetPassword(req) {
+        const { email } = this.validatorService.validate(
+            validator.rules.object().keys({
+                email: validator.rules
+                    .string()
+                    .email()
+                    .required()
+            }),
+            req.body
+        );
+        return this.userService.resetPassword(email);
+    }
+
+    @httpGet('/')
+    private async getUsers() {
+        return this.userService.getUsers();
+    }
+
+    @httpGet('/:userId')
+    private async getById(req) {
+        const { userId } = this.validatorService.validate(
+            validator.rules.object().keys({
+                userId: validator.rules.string().required()
+            }),
+            req.body
+        );
+
+        return this.userService.getById(userId);
+    }
+
+    @httpDelete('/:userId')
+    private async deleteById(req) {
+        const { userId } = this.validatorService.validate(
+            validator.rules.object().keys({
+                userId: validator.rules.string().required()
+            }),
+            req.body
+        );
+
+        return await this.userService.deleteById(userId);
+    }
 }
