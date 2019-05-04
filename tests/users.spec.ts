@@ -252,6 +252,69 @@ describe('User service', () => {
         });
     });
 
+    describe('Reset password', () => {
+        it('should send email for resetting password', async () => {
+            const mailerStub = sandbox
+                .stub(container.get(TYPES.MailerService), 'send')
+
+                .returns(Promise.resolve());
+            const user = await userRepository
+                .User({
+                    email: 'some@email.com',
+                    name: 'Dummy_2',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await user.setPassword('SOME_PASS');
+
+            await request(server)
+                .post('/api/v1/users/reset-password')
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send({ email: 'some@email.com' })
+                .expect(204)
+                .end();
+
+            mailerStub.should.have.been.calledOnce;
+            mailerStub.should.be.calledWith('some@email.com', 'RESET_PASSWORD', {
+                actionId: sinon.match.string,
+                uiUrl: 'http://localhost'
+            });
+        });
+
+        it('should return 404 error if user not exists', async () => {
+            await request(server)
+                .post('/api/v1/users/reset-password')
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send({ email: 'not_existing@email.com' })
+                .expect(404)
+                .end();
+        });
+
+        it('should return error if user password not set', async () => {
+            await userRepository
+                .User({
+                    email: 'some@email.com',
+                    name: 'Dummy_2',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await request(server)
+                .post('/api/v1/users/reset-password')
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send({ email: 'some@email.com' })
+                .expect(405)
+                .end()
+                .get('body');
+        });
+    });
+
     describe('Profile', () => {
         it('should return user profile', async () => {
             const user = await userRepository

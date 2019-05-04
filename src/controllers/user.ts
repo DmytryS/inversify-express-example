@@ -17,7 +17,6 @@ import IUserService from '../services/user/interface';
 import IConfigService from '../libs/config/interface';
 import { IUserRepository } from '../models/user/interface';
 import validator from '../libs/validator/validator';
-import { container } from '../libs/ioc/ioc';
 
 @ApiPath({
     name: 'User',
@@ -154,6 +153,39 @@ export default class UserController {
         return {
             _id: newUser._id.toString()
         };
+    }
+
+    @ApiOperationPost({
+        description: 'Register new user',
+        parameters: {
+            body: {
+                properties: {
+                    email: {
+                        required: true,
+                        type: 'string'
+                    }
+                }
+            }
+        },
+        responses: {
+            204: { description: 'Success' },
+            400: { description: 'Parameters fail' },
+            404: { description: 'User not exist' }
+        },
+        summary: 'Register new user'
+    })
+    @httpPost('/reset-password')
+    private async resetPassword(req) {
+        const { email } = this.validatorService.validate(
+            validator.rules.object().keys({
+                email: validator.rules
+                    .string()
+                    .email()
+                    .required()
+            }),
+            req.body
+        );
+        return this.userService.resetPassword(email);
     }
 
     @httpGet('/')

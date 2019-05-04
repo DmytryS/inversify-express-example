@@ -1,6 +1,6 @@
-import { ConflictError, NotFoundError } from 'restify-errors';
+import { ConflictError, NotFoundError, MethodNotAllowedError } from 'restify-errors';
 import TYPES from '../../constant/types';
-import IConfig from '../../libs/config/interface';
+import IConfigService from '../../libs/config/interface';
 import { inject, ProvideSingleton } from '../../libs/ioc/ioc';
 import IMailerServiceService from '../../libs/mailer/interface';
 import { IActionRepository } from '../../models/action/interface';
@@ -12,7 +12,7 @@ export default class UserService implements IUserService {
     private config;
 
     constructor(
-        @inject(TYPES.ConfigServie) configService: IConfig,
+        @inject(TYPES.ConfigServie) configService: IConfigService,
         @inject(TYPES.MailerService) private mailerService: IMailerServiceService,
         @inject(TYPES.UserRepository) private userRepository: IUserRepository,
         @inject(TYPES.ActionRepository) private actionRepository: IActionRepository
@@ -63,6 +63,31 @@ export default class UserService implements IUserService {
         });
 
         return user;
+    }
+
+    public async resetPassword(email: string) {
+        const user = await this.userRepository.User.findOne({ email });
+
+        if (!user) {
+            throw new NotFoundError(`User with email of ${email} not found`);
+        }
+
+        if (!user.passwordHash) {
+            throw new MethodNotAllowedError('User password not set');
+        }
+
+        const action = await new this.actionRepository.Action({
+            status: 'ACTIVE',
+            type: 'RESET_PASSWORD',
+            userId: user._id
+        }).save();
+
+        await this.mailerService.send(user.email, 'RESET_PASSWORD', {
+            actionId: action._id.toString(),
+            uiUrl: this.config.SERVER.uiUrl
+        });
+
+        return;
     }
 
     public async getUsers() {

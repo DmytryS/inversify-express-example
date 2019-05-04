@@ -1,4 +1,5 @@
 export default interface IUserService {
+    resetPassword(email: string): Promise<void>;
     register(userData: object): Promise<any>;
     getUsers(): Promise<object[]>;
     getById(id: string): Promise<object>;
