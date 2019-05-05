@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { interfaces, controller, httpDelete, httpGet, httpPost, httpPut, TYPE } from 'inversify-express-utils';
 import { MethodNotAllowedError, UnauthorizedError } from 'restify-errors';
 import * as jwt from 'jsonwebtoken';
-import { ApiOperationGet, ApiOperationPost, ApiOperationPut, ApiPath } from 'swagger-express-ts';
+import { ApiOperationGet, ApiOperationPost, ApiOperationPut, ApiPath, ApiOperationDelete } from 'swagger-express-ts';
 import TYPES from '../constant/types';
 import IAuthService from '../libs/auth/interface';
 import IValidatorService from '../libs/validator/interface';
@@ -64,6 +64,7 @@ export default class UserController implements interfaces.Controller {
         path: '/profile',
         responses: {
             200: { description: 'Success' },
+            401: { description: 'Unauthorized' },
             409: { description: 'Parameters fail' }
         },
         security: {
@@ -204,8 +205,9 @@ export default class UserController implements interfaces.Controller {
         path: '/',
         responses: {
             200: { description: 'Success' },
-            409: { description: 'Parameters fail' },
-            405: { description: 'Not allowed' }
+            401: { description: 'Unauthorized' },
+            405: { description: 'Not allowed' },
+            409: { description: 'Parameters fail' }
         },
         security: { apiKeyHeader: ['Authorization'] },
         summary: 'Get list of users'
@@ -255,6 +257,7 @@ export default class UserController implements interfaces.Controller {
         path: '/{userId}',
         responses: {
             200: { description: 'Success' },
+            401: { description: 'Unauthorized' },
             404: { description: 'User not found' },
             405: { description: 'Not allowed' }
         },
@@ -277,7 +280,7 @@ export default class UserController implements interfaces.Controller {
         return this.userService.getById(userId);
     }
 
-    @ApiOperationGet({
+    @ApiOperationDelete({
         description: 'Delete user',
         parameters: {
             path: {
@@ -290,11 +293,12 @@ export default class UserController implements interfaces.Controller {
         path: '/{userId}',
         responses: {
             204: { description: 'Success' },
+            401: { description: 'Unauthorized' },
             404: { description: 'User not found' },
             405: { description: 'Not allowed' }
         },
         security: { apiKeyHeader: ['Authorization'] },
-        summary: 'Get list of users'
+        summary: 'Delete user by id'
     })
     @httpDelete('/:userId', TYPES.AuthService)
     public async deleteById(req) {
