@@ -311,4 +311,55 @@ export default class UserController implements interfaces.Controller {
 
         return this.userService.deleteById(userId);
     }
+
+    @ApiOperationPost({
+        description: 'Update user',
+        parameters: {
+            body: {
+                properties: {
+                    name: {
+                        required: true,
+                        type: 'string'
+                    }
+                }
+            },
+            path: {
+                userId: {
+                    required: true,
+                    type: 'string'
+                }
+            }
+        },
+        path: '/{userId}',
+        responses: {
+            200: { description: 'Success' },
+            401: { description: 'Unauthorized' },
+            404: { description: 'User not found' },
+            405: { description: 'Not allowed' }
+        },
+        security: { apiKeyHeader: ['Authorization'] },
+        summary: 'Update user by id'
+    })
+    @httpPost('/:userId', TYPES.AuthService)
+    public async updateById(req) {
+        const body = this.validatorService.validate(
+            validator.rules.object().keys({
+                name: validator.rules.string().required(),
+                status: validator.rules.string().valid('BLOCKED')
+            }),
+            req.body
+        );
+        const { userId } = this.validatorService.validate(
+            validator.rules.object().keys({
+                userId: validator.rules.string().required()
+            }),
+            req.params
+        );
+
+        if (req.user.role !== 'ADMIN') {
+            throw new MethodNotAllowedError('Only admin allowed to that');
+        }
+
+        return this.userService.updateById(userId, body);
+    }
 }

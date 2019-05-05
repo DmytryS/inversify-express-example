@@ -9,7 +9,7 @@ export default interface IUser {
     status: status;
 }
 
-export type status = 'ACTIVE' | 'PENDING';
+export type status = 'ACTIVE' | 'PENDING' | 'BLOCKED';
 export type userRole = 'USER' | 'ADMIN';
 
 export type IUserModel = ModelType<IUser>;

@@ -149,6 +149,22 @@ describe('Action service', () => {
             updatedUser.passwordHash.should.not.eql(user.passwordHash);
         });
 
+        it('should return 404 error if user for action deleted', async () => {
+            const action = await new actionRepository.Action({
+                status: 'ACTIVE',
+                type: 'REGISTER',
+                userId: '5cce9e6d2be746695e291fcf'
+            }).save();
+
+            await request(server)
+                .post(`/api/v1/actions/${action._id.toString()}`)
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send({ password: 'SOME_NEW_PASS' })
+                .expect(404)
+                .end();
+        });
+
         it('should return 409 error if action used', async () => {
             const user = await userRepository
                 .User({

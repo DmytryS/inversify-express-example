@@ -1,7 +1,7 @@
 import { NotFoundError } from 'restify-errors';
 import TYPES from '../../constant/types';
 import { inject, ProvideSingleton } from '../../libs/ioc/ioc';
-import { INewsRepository, INewsModel } from '../../models/news/interface';
+import INews, { INewsRepository, INewsModel } from '../../models/news/interface';
 import INewsService from './interface';
 import { dumpNews } from '../../utils/dump';
 
@@ -12,26 +12,36 @@ export default class NewsService implements INewsService {
     public async getById(newsId: string) {
         const news = await this.checkIfNewsExists(newsId);
 
-        const newsJSON = news.toJSON();
-
-        delete newsJSON.__v;
-
-        return newsJSON;
+        return dumpNews(news);
     }
 
-    public async updateById(newsId: string, newsObject: object) {
-        const news = await this.checkIfNewsExists(newsId);
-        return Promise.resolve();
-    }
     public async create(newsObject: INewsModel) {
         const news = await this.newsRepository.News(newsObject).save();
         return dumpNews(news);
     }
-    public async deleteById(id: string) {
-        return Promise.resolve();
+
+    public async deleteById(newsId: string) {
+        const news = await this.checkIfNewsExists(newsId);
+
+        await news.remove();
+
+        return;
     }
+
+    public async updateById(newsId: string, newsObject: INews) {
+        const news = await this.checkIfNewsExists(newsId);
+
+        news.name = newsObject.name;
+        news.text = newsObject.text;
+
+        const updatedNews = await news.save();
+        return dumpNews(updatedNews);
+    }
+
     public async getNews(skip: number, limit: number) {
-        return [{}];
+        const news = await this.newsRepository.News.paginate(skip, limit);
+
+        return news.map(dumpNews);
     }
 
     private async checkIfNewsExists(newsId: string): Promise<INewsModel> {

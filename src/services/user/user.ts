@@ -111,8 +111,17 @@ export default class UserService implements IUserService {
         return;
     }
 
-    public async updateById(id: string, data: object) {
-        return this.userRepository.User.updateById(id, data);
+    public async updateById(userId: string, userObject: IUserModel) {
+        const user = await this.checkIfUserExists(userId);
+
+        user.name = userObject.name;
+        if (userObject.status) {
+            user.status = userObject.status;
+        }
+
+        const updatedUser = await user.save();
+
+        return dumpUser(updatedUser);
     }
 
     private async checkIfUserExists(userId) {

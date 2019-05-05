@@ -144,9 +144,9 @@ export default class AuthService extends BaseMiddleware implements IAuthService 
                             throw new UnauthorizedError('Wrong email or password');
                         }
 
-                        if (user && user.status === 'BANNED') {
+                        if (user && user.status === 'BLOCKED') {
                             throw new UnauthorizedError(
-                                'Your account has been banned. Please contact system administrator'
+                                'Your account has been BLOCKED. Please contact system administrator'
                             );
                         }
 
