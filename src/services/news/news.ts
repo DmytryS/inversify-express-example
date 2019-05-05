@@ -39,7 +39,7 @@ export default class NewsService implements INewsService {
     }
 
     public async getNews(skip: number, limit: number) {
-        const news = this.newsRepository.News.paginate(skip, limit);
+        const news = await this.newsRepository.News.paginate(skip, limit);
 
         return news.map(dumpNews);
     }
