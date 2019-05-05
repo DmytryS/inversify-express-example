@@ -253,13 +253,13 @@ describe('User service', () => {
                 .get('body');
         });
 
-        it('should return 401 error if user banned', async () => {
+        it('should return 401 error if user BLOCKED', async () => {
             const user = await userRepository
                 .User({
                     email: 'some@email.com',
                     name: 'Dummy_2',
                     role: 'USER',
-                    status: 'BANNED'
+                    status: 'BLOCKED'
                 })
                 .save();
 
@@ -728,6 +728,141 @@ describe('User service', () => {
                 .set('Authorization', token)
                 .set('Content-Type', 'application/json')
                 .expect(405)
+                .end();
+        });
+    });
+
+    describe('Update user', () => {
+        it('should return updated user', async () => {
+            const user = await userRepository
+                .User({
+                    email: 'some_user@email.com',
+                    name: 'Dummy_User',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            const admin = await userRepository
+                .User({
+                    email: 'some_admin@email.com',
+                    name: 'Dummy_Admin',
+                    role: 'ADMIN',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await admin.setPassword('SOME_PASS');
+
+            const { token } = await authService.authenticateCredentials({
+                body: {
+                    email: 'some_admin@email.com',
+                    password: 'SOME_PASS'
+                }
+            });
+
+            const response = await request(server)
+                .post(`/api/v1/users/${user._id.toString()}`)
+                .set('Accept', 'application/json')
+                .set('Authorization', token)
+                .set('Content-Type', 'application/json')
+                .send({ name: 'Updated_name', status: 'BLOCKED' })
+                .expect(200)
+                .end()
+                .get('body');
+
+            response.should.eql({
+                _id: user._id.toString(),
+                email: 'some_user@email.com',
+                name: 'Updated_name',
+                role: 'USER',
+                status: 'BLOCKED'
+            });
+        });
+
+        it('should return 404 error user not exist', async () => {
+            const admin = await userRepository
+                .User({
+                    email: 'some_admin@email.com',
+                    name: 'Dummy_Admin',
+                    role: 'ADMIN',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await admin.setPassword('SOME_PASS');
+
+            const { token } = await authService.authenticateCredentials({
+                body: {
+                    email: 'some_admin@email.com',
+                    password: 'SOME_PASS'
+                }
+            });
+
+            await request(server)
+                .post('/api/v1/users/5ccea393ddc4186ce38a1659')
+                .set('Accept', 'application/json')
+                .set('Authorization', token)
+                .set('Content-Type', 'application/json')
+                .send({ name: 'Updated_name', status: 'BLOCKED' })
+                .expect(404)
+                .end();
+        });
+
+        it('should return 405 if user trying to update', async () => {
+            const user1 = await userRepository
+                .User({
+                    email: 'some_user@email.com',
+                    name: 'Dummy_User',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            const user2 = await userRepository
+                .User({
+                    email: 'some_user_2@email.com',
+                    name: 'Dummy_User_2',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await user2.setPassword('SOME_PASS');
+
+            const { token } = await authService.authenticateCredentials({
+                body: {
+                    email: 'some_user_2@email.com',
+                    password: 'SOME_PASS'
+                }
+            });
+
+            await request(server)
+                .post(`/api/v1/users/${user1._id.toString()}`)
+                .set('Accept', 'application/json')
+                .set('Authorization', token)
+                .set('Content-Type', 'application/json')
+                .send({ name: 'Updated_name', status: 'BLOCKED' })
+                .expect(405)
+                .end();
+        });
+
+        it('should return 401 if unauthorized', async () => {
+            const user = await userRepository
+                .User({
+                    email: 'some_user@email.com',
+                    name: 'Dummy_User',
+                    role: 'USER',
+                    status: 'ACTIVE'
+                })
+                .save();
+
+            await request(server)
+                .post(`/api/v1/users/${user._id.toString()}`)
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .send({ name: 'Updated_name', status: 'BLOCKED' })
+                .expect(401)
                 .end();
         });
     });

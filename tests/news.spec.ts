@@ -292,7 +292,7 @@ describe('News service', () => {
                 .set('Accept', 'application/json')
                 .set('Authorization', token)
                 .set('Content-Type', 'application/json')
-                .send({ name: 'News_3', text: 'Text_4s' })
+                .send({ name: 'News_3', text: 'Text_4' })
                 .expect(200)
                 .end()
                 .get('body');

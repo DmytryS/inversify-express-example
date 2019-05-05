@@ -6,7 +6,7 @@ import IConfigService from '../../libs/config/interface';
 import { inject, provide } from '../../libs/ioc/ioc';
 import IUser from './interface';
 
-export type userStatus = 'ACTIVE' | 'PENDING' | 'BANNED';
+export type userStatus = 'ACTIVE' | 'PENDING' | 'BLOCKED';
 export type userRole = 'USER' | 'ADMIN';
 
 let config;
@@ -69,7 +69,7 @@ class User extends Typegoose implements ModelType<IUser> {
     @prop({ required: true })
     @ApiModelProperty({
         description: 'Status of user',
-        example: ['ACTIVE', 'PENDING', 'BANNED'],
+        example: ['ACTIVE', 'PENDING', 'BLOCKED'],
         required: true,
         type: 'string'
     })
