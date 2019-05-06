@@ -45,20 +45,21 @@ export default class Service {
         const server = new InversifyExpressServer(container, null, {
             rootPath: this.config.get('SERVER').baseUrl
         });
+
         server.setConfig((app) => {
             app.use('/api-docs/swagger', express.static('swagger'));
             app.use('/api-docs/swagger/assets', express.static('node_modules/swagger-ui-dist'));
             app.use(bodyParser.json());
 
-            if (process.env.NODE_ENV === 'development') {
+            if (this.config.get('SWAGGER').enabled) {
                 app.use(
                     swagger.express({
                         definition: {
                             externalDocs: {
-                                url: 'My url'
+                                url: 'Inversify example api'
                             },
                             info: {
-                                title: 'My api',
+                                title: 'Inversify example api',
                                 version: '1.0'
                             },
                             securityDefinitions: {
@@ -97,12 +98,13 @@ export default class Service {
             );
         });
 
-        const url = process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1' : '*';
+        const url = process.env.NODE_ENV === 'production' ? '*' : 'http://127.0.0.1';
         const port = this.config.get('SERVER').port;
 
         this.app = server.build().listen(port, () => {
             this.logger.info(`Server started on ${url}:${port}`);
-            if (process.env.NODE_ENV === 'development') {
+
+            if (this.config.get('SWAGGER').enabled) {
                 this.logger.info(`Swagger docs started on ${url}:${port}/api-docs/swagger`);
             }
         });

@@ -1,0 +1,19 @@
+version: '3'
+services:
+    mongo:
+        container_name: mongo
+        hostname: mongo
+        image: 'mongo:latest'
+        restart: always
+        volumes:
+            - ./mongodb:/data/db
+    api:
+        build:
+            context: .
+        restart: always
+        ports:
+            - '3000:3000'
+        depends_on:
+            - mongo
+        volumes:
+            - './config/:/usr/src/app/config:cached'

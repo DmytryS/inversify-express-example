@@ -1,12 +1,15 @@
 {
     "DB": {
         "type": "mongo",
-        "url": "mongodb://test_user:FSeKBJ7fAvmLWm7@ds149146.mlab.com:49146/ioc-boilerplate-test"
+        "url": "mongodb://localhost:27017/inversify-boilerplate-test"
     },
     "SERVER": {
         "port": 3000,
         "baseUrl": "/api/v1",
         "uiUrl": "http://localhost"
+    },
+    "SWAGGER": {
+        "enabled": false
     },
     "LOGGER": {
         "path": "/logs",

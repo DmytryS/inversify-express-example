@@ -18,7 +18,7 @@
         "dev": "NODE_ENV=development nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' ./src/index.ts",
         "test": "NODE_ENV=test mocha -r ts-node/register ./tests/**/*.spec.ts --exit",
         "test:coverage": "nyc npm run test && nyc report --reporter=html --reporter=lcov",
-        "build": "tsc && cp -r ./src/templates ./build/templates",
+        "build": "ntsc && cp -r ./src/templates ./build/templates",
         "format": "prettier --check 'src/**/*.{ts,json,md, gql}'",
         "format:fix": "prettier --write 'src/**/*.{ts,json,md,gql}'",
         "tslint": "tslint -p ./tsconfig.json",
@@ -27,7 +27,7 @@
         "lint:fix": "npm run format:fix && npm run tslint:fix"
     },
     "dependencies": {
-        "bcrypt": "^3.0.4",
+        "bcrypt": "^3.0.6",
         "bluebird": "^3.5.3",
         "body-parser": "^1.18.3",
         "express": "^4.16.4",
@@ -42,6 +42,7 @@
         "mongoose": "^5.4.13",
         "nconf": "^0.10.0",
         "nodemailer": "^5.1.1",
+        "ntypescript": "^1.201706190042.1",
         "passport": "^0.4.0",
         "passport-jwt": "^4.0.0",
         "passport-local": "^1.0.0",
@@ -51,9 +52,7 @@
         "restify-errors": "^6.1.1",
         "swagger-express-ts": "^1.0.1",
         "swagger-ui-dist": "^3.21.0",
-        "tsc": "^1.20150623.0",
-        "typegoose": "^5.6.0",
-        "typescript": "^3.1.6"
+        "typegoose": "^5.6.0"
     },
     "devDependencies": {
         "@hapi/joi": "^15.0.1",

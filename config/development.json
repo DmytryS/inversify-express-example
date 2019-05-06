@@ -8,6 +8,9 @@
         "baseUrl": "/api/v1",
         "uiUrl": "http://127.0.0.1"
     },
+    "SWAGGER": {
+        "enabled": true
+    },
     "LOGGER": {
         "path": "/logs",
         "fileName": "inversify-example-development.log"
