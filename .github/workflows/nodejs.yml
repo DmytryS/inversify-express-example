@@ -20,7 +20,7 @@ jobs:
     - name: npm install, build, and test
       run: |
         npm install
-        npm lint
-        npm test:coverage
+        npm run lint
+        npm run test:coverage
       env:
         CI: true
