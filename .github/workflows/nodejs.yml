@@ -2,6 +2,7 @@ name: Node CI
 
 on: [push]
 
+
 jobs:
   build:
 
@@ -10,6 +11,12 @@ jobs:
     strategy:
       matrix:
         node-version: [8.x, 10.x, 12.x]
+
+    services:
+      nginx:
+        image: mongo
+        ports:
+          - 27017:27017
 
     steps:
     - uses: actions/checkout@v1
